@@ -1,0 +1,13 @@
+# React
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Java
+backend/target/
+backend/build/
+
+# IDE
+.idea/
+*.iml
+.vscode/
