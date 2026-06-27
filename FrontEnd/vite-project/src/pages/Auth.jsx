@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './Auth.css'; // متصل کردن فایل استایل اختصاصی فرم‌ها
 
 function Auth({ setUser }) {
   const [isLogin, setIsLogin] = useState(true)
@@ -11,7 +12,6 @@ function Auth({ setUser }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     setMessage('')
-
 
     const userData = {
       username: username,
@@ -31,7 +31,6 @@ function Auth({ setUser }) {
       body: JSON.stringify(userData),
     })
       .then(async (response) => {
-        
         if (!response.ok) {
           const errData = await response.json()
             throw new Error(errData.error || 'خطایی از سمت سرور رخ داد')
@@ -52,54 +51,53 @@ function Auth({ setUser }) {
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', direction: 'rtl', fontFamily: 'tahoma' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+    <div className="auth-container">
+      <h2 className="auth-title">
         {isLogin ? '🔑 ورود به حساب کاربری' : '📝 ثبت‌نام در سیستم'}
       </h2>
 
-      {message && <p style={{ textAlign: 'center', fontWeight: 'bold', color: 'red' }}>{message}</p>}
+      {message && <p className="auth-message">{message}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>نام کاربری:</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} required />
+        <div className="form-group">
+          <label>نام کاربری:</label>
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>رمز عبور:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} required />
+        <div className="form-group">
+          <label>رمز عبور:</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
 
         {!isLogin && (
           <>
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>نقش کاربری:</label>
-              <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}>
+            <div className="form-group">
+              <label>نقش کاربری:</label>
+              <select value={role} onChange={(e) => setRole(e.target.value)}>
                 <option value="CUSTOMER">خریدار (Customer)</option>
                 <option value="SELLER">فروشنده (Seller)</option>
               </select>
             </div>
 
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>موجودی اولیه کیف پول (تومان):</label>
-              <input type="number" value={wallet} onChange={(e) => setWallet(e.target.
-              value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} min="0" />
-              </div>
-            </>
-          )}
+            <div className="form-group">
+              <label>موجودی اولیه کیف پول (تومان):</label>
+              <input type="number" value={wallet} onChange={(e) => setWallet(e.target.value)} min="0" />
+            </div>
+          </>
+        )}
           
-          <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: isLogin ? '#007bff' : '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', marginTop: '10px' }}>
-            {isLogin ? 'ورود' : 'ثبت‌نام'}
-          </button>
-        </form>
-  
-        <hr style={{ margin: '20px 0', border: '0', borderTop: '1px solid #eee' }} />
-  
-        <button onClick={() => { setIsLogin(!isLogin); setMessage(''); }} style={{ width: '100%', background: 'none', border: 'none', color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}>
-          {isLogin ? 'حساب کاربری ندارید؟ ثبت‌نام کنید' : 'قبلاً ثبت‌نام کرده‌اید؟ وارد شوید'}
+        <button type="submit" className={`auth-submit-btn ${isLogin ? 'login-mode' : 'register-mode'}`}>
+          {isLogin ? 'ورود' : 'ثبت‌نام'}
         </button>
-      </div>
-    )
-  }
+      </form>
   
-  export default Auth;
+      <hr className="auth-divider" />
+  
+      <button onClick={() => { setIsLogin(!isLogin); setMessage(''); }} className="auth-toggle-btn">
+        {isLogin ? 'حساب کاربری ندارید؟ ثبت‌نام کنید' : 'قبلاً ثبت‌نام کرده‌اید؟ وارد شوید'}
+      </button>
+    </div>
+  )
+}
+
+export default Auth;

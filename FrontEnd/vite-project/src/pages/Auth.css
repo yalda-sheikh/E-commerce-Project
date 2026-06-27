@@ -1,0 +1,139 @@
+/* اضافه کردن فونت زیبای وزیرمتن برای متون فارسی */
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+/* استایل بدنه اصلی فرم */
+.auth-container {
+  font-family: 'Vazirmatn', sans-serif;
+  direction: rtl;
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 40px 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* سایه نرم و مدرن */
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+/* عنوان فرم */
+.auth-title {
+  text-align: center;
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* استایل باکس پیام‌های خطا و موفقیت */
+.auth-message {
+  background: #fff5f5;
+  color: #c53030;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+  text-align: center;
+  border: 1px solid #fed7d7;
+  font-weight: 500;
+}
+
+/* گروه‌بندی لیبل و اینپوت */
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* استایل ورودی‌ها (Input & Select) */
+.form-group input,
+.form-group select {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  color: #1a202c;
+  transition: all 0.3s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+/* افکت هنگام کلیک و تایپ در ورودی‌ها */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.15);
+  background-color: #ffffff;
+}
+
+/* دکمه اصلی (ورود / ثبت‌نام) */
+.auth-submit-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.1s, background-color 0.3s, box-shadow 0.3s;
+  margin-top: 12px;
+  font-family: inherit;
+}
+
+.auth-submit-btn:active {
+  transform: scale(0.97); /* افکت فرو رفتن دکمه هنگام کلیک */
+}
+
+/* تم دکمه ورود (آبی فروشگاهی) */
+.login-mode {
+  background-color: #3182ce;
+  box-shadow: 0 4px 15px rgba(49, 130, 206, 0.35);
+}
+
+.login-mode:hover {
+  background-color: #2b6cb0;
+}
+
+/* تم دکمه ثبت‌نام (سبز رشد و تایید) */
+.register-mode {
+  background-color: #38a169;
+  box-shadow: 0 4px 15px rgba(56, 161, 105, 0.35);
+}
+
+.register-mode:hover {
+  background-color: #2f855a;
+}
+
+/* خط جداکننده */
+.auth-divider {
+  border: 0;
+  height: 1px;
+  background: #edf2f7;
+  margin: 28px 0;
+}
+
+/* دکمه تغییر حالت (متنی در پایین فرم) */
+.auth-toggle-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #718096;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s;
+  font-family: inherit;
+}
+
+.auth-toggle-btn:hover {
+  color: #2d3748;
+}

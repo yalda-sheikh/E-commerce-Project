@@ -209,6 +209,7 @@ public class MainServer {
         server.createContext("/api/purchase-history", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
+
                 // اعمال هدرهای هماهنگی با فرانت‌اند و برطرف‌سازی خطاهای CORS
                 exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                 exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -455,50 +456,142 @@ public class MainServer {
         // مدیریت مسیر /api/products برای ارسال لیست تمام کالاهای موجود در انبار به کامپوننت داشبورد خرید
         server.createContext("/api/products", new HttpHandler() {
             @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                // اعمال تنظیمات مربوط به هدرهای ارتباطی CORS و تعیین فرمت خروجی JSON فارسی
-                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
-                exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
 
-                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                    exchange.sendResponseHeaders(200, -1);
+            public void handle(HttpExchange exchange) throws IOException {
+                // ۱. تنظیم هدرهای CORS به صورت یکتا با استفاده از متد set برای جلوگیری از تداخل
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+
+                // ۲. مدیریت یکجای درخواست پیش‌پرواز (Preflight) مرورگر
+                if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    exchange.sendResponseHeaders(204, -1); // ارسال پاسخ خالی و اتمام هَندل
                     return;
                 }
 
-                // استفاده از ساختار بهینه رشته‌سازی برای چسباندن اطلاعات کالاها و تبدیل آن به آرایه JSON
-                StringBuilder jsonBuilder = new StringBuilder();
-                jsonBuilder.append("["); // آغاز آرایه جی‌سانی
+                // ۳. مدیریت درخواست GET (ارسال لیست محصولات به فرانت)
+                if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    StringBuilder jsonBuilder = new StringBuilder();
+                    jsonBuilder.append("[");
 
-                // حلقه زدن روی تک‌تک آیتم‌های انبار برای تبدیل فیلدها به فرمت آبجکتی متن JSON
-                for (int i = 0; i < allProductItems.size(); i++) {
-                    ProductItem item = allProductItems.get(i);
-                    // ارزیابی عدم نال بودن فیلد اطلاعات پایه محصول جهت استخراج امن نام و برند کالای دیجیتال
-                    String productName = (item.product != null) ? item.product.getName() : "نامشخص";
-                    String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
+                    for (int i = 0; i < allProductItems.size(); i++) {
+                        ProductItem item = allProductItems.get(i);
+                        String productName = (item.product != null) ? item.product.getName() : "نامشخص";
+                        String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
 
-                    jsonBuilder.append("{");
-                    jsonBuilder.append("\"itemId\":").append(item.getItemId()).append(",");
-                    jsonBuilder.append("\"name\":\"").append(productName).append("\",");
-                    jsonBuilder.append("\"brand\":\"").append(brandName).append("\",");
-                    jsonBuilder.append("\"color\":\"").append(item.color).append("\",");
-                    jsonBuilder.append("\"price\":").append(item.getFinalPrice()).append(",");
-                    jsonBuilder.append("\"stock\":").append(item.getStock());
-                    jsonBuilder.append("}");
+                        jsonBuilder.append("{");
+                        jsonBuilder.append("\"itemId\":").append(item.getItemId()).append(",");
+                        jsonBuilder.append("\"name\":\"").append(productName).append("\",");
+                        jsonBuilder.append("\"brand\":\"").append(brandName).append("\",");
+                        jsonBuilder.append("\"color\":\"").append(item.color).append("\",");
+                        jsonBuilder.append("\"price\":").append(item.getFinalPrice()).append(",");
+                        jsonBuilder.append("\"stock\":").append(item.getStock()).append(",");
+                        jsonBuilder.append("\"sellerName\":\"").append(item.seller.username).append("\"");
 
-                    // بررسی وضعیت عضو جاری تا در صورت نیاز علامت کاما بین آبجکت‌ها گذاشته شود
-                    if (i < allProductItems.size() - 1) {
-                        jsonBuilder.append(",");
+                        jsonBuilder.append("}");
+
+                        if (i < allProductItems.size() - 1) {
+                            jsonBuilder.append(",");
+                        }
                     }
-                }
-                jsonBuilder.append("]"); // پایان آرایه جی‌سانی
+                    jsonBuilder.append("]");
 
-                // استخراج آرایه بایت‌ها بر پایه فرمت جهانی UTF-8 و ارسال آن به هدر به همراه پاسخ وضعیت 200
-                byte[] responseBytes = jsonBuilder.toString().getBytes("UTF-8");
-                exchange.sendResponseHeaders(200, responseBytes.length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(responseBytes);
-                os.close();
+                    byte[] responseBytes = jsonBuilder.toString().getBytes("UTF-8");
+                    exchange.sendResponseHeaders(200, responseBytes.length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(responseBytes);
+                    os.close();
+                    return; // خروج از متد پس از ارسال پاسخ GET
+                }
+
+                // ۴. مدیریت درخواست POST (گرفتن محصول جدید از فروشنده فرانت)
+// ۴. مدیریت درخواست POST (گرفتن محصول جدید از فروشنده فرانت)
+                if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    try {
+                        // ۱. خواندن بادی درخواست (JSON ارسالی از ریکت)
+                        InputStream is = exchange.getRequestBody();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        StringBuilder bodyBuilder = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            bodyBuilder.append(line);
+                        }
+                        String jsonBody = bodyBuilder.toString();
+
+                        // ۲. استخراج فیلدها از JSON به صورت دستی
+                        int itemId = Integer.parseInt(extractJsonValue(jsonBody, "itemId"));
+                        String name = extractJsonValue(jsonBody, "name");
+                        String brand = extractJsonValue(jsonBody, "brand");
+                        String color = extractJsonValue(jsonBody, "color");
+                        double price = Double.parseDouble(extractJsonValue(jsonBody, "price"));
+                        int stock = Integer.parseInt(extractJsonValue(jsonBody, "stock"));
+                        String sellerName = extractJsonValue(jsonBody, "sellerName");
+
+                        // ۳. ذخیره سازی در فایل متنی (به صورت خطی و جدا شده با ویرگول)
+                        try (FileWriter fw = new FileWriter("products.txt", true);
+                             BufferedWriter bw = new BufferedWriter(fw);
+                             PrintWriter out = new PrintWriter(bw)) {
+
+                            String productLine = String.format("%d,%s,%s,%s,%.2f,%d,%s",
+                                    itemId, name, brand, color, price, stock, sellerName);
+                            out.println(productLine);
+                        }
+
+// ۴. اضافه کردن به لیست درون حافظه (allProductItems و لیست اختصاصی فروشنده)
+
+                        // ساخت شیء لپ‌تاپ با مقادیر پیش‌فرض برای فیلدهای اختصاصی لپ‌تاپ
+                        int dummyRam = 16;
+                        int dummyStorage = 512;
+                        boolean dummyGraphics = true;
+                        Product newProductObj = new Laptop(itemId, name, brand, dummyRam, dummyStorage, dummyGraphics);
+
+                        // ساخت شیء فروشنده بر اساس سازنده کلاس Seller
+                        // شناسه، پسورد و کیف پول را تستی می‌دهیم، اما username دقیقاً همان چیزی است که از فرانت آمده.
+                        int dummySellerId = 999;
+                        String dummyPassword = "password123";
+                        double dummyWallet = 0.0;
+                        Seller currentSeller = new Seller(dummySellerId, sellerName, dummyPassword, dummyWallet);
+
+                        // مقدار پیش‌فرض برای تخفیف محصول جدید
+                        double defaultDiscount = 0.0;
+
+                        // ساخت ProductItem با تمام پارامترهای سازنده شما
+                        ProductItem newProductItem = new ProductItem(
+                                itemId,
+                                newProductObj,
+                                currentSeller,
+                                color,
+                                price,
+                                defaultDiscount,
+                                stock
+                        );
+
+                        // الف) اضافه کردن محصول جدید به لیست اصلی انبار کل سایت
+                        allProductItems.add(newProductItem);
+
+                        // ب) اضافه کردن محصول به لیست اختصاصی خود این فروشنده (با استفاده از متدی که در کلاست نوشتی)
+                        currentSeller.addProductItem(newProductItem);
+
+                        // ۵. ارسال پاسخ موفقیت به فرانت‌اند
+                        String successMessage = "{\"message\": \"محصول با موفقیت ذخیره و منتشر شد\"}";
+                        byte[] responseBytes = successMessage.getBytes("UTF-8");
+                        exchange.sendResponseHeaders(200, responseBytes.length);
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(responseBytes);
+                        os.close();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        String errorMessage = "{\"error\": \"خطا در پردازش اطلاعات محصول\"}";
+                        byte[] responseBytes = errorMessage.getBytes("UTF-8");
+                        exchange.sendResponseHeaders(400, responseBytes.length);
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(responseBytes);
+                        os.close();
+                    }
+                    return;
+                }
             }
         });
 
@@ -702,10 +795,8 @@ public class MainServer {
             if (allProductItems.isEmpty()) {
                 // نمونه‌سازی فروشنده فرضی سیستم جهت برقراری وابستگی‌ها (Dependencies) در سازنده‌های اشیاء انبار
                 Seller dummySeller = new Seller(99, "TechShop", "1234", 0.0);
-                allProductItems.add(new ProductItem(1, allBaseProducts.get(0), dummySeller, "مشکی", 45000000.0, 45000000.0, 5));
-                allProductItems.add(new ProductItem(2, allBaseProducts.get(1), dummySeller, "سفید", 18000000.0, 18000000.0, 10));
-                allProductItems.add(new ProductItem(3, allBaseProducts.get(2), dummySeller, "خاکستری", 38000000.0, 38000000.0, 3));
-                allProductItems.add(new ProductItem(4, allBaseProducts.get(3), dummySeller, "نقره‌ای", 12000000.0, 12000000.0, 8));
+
+                allProductItems.add(new ProductItem(0, allBaseProducts.get(3), dummySeller, "نقره‌ای", 12000.0, 12000000.0, 8));
 
                 // یک نمونه کالا پیش‌فرض به سبد خرید کاربر هلیای تستی اضافه می‌کنیم تا فرانت در زمان اولین رندر لودینگ کامپوننت‌ها خالی نباشد
                 if (allUsers.get(0) instanceof Customer) {
@@ -715,5 +806,27 @@ public class MainServer {
             System.out.println("🟢 اطلاعات اولیه با موفقیت لود شدند.");
         } catch (IOException e) {
             System.out.println("❌ خطا در آماده‌سازی یا بارگذاری اولیه فایل‌ها: " + e.getMessage());
+        }
+    }
+    // یک متد ساده برای بیرون کشیدن مقدار فیلدها از متن JSON
+    private static String extractJsonValue(String json, String key) {
+        String pattern = "\"" + key + "\":";
+        int startIdx = json.indexOf(pattern);
+        if (startIdx == -1) return "";
+
+        startIdx += pattern.length();
+
+        // اگر مقدار رشته بود (با " شروع می‌شد)
+        if (json.charAt(startIdx) == '"') {
+            startIdx++; // رد کردن کتیشن اول
+            int endIdx = json.indexOf('"', startIdx);
+            return json.substring(startIdx, endIdx);
+        } else {
+            // اگر مقدار عددی یا بولین بود
+            int endIdxComma = json.indexOf(',', startIdx);
+            int endIdxBracket = json.indexOf('}', startIdx);
+            int endIdx = (endIdxComma != -1 && endIdxComma < endIdxBracket) ? endIdxComma : endIdxBracket;
+            if (endIdx == -1) endIdx = json.length();
+            return json.substring(startIdx, endIdx).trim();
         }
     }}

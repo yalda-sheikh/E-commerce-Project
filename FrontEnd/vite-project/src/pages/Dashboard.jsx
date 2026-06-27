@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import './Dashboard.css' // اضافه کردن فایل استایل داشبورد
 
 function Dashboard({ user, setUser }) {
   const navigate = useNavigate()
@@ -16,7 +17,6 @@ function Dashboard({ user, setUser }) {
   const fetchDashboardData = () => {
     if (!user) return
 
-    // ۱. دریافت اطلاعات سبد خرید و آخرین وضعیت موجودی کیف پول از جاوا
     fetch(`http://localhost:8080/api/cart?userId=${user.userId}`)
       .then((res) => {
         if (!res.ok) throw new Error('خطا در دریافت اطلاعات سبد خرید')
@@ -26,7 +26,6 @@ function Dashboard({ user, setUser }) {
         setCartItems(data.cartItems || [])
         setTotalCartPrice(data.totalPrice || 0)
         
-        // اگر موجودی ولت در بک‌اِند با فرانت یکی نبود، آپدیتش کن
         if (data.wallet !== undefined && user.wallet !== data.wallet) {
           const updatedUser = { ...user, wallet: data.wallet }
           setUser(updatedUser)
@@ -37,7 +36,6 @@ function Dashboard({ user, setUser }) {
         console.error('Cart Fetch Error:', err)
       })
 
-    // ۲. دریافت تاریخچه خریدهای واقعی و فاکتورها از بک‌اِند جاوا
     fetch(`http://localhost:8080/api/purchase-history?userId=${user.userId}`)
       .then((res) => {
         if (!res.ok) throw new Error('خطا در دریافت تاریخچه خرید')
@@ -72,7 +70,6 @@ function Dashboard({ user, setUser }) {
       return
     }
 
-    // ارسال درخواست افزایش موجودی به کانتکست جاوای MainServer
     fetch('http://localhost:8080/api/wallet/charge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=UTF-8' },
@@ -84,7 +81,6 @@ function Dashboard({ user, setUser }) {
         return data
       })
       .then((data) => {
-        // به‌روزرسانی استیت سراسری یوزر با موجودی جدید برگردانده شده از جاوا
         const updatedUser = { ...user, wallet: data.newWallet }
         setUser(updatedUser)
         localStorage.setItem('user', JSON.stringify(updatedUser))
@@ -115,7 +111,7 @@ function Dashboard({ user, setUser }) {
       .then((data) => {
         setMessage(data.message || '✅ تسویه حساب با موفقیت انجام شد.')
         setDiscountCode('')
-        fetchDashboardData() // لود مجدد کل دیتای داشبورد برای خالی شدن سبد و آپدیت انبار و فاکتورها
+        fetchDashboardData() 
       })
       .catch((err) => {
         setMessage(`❌ ${err.message}`)
@@ -123,100 +119,129 @@ function Dashboard({ user, setUser }) {
   }
 
   if (loading && user) {
-    return <h3 style={{ textAlign: 'center', marginTop: '50px' }}>⏳ در حال بارگذاری اطلاعات داشبورد...</h3>
+    return (
+      <div className="dashboard-loading">
+        <h3>⏳ در حال بارگذاری اطلاعات داشبورد...</h3>
+      </div>
+    )
   }
 
-  return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px', direction: 'rtl', fontFamily: 'tahoma', padding: '20px' }}>
+  return(
+    <div className="dashboard-container">
       
       {/* پیام‌های وضعیت سیستم */}
       {message && (
-        <div style={{ padding: '15px', borderRadius: '6px', backgroundColor: message.startsWith('❌') ? '#f8d7da' : '#d4edda', color: message.startsWith('❌') ? '#721c24' : '#155724', textAlign: 'center', fontWeight: 'bold' }}>
+        <div className={`dashboard-message ${message.startsWith('❌') ? 'error-msg' : 'success-msg'}`}>
           {message}
         </div>
       )}
 
       {/* بخش اول: اطلاعات مالی و شارژ ولت */}
-      <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-        <h3 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>💳 وضعیت مالی و کیف پول</h3>
-        <p style={{ fontSize: '18px' }}>موجودی فعلی حساب شما: <strong style={{ color: '#28a745' }}>{user?.wallet?.toLocaleString()} تومان</strong></p>
+      <div className="dashboard-card">
+        <h3 className="card-title">💳 وضعیت مالی و کیف پول</h3>
+        <p className="wallet-status">
+          موجودی فعلی حساب شما: <strong>{user?.wallet?.toLocaleString()} تومان</strong>
+        </p>
         
-        <form onSubmit={handleChargeWallet} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '15px' }}>
-          <input type="number" placeholder="مبلغ افزایش موجودی (تومان)" value={chargeAmount} onChange={(e) => setChargeAmount(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '200px' }} required min="1000" />
-          <button type="submit" style={{ padding: '8px 15px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>➕ شارژ آنلاین کیف پول</button>
+        <form onSubmit={handleChargeWallet} className="charge-form">
+          <input 
+            type="number" 
+            placeholder="مبلغ افزایش موجودی (تومان)" 
+            value={chargeAmount} 
+            onChange={(e) => setChargeAmount(e.target.value)} 
+            className="dashboard-input"
+            required 
+            min="1000" 
+          />
+          <button type="submit" className="btn btn-success">➕ شارژ آنلاین کیف پول</button>
         </form>
       </div>
 
       {/* بخش دوم: سبد خرید و اعمال کد تخفیف */}
-      <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-        <h3 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>🛒 سبد خرید شما</h3>
+      <div className="dashboard-card">
+        <h3 className="card-title">🛒 سبد خرید شما</h3>
         
         {cartItems.length === 0 ? (
-          <p style={{ color: '#666', textAlign: 'center', padding: '20px 0' }}>سبد خرید شما در حال حاضر خالی است.</p>
+          <p className="empty-state">سبد خرید شما در حال حاضر خالی است.</p>
         ) : (
           <div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', textAlign: 'right' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#f1f3f5' }}>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>نام کالا</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>قیمت واحد</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>تعداد درخواست</th>
-                  <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>قیمت کل</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cartItems.map((item) => (
-                  <tr key={item.itemId}>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{item.name}</td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{item.price.toLocaleString()} تومان</td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{item.quantity} عدد</td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{(item.price * item.quantity).toLocaleString()} تومان</td>
+            <div className="table-responsive">
+              <table className="dashboard-table">
+                <thead>
+                  <tr>
+                    <th>نام کالا</th>
+                    <th>قیمت واحد</th>
+                    <th>تعداد درخواست</th>
+                    <th>قیمت کل</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* بخش اعمال کد تخفیف */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '6px' }}>
-              <input type="text" placeholder="کد تخفیف (مثلاً: 12345678)" value={discountCode} onChange={(e) => setDiscountCode(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-              <button onClick={() => { setMessage('✅ کد تخفیف ذخیره شد. موقع پرداخت نهایی اعمال می‌شود.'); }} style={{ padding: '8px 15px', backgroundColor: '#17a2b8', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>ثبت کد</button>
+                </thead>
+                <tbody>
+                  {cartItems.map((item) => (
+                    <tr key={item.itemId}>
+                      <td>{item.name}</td>
+                      <td>{item.price.toLocaleString()} تومان</td>
+                      <td>{item.quantity} عدد</td>
+                      <td>{(item.price * item.quantity).toLocaleString()} تومان</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '2px solid #eee', paddingTop: '15px' }}>
-              <span style={{ fontSize: '18px', fontWeight: 'bold' }}>مبلغ کل قابل پرداخت: {totalCartPrice.toLocaleString()} تومان</span>
-              <button onClick={handleCheckout} style={{ padding: '12px 25px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>💳 پرداخت و تسویه نهایی</button>
+            {/* بخش اعمال کد تخفیف */}
+            <div className="discount-section">
+              <input 
+                type="text" 
+                placeholder="کد تخفیف (مثلاً: 12345678)" 
+                value={discountCode} 
+                onChange={(e) => setDiscountCode(e.target.value)} 
+                className="dashboard-input" 
+              />
+              <button 
+                onClick={() => { setMessage('✅ کد تخفیف ذخیره شد. موقع پرداخت نهایی اعمال می‌شود.'); }} 
+                className="btn btn-info"
+              >
+                ثبت کد
+              </button>
+            </div>
+
+            <div className="checkout-section">
+              <span className="total-price">مبلغ کل قابل پرداخت: {totalCartPrice.toLocaleString()} تومان</span>
+              <button onClick={handleCheckout} className="btn btn-primary">💳 پرداخت و تسویه نهایی</button>
             </div>
           </div>
         )}
       </div>
 
       {/* بخش سوم: تاریخچه خریدها (فاکتورها) */}
-      <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-        <h3 style={{ marginTop: 0, color: '#333', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>📜 تاریخچه خریدها و فاکتورها</h3>
+      <div className="dashboard-card">
+        <h3 className="card-title">📜 تاریخچه خریدها و فاکتورها</h3>
         
         {purchaseHistory.length === 0 ? (
-          <p style={{ color: '#666', textAlign: 'center', padding: '20px 0' }}>هنوز هیچ فاکتور یا خریدی در تاریخچه شما ثبت نشده است.</p>
+          <p className="empty-state">هنوز هیچ فاکتور یا خریدی در تاریخچه شما ثبت نشده است.</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f1f3f5' }}>
-                <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>شماره فاکتور</th>
-                <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>تاریخ ثبت</th>
-                <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>مبلغ پرداختی</th>
-                <th style={{ padding: '10px', borderBottom: '2px solid #dee2e6' }}>وضعیت فاکتور</th>
-              </tr>
-            </thead>
-            <tbody>
-              {purchaseHistory.map((history) => (
-                <tr key={history.purchaseId}>
-                  <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{history.purchaseId}</td>
-                  <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{history.date}</td>
-                  <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6' }}>{history.total.toLocaleString()} تومان</td>
-                  <td style={{ padding: '10px', borderBottom: '1px solid #dee2e6', color: '#28a745', fontWeight: 'bold' }}>{history.status}</td>
+          <div className="table-responsive">
+            <table className="dashboard-table">
+              <thead>
+                <tr>
+                  <th>شماره فاکتور</th>
+                  <th>تاریخ ثبت</th>
+                  <th>مبلغ پرداختی</th>
+                  <th>وضعیت فاکتور</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {purchaseHistory.map((history) => (
+                  <tr key={history.purchaseId}>
+                    <td>{history.purchaseId}</td>
+                    <td>{history.date}</td>
+                    <td>{history.total.toLocaleString()} تومان</td>
+                    <td className="status-success">{history.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
