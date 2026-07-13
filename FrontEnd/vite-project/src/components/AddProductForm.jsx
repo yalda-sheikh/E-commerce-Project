@@ -79,6 +79,40 @@ export default function AddProductForm({ user }) {
   if (loading) {
     return <p style={{ textAlign: 'center', fontSize: '18px' }}>🔄 در حال بارگذاری محصولات...</p>;
   }
+  const handleDelete = async (itemId) => {
+    const confirmDelete = window.confirm(
+      "آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟"
+    );
+  
+    if (!confirmDelete) return;
+  
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/products/${itemId}`,
+        {
+          method: "DELETE",
+        }
+      );
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+  
+      // حذف محصول از صفحه بدون رفرش
+      setProducts((prevProducts) =>
+        prevProducts.filter(
+          (product) => product.itemId !== itemId
+        )
+      );
+  
+      console.log(data.message);
+  
+    } catch (error) {
+      console.log("خطا در حذف محصول:", error.message);
+    }
+  };
 
   return (
     <div className="seller-page">
@@ -176,6 +210,7 @@ export default function AddProductForm({ user }) {
                     <th>موجودی</th>
                     <th>نوع کالا</th>
                     <th>✨ ویژگی‌های اختصاصی</th>
+                    
                 </tr>
 
             </thead>
@@ -186,8 +221,10 @@ export default function AddProductForm({ user }) {
             {products
             .filter(p => p.sellerName === user?.username)
             .map((item)=>(
+              console.log(products),
 
                 <tr key={item.itemId}>
+                  
 
                     <td>
                         <strong>{item.itemId}</strong>
@@ -286,6 +323,7 @@ export default function AddProductForm({ user }) {
 
 
                     </td>
+                    <td> <button className='btn btn-primary' onClick={() => handleDelete(item.itemId)}>حذف محصول</button></td>
 
 
                 </tr>

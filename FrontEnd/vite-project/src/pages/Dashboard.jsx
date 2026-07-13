@@ -144,6 +144,7 @@ function Dashboard({ user, setUser }) {
       </div>
     )
   }
+  
   const handleApplyDiscount = () => {
     fetch("http://localhost:8080/api/discount/apply", {
       method: "POST",
@@ -176,7 +177,27 @@ function Dashboard({ user, setUser }) {
         console.log("❌ " + err.message);
       });
   };
+const handleRemove = (itemId) => {
+  fetch("http://localhost:8080/api/cart/remove",{
+    method : "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      userId : user.userId,
+      itemId : itemId
+    })
 
+
+  }).then(async(res) =>{
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    return data;
+  }).then(()=>{
+    fetchDashboardData();
+    
+}).catch((err) => alert(err.message))
+}
   return(
     <div className="dashboard-container">
       
@@ -246,6 +267,8 @@ function Dashboard({ user, setUser }) {
                     <th>قیمت واحد</th>
                     <th>تعداد درخواست</th>
                     <th>قیمت کل</th>
+
+
                   </tr>
                 </thead>
                 <tbody>
@@ -255,6 +278,13 @@ function Dashboard({ user, setUser }) {
                       <td>{item.price.toLocaleString()} تومان</td>
                       <td>{item.quantity} عدد</td>
                       <td>{(item.price * item.quantity).toLocaleString()} تومان</td>
+                      <td>
+                    <button className='btn btn-primary'
+          onClick={() => handleRemove(item.itemId)}
+                >
+                      🗑 حذف
+                      </button>
+                    </td>
                     </tr>
                   ))}
                 </tbody>

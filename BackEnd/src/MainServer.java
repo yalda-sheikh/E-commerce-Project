@@ -463,7 +463,10 @@ public class MainServer {
                 // ۱. تنظیم هدرهای CORS به صورت یکتا با استفاده از متد set برای جلوگیری از تداخل
                 exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
                 exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().set(
+                        "Access-Control-Allow-Methods",
+                        "GET, POST, DELETE, OPTIONS"
+                );
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
                 // ۲. مدیریت یکجای درخواست پیش‌پرواز (Preflight) مرورگر
@@ -786,12 +789,149 @@ public class MainServer {
                     }
                     return;
                 }
+                if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+                    try {
+                        String path = exchange.getRequestURI().getPath();
+
+                        // گرفتن id از آدرس /api/products/5
+                        if (path.matches("/api/products/\\d+")) {
+
+                            String idString = path.substring("/api/products/".length());
+                            int itemId = Integer.parseInt(idString);
+
+                            ProductItem foundProduct = null;
+
+                            for (ProductItem item : allProductItems) {
+                                if (item.getItemId() == itemId) {
+                                    foundProduct = item;
+                                    break;
+                                }
+                            }
+
+                            if (foundProduct != null) {
+
+                                allProductItems.remove(foundProduct);
+
+                                String response = "{\"message\":\"محصول با موفقیت حذف شد\"}";
+                                byte[] bytes = response.getBytes("UTF-8");
+
+                                exchange.sendResponseHeaders(200, bytes.length);
+
+                                OutputStream os = exchange.getResponseBody();
+                                os.write(bytes);
+                                os.close();
+
+                            } else {
+
+                                String response = "{\"error\":\"محصول پیدا نشد\"}";
+                                byte[] bytes = response.getBytes("UTF-8");
+
+                                exchange.sendResponseHeaders(404, bytes.length);
+
+                                OutputStream os = exchange.getResponseBody();
+                                os.write(bytes);
+                                os.close();
+                            }
+
+                        } else {
+
+                            exchange.sendResponseHeaders(400, -1);
+
+                        }
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        String response = "{\"error\":\"خطا در حذف محصول\"}";
+                        byte[] bytes = response.getBytes("UTF-8");
+
+                        exchange.sendResponseHeaders(500, bytes.length);
+
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(bytes);
+                        os.close();
+                    }
+
+                    return;
+                }
             }
         });
         server.createContext("/api/discount", new DiscountHandler(allDiscountCodes));
         server.createContext("/api/filter", new FilterHandler(allProductItems));
-        // ۴. کانتکست سیستم احراز هویت
 
+        server.createContext("/api/cart/remove", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+
+                if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                    exchange.sendResponseHeaders(200, -1);
+                    return;
+                }
+                String responseText = "";
+                if(exchange.getRequestMethod().equalsIgnoreCase("POST")){
+                    InputStream is = exchange.getRequestBody();
+                    String body = new String(is.readAllBytes(), "UTF-8");
+                    int userId = -1;
+                    int itemId = -1;
+                    if(body.contains("\"userId\":")){
+                        userId = Integer.parseInt(body.split("\"userId\":")[1].split(",")[0].trim());
+
+
+                    };
+                    if (body.contains("\"itemId\"")) {
+                        itemId = Integer.parseInt(
+                                body.split("\"itemId\":")[1]
+                                        .split(",")[0]
+                                        .split("}")[0]
+                                        .trim()
+                        );
+                    };
+                    Customer customer = null;
+                    for(User u : allUsers){
+                        if(u instanceof Customer && u.userId == userId){
+                            customer = (Customer) u;
+                            break;
+                        }
+                    }
+                    if (customer == null) {
+
+                        responseText = "{\"error\":\"کاربر پیدا نشد\"}";
+                        exchange.sendResponseHeaders(400, responseText.getBytes("UTF-8").length);
+
+                    } else {
+
+                        customer.removeFromCart(itemId);
+
+                        responseText = "{\"success\":true}";
+                        exchange.sendResponseHeaders(200, responseText.getBytes("UTF-8").length);
+
+                    }
+
+
+
+                } else {
+
+                    responseText = "{\"error\":\"Method not allowed\"}";
+                    exchange.sendResponseHeaders(405, responseText.getBytes("UTF-8").length);
+
+                }
+
+                OutputStream os = exchange.getResponseBody();
+                os.write(responseText.getBytes("UTF-8"));
+                os.close();
+
+
+
+
+            }
+        });
+        // ۴. کانتکست سیستم احراز هویت
         // مدیریت مسیر ثبت‌نام و ورود کاربران به نشانی /api/auth
         server.createContext("/api/auth", new HttpHandler() {
             @Override
