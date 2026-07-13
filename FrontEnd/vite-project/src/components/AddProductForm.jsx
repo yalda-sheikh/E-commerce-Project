@@ -102,8 +102,8 @@ export default function AddProductForm({ user }) {
         {productType === 'LAPTOP' && (
          <div className="special-fields laptop-fields">
             <h4>ویژگی‌های اختصاصی لپ‌تاپ:</h4>
-            <input type="number" name="ram" placeholder="مقدار رم (GB)" onChange={handleLaptopChange} required />
-            <input type="number" name="storage" placeholder="مقدار حافظه (GB)" onChange={handleLaptopChange} required />
+            <input className="special-fields-input" type="number" name="ram" placeholder="مقدار رم (GB)" onChange={handleLaptopChange} required />
+            <input className="special-fields-input" type="number" name="storage" placeholder="مقدار حافظه (GB)" onChange={handleLaptopChange} required />
             <label>
               کارت گرافیک مجزا دارد؟
               <select name="graphics" onChange={handleLaptopChange}>
@@ -116,10 +116,10 @@ export default function AddProductForm({ user }) {
 
         {productType === 'MOBILE' && (
           <div className="special-fields mobile-fields">
-            <h4 style={{ color: '#166534', marginTop: 0 }}>مشخصات فنی موبایل:</h4>
-            <div style={{ marginBottom: '10px' }}>
+            <h4 >مشخصات فنی موبایل:</h4>
+            <div >
               <label>کیفیت دوربین (مگاپیکسل): </label>
-              <input 
+              <input className="special-fields-input"
                 type="number" 
                 value={mobileFields.cameraMP} 
                 onChange={(e) => setMobileFields({...mobileFields, cameraMP: e.target.value})} 
@@ -127,9 +127,9 @@ export default function AddProductForm({ user }) {
                 required
               />
             </div>
-            <div style={{ marginBottom: '10px' }}>
+            <div >
               <label>ظرفیت باتری (mAh): </label>
-              <input 
+              <input className="special-fields-input"
                 type="number" 
                 value={mobileFields.batteryMah} 
                 onChange={(e) => setMobileFields({...mobileFields, batteryMah: e.target.value})} 
@@ -137,15 +137,7 @@ export default function AddProductForm({ user }) {
                 required
               />
             </div>
-            <div style={{ marginBottom: '10px' }}>
-              <label>
-                <input 
-                  type="checkbox" 
-                  checked={mobileFields.is5G} 
-                  onChange={(e) => setMobileFields({...mobileFields, is5G: e.target.checked})} 
-                />
-                پشتیبانی از شبکه 5G
-              </label>
+            <div>
             </div>
           </div>
         )}
