@@ -165,7 +165,7 @@ function Dashboard({ user, setUser }) {
         setMessage("✅ کد تخفیف اعمال شد.");
       })
       .then(async (res) => {
-        const data = await res.json();
+        const data = await res.JSON();
         console.log(data);
       
         if (!res.ok) throw new Error(data.error);
@@ -173,7 +173,7 @@ function Dashboard({ user, setUser }) {
         return data;
       })
       .catch((err) => {
-        setMessage("❌ " + err.message);
+        console.log("❌ " + err.message);
       });
   };
 

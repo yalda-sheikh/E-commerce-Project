@@ -331,6 +331,7 @@ transform:translateY(0);
   transition:.35s;
   position:relative;
   overflow:hidden;
+  margin-bottom: 10px;
 }
 
 .discount-card::before{
