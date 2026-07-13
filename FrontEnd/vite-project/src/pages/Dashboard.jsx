@@ -4,7 +4,7 @@ import './Dashboard.css' // اضافه کردن فایل استایل داشبو
 
 function Dashboard({ user, setUser }) {
   const navigate = useNavigate()
-  
+  const [discountCodes, setDiscountCodes] = useState([])
   const [discountCode, setDiscountCode] = useState('')
   const [chargeAmount, setChargeAmount] = useState('')
   const [message, setMessage] = useState('')
@@ -51,6 +51,14 @@ function Dashboard({ user, setUser }) {
         console.error('History Fetch Error:', err)
         setLoading(false)
       })
+      fetch("http://localhost:8080/api/discount")
+.then(res => res.json())
+.then(data => {
+    setDiscountCodes(data)
+})
+.catch(err => {
+    console.log("Discount Load Error:", err)
+})
   }
 
   useEffect(() => {
@@ -116,6 +124,17 @@ function Dashboard({ user, setUser }) {
       .catch((err) => {
         setMessage(`❌ ${err.message}`)
       })
+      fetch(`http://localhost:8080/api/discounts?userId=${user.userId}`)
+  .then(res => {
+    if (!res.ok) throw new Error("خطا در دریافت کدهای تخفیف");
+    return res.json();
+  })
+  .then(data => {
+    setDiscountCodes(data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
   }
 
   if (loading && user) {
@@ -125,6 +144,38 @@ function Dashboard({ user, setUser }) {
       </div>
     )
   }
+  const handleApplyDiscount = () => {
+    fetch("http://localhost:8080/api/discount/apply", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: JSON.stringify({
+        discountCode: discountCode,
+        userId : user.userId
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        return data;
+      })
+      .then((data) => {
+        setTotalCartPrice(data.newPrice);
+        setMessage("✅ کد تخفیف اعمال شد.");
+      })
+      .then(async (res) => {
+        const data = await res.json();
+        console.log(data);
+      
+        if (!res.ok) throw new Error(data.error);
+      
+        return data;
+      })
+      .catch((err) => {
+        setMessage("❌ " + err.message);
+      });
+  };
 
   return(
     <div className="dashboard-container">
@@ -137,7 +188,7 @@ function Dashboard({ user, setUser }) {
       )}
 
       {/* بخش اول: اطلاعات مالی و شارژ ولت */}
-      <div className="dashboard-card">
+      <div className="dashboard-card discount-list-card">
         <h3 className="card-title">💳 وضعیت مالی و کیف پول</h3>
         <p className="wallet-status">
           موجودی فعلی حساب شما: <strong>{user?.wallet?.toLocaleString()} تومان</strong>
@@ -156,6 +207,28 @@ function Dashboard({ user, setUser }) {
           <button type="submit" className="btn btn-success">➕ شارژ آنلاین کیف پول</button>
         </form>
       </div>
+      <div className="dashboard-card">
+      <h3 className="card-title">🎁 کدهای تخفیف من</h3>
+
+  {discountCodes.map((discount, index) => (
+ <div key={index} className="discount-card">
+<p className="discount-item"><strong>کد:</strong> {discount.code}</p>
+
+<p className="discount-item"><strong>نوع:</strong> {discount.discountType}</p>
+
+<p className="discount-item"><strong>مقدار:</strong> {discount.value}</p>
+
+<p className="discount-item">
+<strong>حداقل خرید:</strong> {discount.minimumPrice.toLocaleString()} تومان
+</p>
+
+<p className="discount-item">
+<strong>وضعیت:</strong>{" "}
+{discount.active ? "✅ فعال" : "❌ استفاده شده"}
+</p>
+  </div>
+))}
+</div>
 
       {/* بخش دوم: سبد خرید و اعمال کد تخفیف */}
       <div className="dashboard-card">
@@ -198,7 +271,7 @@ function Dashboard({ user, setUser }) {
                 className="dashboard-input" 
               />
               <button 
-                onClick={() => { setMessage('✅ کد تخفیف ذخیره شد. موقع پرداخت نهایی اعمال می‌شود.'); }} 
+                onClick={handleApplyDiscount}
                 className="btn btn-info"
               >
                 ثبت کد

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './Auth.css'; // متصل کردن فایل استایل اختصاصی فرم‌ها
+import AlertModal from "../components/AlertModal";
 
 function Auth({ setUser }) {
   const [isLogin, setIsLogin] = useState(true)
@@ -8,6 +9,16 @@ function Auth({ setUser }) {
   const [role, setRole] = useState('CUSTOMER')
   const [wallet, setWallet] = useState('100000') 
   const [message, setMessage] = useState('')
+
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => {
+    setIsOpen(false);
+  };
+  const [modalData, setModalData] = useState({
+    title: "",
+    message: "",
+    type: "info",
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -40,7 +51,14 @@ function Auth({ setUser }) {
       .then((data) => {
         setUser(data);
         localStorage.setItem('user', JSON.stringify(data));
-        alert(isLogin ? '🟢 با موفقیت وارد شدید!' : '🎉 ثبت‌نام با موفقیت انجام و در فایل متنی ذخیره شد!');
+        setModalData({
+          message : isLogin ? '🟢 با موفقیت وارد شدید!' : '🎉 ثبت‌نام با موفقیت انجام و در فایل متنی ذخیره شد!',
+           title : "موفق",
+            type : 'success'
+        }
+
+        );
+        setIsOpen(true);
       })
       .catch((error) => {
         console.error('خطا:', error);
@@ -96,6 +114,13 @@ function Auth({ setUser }) {
       <button onClick={() => { setIsLogin(!isLogin); setMessage(''); }} className="auth-toggle-btn">
         {isLogin ? 'حساب کاربری ندارید؟ ثبت‌نام کنید' : 'قبلاً ثبت‌نام کرده‌اید؟ وارد شوید'}
       </button>
+      <AlertModal
+  isOpen={isOpen}
+  onClose={onClose}
+  title={modalData.title}
+  message={modalData.message}
+  type={modalData.type}
+/>
     </div>
   )
 }

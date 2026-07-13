@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import './Home.css'; 
-
+import { Link } from 'react-router';
+import Search from '../components/Search';
+import FilterHandler from '../components/FilterHandler';
 function Home({ user }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,21 +46,39 @@ function Home({ user }) {
         setTimeout(() => setMessage(''), 4000);
       });
   };
+  const searchProduct = (keyword) => {
+
+    if (keyword.trim() === "") {
+
+        fetch("http://localhost:8080/api/products")
+            .then(res => res.json())
+            .then(data => setProducts(data));
+
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/search?q=${keyword}`)
+        .then(res => res.json())
+        .then(data => setProducts(data));
+}
 
   if (loading) return <h3 className="loading-state">⏳ در حال بارگذاری محصولات...</h3>;
 
   return (
     <div className="home-container">
       <h2 className="home-title">🏪 ویترین فروشگاه دیجیتال</h2>
-      
+      <Search onSearch = {searchProduct} />
+      <FilterHandler setProducts={setProducts} />
       {message && <div className="home-alert">{message}</div>}
       
       <div className="store-grid">
         {products.length === 0 ? (
           <p className="empty-msg">محصولی برای نمایش یافت نشد.</p>
         ) : (
-          products.map((item) => (
-            <div key={item.itemId} className="store-card">
+          products.map((item , index) => (
+            <Link   key={`${item.itemId}-${index}`}
+            className="store-card"
+            to={`/product/${item.itemId}`}>
               <div className="product-emoji-wrapper">
                 {item.name?.toLowerCase().includes('watch') ? '⌚' : '📱'}
               </div>
@@ -72,14 +92,16 @@ function Home({ user }) {
               <div className="card-footer">
                 <span className="price-tag">{item.price?.toLocaleString()} تومان</span>
                 <button 
-                  onClick={() => handleAddToCart(item.itemId)}
+                  onClick={(e) => { e.preventDefault(); 
+                  handleAddToCart(item.itemId) ;
+                }}
                   disabled={item.stock === 0}
                   className="add-to-cart-btn"
                 >
                   {item.stock > 0 ? '🛒 افزودن' : 'ناموجود'}
                 </button>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>

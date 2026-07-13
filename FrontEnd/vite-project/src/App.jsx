@@ -5,6 +5,7 @@ import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard.jsx'
 import SellerDashboard from './pages/SellerDashboard.jsx'
 import './App.css' // متصل کردن فایل استایل جدید
+import ProductDetail from './pages/ProductِDetail.jsx'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -63,6 +64,7 @@ function App() {
               )
             } 
           />
+           <Route path="/product/:id" element={<ProductDetail />} />
         </Routes>
       </main>
     </div>

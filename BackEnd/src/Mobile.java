@@ -9,6 +9,9 @@ public class Mobile extends Product {
         this.is5G = is5G;
 
     }
+    public int getCameraMP() { return cameraMP; }
+    public int getBatteryMah() { return batteryMah; }
+    public boolean is5G() { return is5G; }
     public String getBatteryStatus() {
         if (batteryMah < 4000) {
             return "ضعیف";

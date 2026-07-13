@@ -1,3 +1,5 @@
 CUSTOMER,1,helia,password123,5.0E7
-CUSTOMER,2,fafa2020sh@gmail.com,235425,100000.0
-SELLER,3,ra,ra,0.0
+SELLER,2,fafa2020sh@gmail.com,235425,0.0
+CUSTOMER,3,fafa2020sh@567gmail.com,235425,2.2988094E10
+CUSTOMER,4,fafa202قذ0sh@gmail.com,235425,100000.0
+SELLER,5,fafa2020sh@gmail.comاث,235425,0.0

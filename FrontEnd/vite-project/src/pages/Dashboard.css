@@ -1,226 +1,870 @@
-/* استایل کلی کانتینر داشبورد */
-.dashboard-container {
-    max-width: 950px;
-    margin: 40px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    direction: rtl;
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    padding: 0 20px;
+/* ===========================
+   GOOGLE FONT
+=========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Vazirmatn',sans-serif;
+    background:#f5f7fa;
+    color:#333;
+}
+
+.dashboard-container{
+    width:min(1400px,95%);
+    margin:40px auto;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+.dashboard-card{
+    background:#fff;
+    border-radius:20px;
+    padding:28px;
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.05),
+        0 3px 10px rgba(0,0,0,.04);
+
+    transition:.35s;
+    animation:fadeUp .55s ease;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-5px);
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.08),
+        0 8px 18px rgba(0,0,0,.05);
+}
+
+/* ===========================
+   TITLE
+=========================== */
+
+.card-title{
+    font-size:1.45rem;
+    font-weight:800;
+    color:#1f2937;
+    margin-bottom:25px;
+    padding-bottom:14px;
+    border-bottom:2px solid #edf1f7;
+}
+
+/* ===========================
+   WALLET
+=========================== */
+
+.wallet-status{
+    background:linear-gradient(135deg,#0ea5e9,#2563eb);
+    color:white;
+    border-radius:16px;
+    padding:22px;
+    font-size:1.08rem;
+    margin-bottom:25px;
+    box-shadow:0 10px 25px rgba(37,99,235,.25);
+}
+
+.wallet-status strong{
+    display:block;
+    margin-top:10px;
+    font-size:1.45rem;
+    font-weight:800;
+}
+
+/* ===========================
+   FORM
+=========================== */
+
+.charge-form{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.dashboard-input{
+    flex:1;
+    min-width:260px;
+
+    height:54px;
+
+    border:1px solid #d9e2ec;
+
+    border-radius:14px;
+
+    padding:0 18px;
+
+    font-size:15px;
+
+    transition:.3s;
+
+    background:#fafbfd;
+}
+
+.dashboard-input:focus{
+
+    outline:none;
+
+    border-color:#3b82f6;
+
+    background:white;
+
+    box-shadow:0 0 0 4px rgba(59,130,246,.12);
+
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.btn{
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:14px 22px;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    color:white;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.btn:active{
+
+    transform:scale(.96);
+
+}
+
+.btn-success{
+
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+
+}
+
+.btn-success:hover{
+
+    box-shadow:0 12px 25px rgba(34,197,94,.3);
+
+}
+
+.btn-primary{
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+}
+
+.btn-primary:hover{
+
+    box-shadow:0 12px 25px rgba(37,99,235,.35);
+
+}
+
+.btn-info{
+
+    background:linear-gradient(135deg,#06b6d4,#0891b2);
+
+}
+
+.btn-info:hover{
+
+    box-shadow:0 12px 25px rgba(6,182,212,.3);
+
+}
+
+/* ===========================
+   MESSAGE
+=========================== */
+
+.dashboard-message{
+
+    padding:18px 24px;
+
+    border-radius:15px;
+
+    font-weight:700;
+
+    animation:fadeDown .45s;
+
+}
+
+.success-msg{
+
+    background:#ecfdf5;
+
+    color:#15803d;
+
+    border:1px solid #bbf7d0;
+
+}
+
+.error-msg{
+
+    background:#fef2f2;
+
+    color:#dc2626;
+
+    border:1px solid #fecaca;
+
+}
+
+/* ===========================
+   EMPTY
+=========================== */
+
+.empty-state{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    padding:40px 0;
+
+    font-size:17px;
+
+}
+
+/* ===========================
+   LOADING
+=========================== */
+
+.dashboard-loading{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:60vh;
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+/* ===========================
+   ANIMATION
+=========================== */
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(25px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+@keyframes fadeDown{
+
+from{
+
+opacity:0;
+
+transform:translateY(-15px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+/*=====================================
+        DISCOUNT CARDS
+======================================*/
+
+.discount-list-card{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.discount-card{
+  background:#fafbff;
+  border:1px solid #e8eef8;
+  border-radius:18px;
+  padding:18px 22px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  transition:.35s;
+  position:relative;
+  overflow:hidden;
+}
+
+.discount-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  right:0;
+  width:6px;
+  height:100%;
+  background:linear-gradient(#2563eb,#38bdf8);
+}
+
+.discount-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 28px rgba(0,0,0,.08);
+  background:white;
+}
+
+.discount-item{
+  font-size:15px;
+  color:#475569;
+  line-height:1.9;
+}
+
+.discount-item strong{
+  color:#111827;
+}
+
+/*=====================================
+      TABLE
+======================================*/
+
+.table-responsive{
+  width:100%;
+  overflow-x:auto;
+  border-radius:18px;
+}
+
+.dashboard-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:760px;
+  background:white;
+}
+
+.dashboard-table thead{
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:white;
+}
+
+.dashboard-table th{
+  padding:18px;
+  font-size:15px;
+  font-weight:700;
+  text-align:center;
+}
+
+.dashboard-table td{
+  padding:18px;
+  text-align:center;
+  border-bottom:1px solid #edf2f7;
+  transition:.25s;
+}
+
+.dashboard-table tbody tr{
+  transition:.3s;
+}
+
+.dashboard-table tbody tr:nth-child(even){
+  background:#fafcff;
+}
+
+.dashboard-table tbody tr:hover{
+  background:#eef6ff;
+}
+
+/*=====================================
+    DISCOUNT SECTION
+======================================*/
+
+.discount-section{
+  display:flex;
+  gap:15px;
+  margin-top:28px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.discount-section .dashboard-input{
+  flex:1;
+}
+
+/*=====================================
+    CHECKOUT
+======================================*/
+
+.checkout-section{
+
+  margin-top:30px;
+
+  background:#f8fbff;
+
+  border:1px solid #dbeafe;
+
+  border-radius:18px;
+
+  padding:22px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:20px;
+
+  flex-wrap:wrap;
+
+}
+
+.total-price{
+
+  font-size:20px;
+
+  font-weight:800;
+
+  color:#2563eb;
+
+}
+
+/*=====================================
+    STATUS
+======================================*/
+
+.status-success{
+
+  color:#16a34a;
+
+  font-weight:700;
+
+}
+
+/*=====================================
+    SCROLLBAR
+======================================*/
+
+.table-responsive::-webkit-scrollbar{
+
+  height:8px;
+
+}
+
+.table-responsive::-webkit-scrollbar-thumb{
+
+  background:#cbd5e1;
+
+  border-radius:20px;
+
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover{
+
+  background:#94a3b8;
+
+}
+
+/*=====================================
+    INPUT PLACEHOLDER
+======================================*/
+
+.dashboard-input::placeholder{
+
+  color:#94a3b8;
+
+}
+
+/*=====================================
+    BUTTON EFFECT
+======================================*/
+
+.btn{
+
+  position:relative;
+
+  overflow:hidden;
+
+}
+
+.btn::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:0;
+
+  height:100%;
+
+  top:0;
+
+  right:0;
+
+  background:rgba(255,255,255,.18);
+
+  transition:.35s;
+
+}
+
+.btn:hover::after{
+
+  width:100%;
+
+}
+
+/*==================================
+        CARD ANIMATION
+===================================*/
+
+.dashboard-card{
+  opacity:0;
+  animation:cardShow .6s ease forwards;
+}
+
+.dashboard-card:nth-child(1){animation-delay:.08s;}
+.dashboard-card:nth-child(2){animation-delay:.18s;}
+.dashboard-card:nth-child(3){animation-delay:.28s;}
+.dashboard-card:nth-child(4){animation-delay:.38s;}
+
+@keyframes cardShow{
+
+  from{
+      opacity:0;
+      transform:translateY(35px);
   }
-  
-  /* استایل حالت بارگذاری (Loading) */
-  .dashboard-loading {
-    text-align: center;
-    margin-top: 100px;
-    color: #4a5568;
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
+
+  to{
+      opacity:1;
+      transform:translateY(0);
   }
-  
-  /* پیام‌های وضعیت (خطا و موفقیت) */
-  .dashboard-message {
-    padding: 16px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+}
+
+/*==================================
+      HOVER EFFECT
+===================================*/
+
+.dashboard-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.dashboard-card::after{
+
+  content:"";
+
+  position:absolute;
+
+  top:-150%;
+
+  left:-50%;
+
+  width:40%;
+
+  height:350%;
+
+  background:rgba(255,255,255,.22);
+
+  transform:rotate(25deg);
+
+  transition:1s;
+
+}
+
+.dashboard-card:hover::after{
+
+  left:130%;
+
+}
+
+/*==================================
+      TABLE ANIMATION
+===================================*/
+
+.dashboard-table tbody tr{
+
+  animation:rowFade .45s ease;
+
+}
+
+@keyframes rowFade{
+
+  from{
+
+      opacity:0;
+
+      transform:translateY(12px);
+
   }
-  
-  .error-msg {
-    background-color: #fff5f5;
-    color: #c53030;
-    border: 1px solid #fed7d7;
+
+  to{
+
+      opacity:1;
+
+      transform:none;
+
   }
-  
-  .success-msg {
-    background-color: #f0fff4;
-    color: #276749;
-    border: 1px solid #c6f6d5;
-  }
-  
-  /* طراحی کارت‌های داشبورد */
-  .dashboard-card {
-    background-color: #ffffff;
-    border: 1px solid #edf2f7;
-    border-radius: 12px;
-    padding: 24px 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .dashboard-card:hover {
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-  }
-  
-  /* عناوین داخل کارت‌ها */
-  .card-title {
-    margin-top: 0;
-    color: #2d3748;
-    border-bottom: 2px solid #edf2f7;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-  
-  /* متون خالی بودن لیست */
-  .empty-state {
-    color: #a0aec0;
-    text-align: center;
-    padding: 30px 0;
-    font-size: 1rem;
-  }
-  
-  /* بخش وضعیت مالی */
-  .wallet-status {
-    font-size: 1.1rem;
-    color: #4a5568;
-    margin-bottom: 20px;
-  }
-  
-  .wallet-status strong {
-    color: #38a169;
-    font-size: 1.2rem;
-    margin-right: 8px;
-  }
-  
-  /* فرم‌ها و اینپوت‌ها */
-  .charge-form {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  .dashboard-input {
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1.5px solid #e2e8f0;
-    font-size: 0.95rem;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    min-width: 250px;
-  }
-  
-  .dashboard-input:focus {
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
-  }
-  
-  /* دکمه‌های عمومی */
-  .btn {
-    padding: 12px 20px;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-  
-  .btn:active {
-    transform: translateY(2px);
-  }
-  
-  .btn-success { background-color: #38a169; }
-  .btn-success:hover { background-color: #2f855a; }
-  
-  .btn-primary { background-color: #3182ce; padding: 14px 28px; font-size: 1.05rem; }
-  .btn-primary:hover { background-color: #2b6cb0; }
-  
-  .btn-info { background-color: #319795; }
-  .btn-info:hover { background-color: #285e61; }
-  
-  /* جداول رسپانسیو */
-  .table-responsive {
-    overflow-x: auto;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: right;
-  }
-  
-  .dashboard-table th, 
-  .dashboard-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #edf2f7;
-    color: #4a5568;
-  }
-  
-  .dashboard-table th {
-    background-color: #f7fafc;
-    font-weight: 700;
-    color: #2d3748;
-    border-bottom: 2px solid #e2e8f0;
-  }
-  
-  .dashboard-table tbody tr:hover {
-    background-color: #f8fafc;
-  }
-  
-  /* استاتوس‌های خاص جدول */
-  .status-success {
-    color: #38a169 !important;
-    font-weight: 700;
-  }
-  
-  /* بخش تخفیف */
-  .discount-section {
-    display: flex;
-    gap: 12px;
-    background-color: #f7fafc;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 25px;
-    align-items: center;
-    border: 1px dashed #cbd5e0;
-  }
-  
-  /* بخش تسویه حساب نهایی */
-  .checkout-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 2px solid #edf2f7;
-    padding-top: 24px;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-  
-  .total-price {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #2d3748;
-  }
-  
-  /* رسپانسیو کردن برای موبایل */
-  @media (max-width: 768px) {
-    .checkout-section {
-      flex-direction: column;
-      align-items: stretch;
-      text-align: center;
-    }
-    
-    .btn-primary {
-      width: 100%;
-    }
-  
-    .charge-form {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    .dashboard-input {
-      width: 100%;
-      min-width: unset;
-  }
+
+}
+
+/*==================================
+      INPUT
+===================================*/
+
+.dashboard-input{
+
+  transition:
+      border .25s,
+      box-shadow .25s,
+      transform .25s;
+
+}
+
+.dashboard-input:focus{
+
+  transform:translateY(-2px);
+
+}
+
+/*==================================
+      DISCOUNT CARD
+===================================*/
+
+.discount-card{
+
+  cursor:pointer;
+
+}
+
+.discount-card:hover{
+
+  border-color:#3b82f6;
+
+}
+
+.discount-item{
+
+  transition:.25s;
+
+}
+
+.discount-card:hover .discount-item{
+
+  transform:translateX(-3px);
+
+}
+
+/*==================================
+      BUTTON
+===================================*/
+
+.btn{
+
+  letter-spacing:.3px;
+
+}
+
+.btn:hover{
+
+  filter:brightness(1.03);
+
+}
+
+/*==================================
+      MOBILE
+===================================*/
+
+@media(max-width:992px){
+
+.dashboard-container{
+
+width:94%;
+
+margin:25px auto;
+
+}
+
+.dashboard-card{
+
+padding:22px;
+
+}
+
+.checkout-section{
+
+flex-direction:column;
+
+align-items:stretch;
+
+}
+
+.total-price{
+
+text-align:center;
+
+font-size:18px;
+
+}
+
+.btn{
+
+width:100%;
+
+}
+
+.discount-section{
+
+flex-direction:column;
+
+}
+
+.dashboard-input{
+
+width:100%;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.card-title{
+
+font-size:20px;
+
+}
+
+.wallet-status{
+
+padding:18px;
+
+}
+
+.wallet-status strong{
+
+font-size:24px;
+
+}
+
+.dashboard-table{
+
+min-width:650px;
+
+}
+
+.discount-card{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.dashboard-container{
+
+gap:20px;
+
+}
+
+.dashboard-card{
+
+border-radius:16px;
+
+padding:18px;
+
+}
+
+.dashboard-table th,
+
+.dashboard-table td{
+
+padding:14px;
+
+font-size:13px;
+
+}
+
+.wallet-status{
+
+font-size:14px;
+
+}
+
+.total-price{
+
+font-size:17px;
+
+}
+
+}
+
+/*==================================
+      SCROLL FIX
+===================================*/
+
+html{
+
+scroll-behavior:smooth;
+
+overflow-x:hidden;
+
+}
+
+body{
+
+overflow-x:hidden;
+
+}
+
+.dashboard-container{
+
+overflow:hidden;
+
+}
+
+/*==================================
+      SELECTION
+===================================*/
+
+::selection{
+
+background:#2563eb;
+
+color:white;
+
 }

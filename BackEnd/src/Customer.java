@@ -16,6 +16,9 @@ public class Customer extends User {
     public ArrayList<Purchase> getPurchaseHistory(){
         return purchaseHistory;
     }
+    public ArrayList<String> getDiscountCodes() {
+        return discountCodes;
+    }
 
     public void addToCart(ProductItem item, int quantity) {
         if (item == null || quantity <= 0) return;
@@ -72,14 +75,21 @@ public class Customer extends User {
 
     public double getCartTotal() {
         double total = 0;
+
         for (ProductItem item : cart.keySet()) {
-            //تعداد یا همان Value مربوط به آن را بیرون می‌کشد و در متغیر quantity ذخیره می‌کند.
+
             int quantity = cart.get(item);
+
+            System.out.println("قیمت: " + item.getPriceAfterDiscount());
+            System.out.println("تعداد: " + quantity);
+
             total += item.getPriceAfterDiscount() * quantity;
         }
+
+        System.out.println("جمع کل = " + total);
+
         return total;
     }
-
     public boolean checkout(String discountCode) {
         if (cart.isEmpty()) {
             System.out.println("❌ سبد خرید شما خالی است و محصولی برای تسویه وجود ندارد.");
@@ -88,20 +98,57 @@ public class Customer extends User {
 
         double totalCost = getCartTotal();
         String usedCode = null;
-
-
         if (discountCode != null && !discountCode.isEmpty()) {
-            //contains(discountCode): این متد چک می‌کند که آیا کدی که کاربر الان وارد کرده (discountCode)، در لیست کدهای مجاز او وجود دارد یا خیر؟
 
-            if (discountCodes.contains(discountCode)) {
-                totalCost = totalCost * 0.95;
-                discountCodes.remove(discountCode);
-                usedCode = discountCode;
-                System.out.println("🎉 کد تخفیف ۵ درصدی با موفقیت روی کل سفارش اعمال شد.");
+            DiscountCode discount = MainServer.findDiscountCode(discountCode);
+
+            if (discount != null && discount.isActive()) {
+
+                if (totalCost >= discount.getMinimumPrice()) {
+
+                    if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
+
+                        double discountAmount =
+                                totalCost * discount.getValue() / 100;
+
+                        totalCost -= discountAmount;
+
+                    }
+                    else if (discount.getDiscountType().equalsIgnoreCase("FIXED")) {
+
+                        totalCost -= discount.getValue();
+
+                        if(totalCost < 0){
+                            totalCost = 0;
+                        }
+                    }
+
+                    usedCode = discountCode;
+                    discount.setActive(false);
+
+                    System.out.println(
+                            "🎉 کد تخفیف با موفقیت اعمال شد."
+                    );
+
+                } else {
+
+                    System.out.println(
+                            "⚠️ مبلغ خرید به حداقل لازم برای این کد نرسیده است."
+                    );
+
+                }
+
             } else {
-                System.out.println("⚠️ کد تخفیف وارد شده نامعتبر یا قبلاً استفاده شده است.");
+
+                System.out.println(
+                        "⚠️ کد تخفیف نامعتبر یا غیرفعال است."
+                );
+
             }
         }
+
+
+
 
 
         if (this.wallet < totalCost) {
@@ -151,13 +198,31 @@ public class Customer extends User {
     }
 
     public void generateDiscountCode() {
+
         Random random = new Random();
         String code = "";
+
         for (int i = 0; i < 8; i++) {
             code += random.nextInt(10);
         }
+
         discountCodes.add(code);
-        System.out.println("🎁 یک کد تخفیف ۵ درصدی اختصاصی به حساب شما اضافه شد: " + code);
+
+
+        DiscountCode newDiscount = new DiscountCode(
+                code,
+                "PERCENT",
+                5,
+                0,
+                true
+        );
+
+        MainServer.allDiscountCodes.add(newDiscount);
+
+
+        System.out.println(
+                "🎁 کد تخفیف ۵ درصدی ساخته شد: " + code
+        );
     }
 
     public void viewPurchaseHistory() {

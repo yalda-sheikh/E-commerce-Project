@@ -1,0 +1,2 @@
+cc,PERCENT,50.0,100.0,false
+79913791,PERCENT,5.0,0.0,true

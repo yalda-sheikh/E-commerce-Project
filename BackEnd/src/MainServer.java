@@ -3,16 +3,18 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MainServer {
-
     // لیست‌های عمومی و استاتیک برای نگهداری داده‌های سیستم در حافظه (RAM)
     public static List<User> allUsers = new ArrayList<>(); // ذخیره تمامی کاربران سیستم (مشتری، ادمین و...)
     public static List<Product> allBaseProducts = new ArrayList<>(); // ذخیره اطلاعات پایه محصولات
-    public static List<ProductItem> allProductItems = new ArrayList<>(); // ذخیره آیتم‌های فیزیکی/موجودی انبار از محصولات
+    public static List<ProductItem> allProductItems = new ArrayList<>();
+    public static List<DiscountCode> allDiscountCodes = new ArrayList<>();
+
 
     public static void main(String[] args) throws IOException {
 
@@ -451,7 +453,7 @@ public class MainServer {
             }
         });
 
-
+        server.createContext("/api/search", (new SearchHandler(allProductItems)));
         // ۳. کانتکست دریافت لیست محصولات
         // مدیریت مسیر /api/products برای ارسال لیست تمام کالاهای موجود در انبار به کامپوننت داشبورد خرید
         server.createContext("/api/products", new HttpHandler() {
@@ -471,14 +473,156 @@ public class MainServer {
                 }
 
                 // ۳. مدیریت درخواست GET (ارسال لیست محصولات به فرانت)
+                // ۳. مدیریت درخواست GET (ارسال لیست محصولات به فرانت با تشخیص هوشمند لپ‌تاپ واقعی)
                 if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+                    String path = exchange.getRequestURI().getPath();
+
+                    // ==================== دیتیل یک محصول ====================
+                    if (path.matches("/api/products/\\d+")) {
+
+                        String idString = path.substring("/api/products/".length());
+                        int itemId = Integer.parseInt(idString);
+
+                        ProductItem item = null;
+
+                        for (ProductItem p : allProductItems) {
+                            if (p.getItemId() == itemId) {
+                                item = p;
+                                break;
+                            }
+                        }
+
+                        if (item == null) {
+                            exchange.sendResponseHeaders(404, -1);
+                            return;
+                        }
+
+                        String productName = (item.product != null) ? item.product.getName() : "نامشخص";
+                        String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
+
+                        boolean isRealLaptop = false;
+                        boolean isRealMobile = false;
+
+                        int ramVal = 0;
+                        int storageVal = 0;
+
+                        int cameraVal = 0;
+                        int batteryVal = 0;
+                        boolean is5GVal = false;
+
+                        if (item.product instanceof Laptop) {
+
+                            Laptop laptop = (Laptop) item.product;
+
+                            ramVal = laptop.getRamSize();
+                            storageVal = laptop.getStorage();
+
+                            if (ramVal > 0 || storageVal > 0) {
+                                isRealLaptop = true;
+                            }
+
+                        } else if (item.product instanceof Mobile) {
+
+                            Mobile mobile = (Mobile) item.product;
+
+                            cameraVal = mobile.getCameraMP();
+                            batteryVal = mobile.getBatteryMah();
+                            is5GVal = mobile.is5G();
+
+                            isRealMobile = true;
+                        }
+
+                        StringBuilder json = new StringBuilder();
+
+                        json.append("{");
+                        json.append("\"itemId\":").append(item.getItemId()).append(",");
+                        json.append("\"name\":\"").append(productName).append("\",");
+                        json.append("\"brand\":\"").append(brandName).append("\",");
+                        json.append("\"color\":\"").append(item.color).append("\",");
+                        json.append("\"price\":").append(item.getFinalPrice()).append(",");
+                        json.append("\"stock\":").append(item.getStock()).append(",");
+                        json.append("\"sellerName\":\"").append(item.seller.username).append("\",");
+
+                        json.append("\"productType\":\"");
+
+                        if (isRealLaptop)
+                            json.append("LAPTOP");
+                        else if (isRealMobile)
+                            json.append("MOBILE");
+                        else
+                            json.append("BASE");
+
+                        json.append("\"");
+
+                        if (isRealLaptop) {
+                            json.append(",");
+                            json.append("\"ram\":").append(ramVal).append(",");
+                            json.append("\"storage\":").append(storageVal);
+                        }
+
+                        if (isRealMobile) {
+                            json.append(",");
+                            json.append("\"cameraMP\":").append(cameraVal).append(",");
+                            json.append("\"batteryMah\":").append(batteryVal).append(",");
+                            json.append("\"is5G\":").append(is5GVal);
+                        }
+
+                        json.append("}");
+
+                        byte[] responseBytes = json.toString().getBytes("UTF-8");
+
+                        exchange.sendResponseHeaders(200, responseBytes.length);
+
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(responseBytes);
+                        os.close();
+
+                        return;
+                    }
+
+                    // ==================== لیست محصولات ====================
+
                     StringBuilder jsonBuilder = new StringBuilder();
                     jsonBuilder.append("[");
 
                     for (int i = 0; i < allProductItems.size(); i++) {
+
                         ProductItem item = allProductItems.get(i);
+
                         String productName = (item.product != null) ? item.product.getName() : "نامشخص";
                         String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
+
+                        boolean isRealMobile = false;
+                        boolean isRealLaptop = false;
+
+                        int ramVal = 0;
+                        int storageVal = 0;
+
+                        int cameraVal = 0;
+                        int batteryVal = 0;
+                        boolean is5GVal = false;
+
+                        if (item.product instanceof Laptop) {
+
+                            Laptop specLaptop = (Laptop) item.product;
+
+                            ramVal = specLaptop.getRamSize();
+                            storageVal = specLaptop.getStorage();
+
+                            if (ramVal > 0 || storageVal > 0)
+                                isRealLaptop = true;
+
+                        } else if (item.product instanceof Mobile) {
+
+                            Mobile specMobile = (Mobile) item.product;
+
+                            cameraVal = specMobile.getCameraMP();
+                            batteryVal = specMobile.getBatteryMah();
+                            is5GVal = specMobile.is5G();
+
+                            isRealMobile = true;
+                        }
 
                         jsonBuilder.append("{");
                         jsonBuilder.append("\"itemId\":").append(item.getItemId()).append(",");
@@ -487,7 +631,31 @@ public class MainServer {
                         jsonBuilder.append("\"color\":\"").append(item.color).append("\",");
                         jsonBuilder.append("\"price\":").append(item.getFinalPrice()).append(",");
                         jsonBuilder.append("\"stock\":").append(item.getStock()).append(",");
-                        jsonBuilder.append("\"sellerName\":\"").append(item.seller.username).append("\"");
+                        jsonBuilder.append("\"sellerName\":\"").append(item.seller.username).append("\",");
+
+                        jsonBuilder.append("\"productType\":\"");
+
+                        if (isRealLaptop)
+                            jsonBuilder.append("LAPTOP");
+                        else if (isRealMobile)
+                            jsonBuilder.append("MOBILE");
+                        else
+                            jsonBuilder.append("BASE");
+
+                        jsonBuilder.append("\"");
+
+                        if (isRealLaptop) {
+                            jsonBuilder.append(",");
+                            jsonBuilder.append("\"ram\":").append(ramVal).append(",");
+                            jsonBuilder.append("\"storage\":").append(storageVal);
+                        }
+
+                        if (isRealMobile) {
+                            jsonBuilder.append(",");
+                            jsonBuilder.append("\"cameraMP\":").append(cameraVal).append(",");
+                            jsonBuilder.append("\"batteryMah\":").append(batteryVal).append(",");
+                            jsonBuilder.append("\"is5G\":").append(is5GVal);
+                        }
 
                         jsonBuilder.append("}");
 
@@ -495,17 +663,19 @@ public class MainServer {
                             jsonBuilder.append(",");
                         }
                     }
+
                     jsonBuilder.append("]");
 
                     byte[] responseBytes = jsonBuilder.toString().getBytes("UTF-8");
+
                     exchange.sendResponseHeaders(200, responseBytes.length);
+
                     OutputStream os = exchange.getResponseBody();
                     os.write(responseBytes);
                     os.close();
-                    return; // خروج از متد پس از ارسال پاسخ GET
-                }
 
-                // ۴. مدیریت درخواست POST (گرفتن محصول جدید از فروشنده فرانت)
+                    return;
+                }
 // ۴. مدیریت درخواست POST (گرفتن محصول جدید از فروشنده فرانت)
                 if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                     try {
@@ -519,7 +689,7 @@ public class MainServer {
                         }
                         String jsonBody = bodyBuilder.toString();
 
-                        // ۲. استخراج فیلدها از JSON به صورت دستی
+                        // ۲. استخراج فیلدها از JSON به صورت دستی (اسم متغیر به jsonBody اصلاح شد)
                         int itemId = Integer.parseInt(extractJsonValue(jsonBody, "itemId"));
                         String name = extractJsonValue(jsonBody, "name");
                         String brand = extractJsonValue(jsonBody, "brand");
@@ -528,7 +698,10 @@ public class MainServer {
                         int stock = Integer.parseInt(extractJsonValue(jsonBody, "stock"));
                         String sellerName = extractJsonValue(jsonBody, "sellerName");
 
-                        // ۳. ذخیره سازی در فایل متنی (به صورت خطی و جدا شده با ویرگول)
+                        // ✨ اضافه شد: استخراج نوع محصول (BASE یا LAPTOP)
+                        String productType = extractJsonValue(jsonBody, "productType");
+
+                        // ۳. ذخیره سازی در فایل متنی
                         try (FileWriter fw = new FileWriter("products.txt", true);
                              BufferedWriter bw = new BufferedWriter(fw);
                              PrintWriter out = new PrintWriter(bw)) {
@@ -538,16 +711,37 @@ public class MainServer {
                             out.println(productLine);
                         }
 
-// ۴. اضافه کردن به لیست درون حافظه (allProductItems و لیست اختصاصی فروشنده)
+                        // ۴. ساخت شیء محصول به صورت داینامیک بر اساس دیتای واقعی ریکت
+                        Product newProductObj = null;
 
-                        // ساخت شیء لپ‌تاپ با مقادیر پیش‌فرض برای فیلدهای اختصاصی لپ‌تاپ
-                        int dummyRam = 16;
-                        int dummyStorage = 512;
-                        boolean dummyGraphics = true;
-                        Product newProductObj = new Laptop(itemId, name, brand, dummyRam, dummyStorage, dummyGraphics);
+                        if ("LAPTOP".equalsIgnoreCase(productType)) {
+                            // بیرون کشیدن رم، هارد و گرافیک واقعی از دیتای ارسالی فرانت
+                            String ramStr = extractJsonValue(jsonBody, "ram");
+                            String storageStr = extractJsonValue(jsonBody, "storage");
+                            String graphicsStr = extractJsonValue(jsonBody, "graphics");
+
+                            // تبدیل متن‌ها به عدد و بونین واقعی
+                            int realRam = (ramStr != null) ? Integer.parseInt(ramStr.trim()) : 8;
+                            int realStorage = (storageStr != null) ? Integer.parseInt(storageStr.trim()) : 256;
+                            boolean realGraphics = "true".equalsIgnoreCase(graphicsStr);
+
+                            // ساخت لپ‌تاپ با دیتای واقعی فرانت
+                            newProductObj = new Laptop(itemId, name, brand, realRam, realStorage, realGraphics);
+                        } else if ("MOBILE".equalsIgnoreCase(productType)) {
+                            String batteryMah = extractJsonValue(jsonBody , "batteryMah");
+                            String cameraMP = extractJsonValue(jsonBody , "cameraMP");
+                            String is5G = extractJsonValue(jsonBody , "is5G");
+                            int realBattery = (batteryMah != null) ? Integer.parseInt(batteryMah.trim()): 5;
+                            int realCamera = (cameraMP != null) ? Integer.parseInt(cameraMP.trim()): 28;
+                            boolean realis5G = "true".equalsIgnoreCase(is5G);
+                            newProductObj = new Mobile(itemId, name, brand, realBattery, realCamera , realis5G);
+
+                        } else {
+                            // اگر محصول معمولی بود (می‌تونی کلاس محصول ساده رو بسازی، یا مثل قبل یک لپ‌تاپ با مقادیر صفر بدی)
+                            newProductObj = new Laptop(itemId, name, brand, 0, 0, false);
+                        }
 
                         // ساخت شیء فروشنده بر اساس سازنده کلاس Seller
-                        // شناسه، پسورد و کیف پول را تستی می‌دهیم، اما username دقیقاً همان چیزی است که از فرانت آمده.
                         int dummySellerId = 999;
                         String dummyPassword = "password123";
                         double dummyWallet = 0.0;
@@ -570,7 +764,7 @@ public class MainServer {
                         // الف) اضافه کردن محصول جدید به لیست اصلی انبار کل سایت
                         allProductItems.add(newProductItem);
 
-                        // ب) اضافه کردن محصول به لیست اختصاصی خود این فروشنده (با استفاده از متدی که در کلاست نوشتی)
+                        // ب) اضافه کردن محصول به لیست اختصاصی خود این فروشنده
                         currentSeller.addProductItem(newProductItem);
 
                         // ۵. ارسال پاسخ موفقیت به فرانت‌اند
@@ -594,8 +788,8 @@ public class MainServer {
                 }
             }
         });
-
-
+        server.createContext("/api/discount", new DiscountHandler(allDiscountCodes));
+        server.createContext("/api/filter", new FilterHandler(allProductItems));
         // ۴. کانتکست سیستم احراز هویت
 
         // مدیریت مسیر ثبت‌نام و ورود کاربران به نشانی /api/auth
@@ -728,6 +922,241 @@ public class MainServer {
                 os.close();
             }
         });
+        server.createContext("/api/discount/apply", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+
+                if(exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")){
+                    exchange.sendResponseHeaders(200,-1);
+                    return;
+                }
+
+                String responseText = "";
+
+                if(exchange.getRequestMethod().equalsIgnoreCase("POST")){
+
+                    InputStream is = exchange.getRequestBody();
+                    String body = new String(is.readAllBytes(),"UTF-8");
+                    System.out.println(body);
+
+                    int userId = -1;
+                    String discountCode = "";
+
+                    if(body.contains("\"userId\"")){
+                        userId = Integer.parseInt(
+                                body.split("\"userId\":")[1]
+                                        .split(",")[0]
+                                        .split("}")[0]
+                                        .trim()
+                        );
+                    }
+
+                    if(body.contains("\"discountCode\"")){
+                        discountCode =
+                                body.split("\"discountCode\":\"")[1]
+                                        .split("\"")[0];
+                    }
+
+                    Customer customer = null;
+
+                    for(User u : allUsers){
+                        if(u instanceof Customer && u.userId == userId){
+                            customer = (Customer)u;
+                            break;
+                        }
+                    }
+
+                    if(customer == null){
+
+                        responseText =
+                                "{\"error\":\"کاربر پیدا نشد\"}";
+
+                        exchange.sendResponseHeaders(
+                                400,
+                                responseText.getBytes("UTF-8").length
+                        );
+
+                    }else{
+
+                        double oldPrice = customer.getCartTotal();
+                        double newPrice = oldPrice;
+
+                        DiscountCode discount =
+                                findDiscountCode(discountCode);
+                        System.out.println("کد وارد شده: " + discountCode);
+                        System.out.println("نتیجه findDiscountCode: " + discount);
+
+                        System.out.println("customer = " + customer);
+                        System.out.println("oldPrice = " + oldPrice);
+                        System.out.println("discount = " + discount);
+
+                        if(discount != null){
+                            System.out.println("minimumPrice = " + discount.getMinimumPrice());
+                            System.out.println("active = " + discount.isActive());
+                        }
+
+                        if(discount != null && discount.isActive()){
+
+                            if(oldPrice >= discount.getMinimumPrice()){
+
+                                if(discount.getDiscountType().equalsIgnoreCase("PERCENT")){
+
+                                    newPrice =
+                                            oldPrice -
+                                                    (oldPrice * discount.getValue()/100);
+
+                                }else{
+
+                                    newPrice =
+                                            oldPrice - discount.getValue();
+
+                                    if(newPrice < 0){
+                                        newPrice = 0;
+                                    }
+                                }
+
+                                responseText =
+                                        "{"
+                                                + "\"success\":true,"
+                                                + "\"oldPrice\":"+oldPrice+","
+                                                + "\"newPrice\":"+newPrice+","
+                                                + "\"message\":\"کد تخفیف اعمال شد.\""
+                                                + "}";
+
+                                exchange.sendResponseHeaders(
+                                        200,
+                                        responseText.getBytes("UTF-8").length
+                                );
+
+                            }else{
+
+                                responseText =
+                                        "{\"error\":\"حداقل مبلغ خرید رعایت نشده است.\"}";
+
+                                exchange.sendResponseHeaders(
+                                        400,
+                                        responseText.getBytes("UTF-8").length
+                                );
+
+                            }
+
+                        }else{
+
+                            responseText =
+                                    "{\"error\":\"کد تخفیف نامعتبر است.\"}";
+
+                            exchange.sendResponseHeaders(
+                                    400,
+                                    responseText.getBytes("UTF-8").length
+                            );
+
+                        }
+
+                    }
+
+                }else{
+
+                    responseText =
+                            "{\"error\":\"Method not allowed\"}";
+
+                    exchange.sendResponseHeaders(
+                            405,
+                            responseText.getBytes("UTF-8").length
+                    );
+
+                }
+
+                OutputStream os = exchange.getResponseBody();
+                os.write(responseText.getBytes("UTF-8"));
+                os.close();
+
+            }
+        });
+
+        server.createContext("/api/discounts", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException{
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+                exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+                if(exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")){
+                    exchange.sendResponseHeaders(200, -1);
+                    return;
+                }
+                String responseText = "";
+                if(exchange.getRequestMethod().equalsIgnoreCase("GET")){
+                    String query = exchange.getRequestURI().getQuery();
+                    int userId = -1;
+                    if(query != null && query.contains("userId=")){
+                        userId = Integer.parseInt(query.split("userId=")[1].split("&")[0]);
+
+                    }
+                    Customer customer = null;
+
+                    for (User u : allUsers) {
+                        if (u instanceof Customer && u.userId == userId) {
+                            customer = (Customer) u;
+                            break;
+                        }
+                    }
+
+                    if (customer != null) {
+
+                        StringBuilder json = new StringBuilder();
+
+                        json.append("[");
+
+                        ArrayList<String> codes = customer.getDiscountCodes();
+
+                        for (int i = 0; i < codes.size(); i++) {
+
+                            json.append("\"").append(codes.get(i)).append("\"");
+
+                            if (i < codes.size() - 1) {
+                                json.append(",");
+                            }
+                        }
+
+                        json.append("]");
+
+                        responseText = json.toString();
+
+                        exchange.sendResponseHeaders(
+                                200,
+                                responseText.getBytes("UTF-8").length
+                        );
+
+                    } else {
+
+                        responseText = "{\"error\":\"کاربر پیدا نشد\"}";
+
+                        exchange.sendResponseHeaders(
+                                400,
+                                responseText.getBytes("UTF-8").length
+                        );
+                    }
+
+                } else {
+
+                    responseText = "{\"error\":\"Method not allowed\"}";
+
+                    exchange.sendResponseHeaders(
+                            405,
+                            responseText.getBytes("UTF-8").length
+                    );
+                }
+
+                OutputStream os = exchange.getResponseBody();
+                os.write(responseText.getBytes("UTF-8"));
+                os.close();                }
+
+
+        });
 
         // تنظیم مدیریت نخ‌ها (Threads) روی مقدار نال به منظور استفاده از رفتارهای پیش‌فرض سرور هسته جاوا
         server.setExecutor(null);
@@ -735,6 +1164,7 @@ public class MainServer {
         server.start();
         System.out.println("🚀 بک‌اِند جاوا متصل به فایل‌های متنی روی پورت 8080 بدون ارور روشن شد!");
     }
+
 
     // متد ذخیره کردن داده‌های ساختار برنامه بر روی هاردهای محلی سیستم در قالب فرمت فایل‌های متنی مستقل (.txt)
     public static void saveData() {
@@ -754,12 +1184,29 @@ public class MainServer {
             }
             writerProducts.close();
 
+
             // ۳. نویسنده و ایجاد فایل جزئیات و موجودی انبار کالاها
             PrintWriter writerItems = new PrintWriter(new FileWriter("product_items.txt")); // تغییر نام داخلی متغیر به دلیل رعایت دقیق کدهای کاربر بدون خطا
             for (ProductItem pi : allProductItems) {
                 writerItems.println(pi.getItemId() + "," + (pi.getSeller() != null ? pi.getSeller().getUsername() : "null") + "," + pi.getStock());
             }
             writerItems.close();
+            // ۴. ذخیره کدهای تخفیف
+            PrintWriter writerDiscount =
+                    new PrintWriter(new FileWriter("discount_codes.txt"));
+
+            for (DiscountCode dc : allDiscountCodes) {
+
+                writerDiscount.println(
+                        dc.getCode() + "," +
+                                dc.getDiscountType() + "," +
+                                dc.getValue() + "," +
+                                dc.getMinimumPrice() + "," +
+                                dc.isActive()
+                );
+            }
+
+            writerDiscount.close();
             System.out.println("💾 تمام اطلاعات با موفقیت در فایل‌های متنی سیستم ذخیره شدند.");
         } catch (IOException e) {
             System.out.println("❌ خطا در هنگام ذخیره‌سازی اطلاعات در فایل‌ها: " + e.getMessage());
@@ -777,6 +1224,37 @@ public class MainServer {
             File f5 = new File("purchases.txt"); if (!f5.exists()) f5.createNewFile();
             File f6 = new File("new_questions.txt"); if (!f6.exists()) f6.createNewFile();
             File f7 = new File("discount_codes.txt"); if (!f7.exists()) f7.createNewFile();
+            // خواندن کدهای تخفیف از فایل
+            BufferedReader discountReader =
+                    new BufferedReader(new FileReader("discount_codes.txt"));
+
+            String line;
+
+            while ((line = discountReader.readLine()) != null) {
+
+                String[] parts = line.split(",");
+
+                if (parts.length == 5) {
+
+                    String code = parts[0];
+                    String discountType = parts[1];
+                    double value = Double.parseDouble(parts[2]);
+                    double minimumPrice = Double.parseDouble(parts[3]);
+                    boolean active = Boolean.parseBoolean(parts[4]);
+
+                    DiscountCode discount = new DiscountCode(
+                            code,
+                            discountType,
+                            value,
+                            minimumPrice,
+                            active
+                    );
+
+                    allDiscountCodes.add(discount);
+                }
+            }
+
+            discountReader.close();
 
             // پر کردن موقت اطلاعات دمی و فیک برای تست در صورتی که دیتابیس متنی در ابتدا کاملاً خالی باشد
             if (allUsers.isEmpty()) {
@@ -796,7 +1274,15 @@ public class MainServer {
                 // نمونه‌سازی فروشنده فرضی سیستم جهت برقراری وابستگی‌ها (Dependencies) در سازنده‌های اشیاء انبار
                 Seller dummySeller = new Seller(99, "TechShop", "1234", 0.0);
 
-                allProductItems.add(new ProductItem(0, allBaseProducts.get(3), dummySeller, "نقره‌ای", 12000.0, 12000000.0, 8));
+                allProductItems.add(new ProductItem(
+                        0,
+                        allBaseProducts.get(3),
+                        dummySeller,
+                        "نقره‌ای",
+                        12000000.0,
+                        0,
+                        8
+                ));
 
                 // یک نمونه کالا پیش‌فرض به سبد خرید کاربر هلیای تستی اضافه می‌کنیم تا فرانت در زمان اولین رندر لودینگ کامپوننت‌ها خالی نباشد
                 if (allUsers.get(0) instanceof Customer) {
@@ -807,6 +1293,18 @@ public class MainServer {
         } catch (IOException e) {
             System.out.println("❌ خطا در آماده‌سازی یا بارگذاری اولیه فایل‌ها: " + e.getMessage());
         }
+    }
+    public static DiscountCode findDiscountCode(String code){
+
+        for(DiscountCode dc : allDiscountCodes){
+
+            if(dc.getCode().equalsIgnoreCase(code)){
+                return dc;
+            }
+
+        }
+
+        return null;
     }
     // یک متد ساده برای بیرون کشیدن مقدار فیلدها از متن JSON
     private static String extractJsonValue(String json, String key) {

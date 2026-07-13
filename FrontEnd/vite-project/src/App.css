@@ -10,7 +10,7 @@
 .app-container {
   direction: rtl;
   min-height: 100vh;
-  backgroundColor: #f4f6f9; /* پس‌زمینه لایت و شیک */
+  background-color : #f4f6f9; /* پس‌زمینه لایت و شیک */
   color: #333a42;
 }
 

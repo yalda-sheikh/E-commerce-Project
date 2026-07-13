@@ -5,6 +5,7 @@ public abstract class Product {
     protected String brand;
     protected ArrayList<String> reviews;
     public Product(int productId, String name, String brand) {
+
         this.productId = productId;
         this.name = name;
         this.brand = brand;
@@ -15,6 +16,7 @@ public abstract class Product {
             this.reviews.add(reviewText);
         }
     }
+
     public int getId(){
         return this.productId;
     }

@@ -25,6 +25,7 @@ public class ProductItem implements StockManageable, Discountable {
     public int getItemId(){
         return itemId;
     }
+
     public Seller getSeller(){
         return this.seller;
     }
