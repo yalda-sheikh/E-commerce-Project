@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import "./ProductDetail.css";
 
 function ProductDetail() {
 
   const { id } = useParams();
 
-
   const [product, setProduct] = useState(null);
 
-
   const [loading, setLoading] = useState(true);
-
 
   const [error, setError] = useState("");
 
@@ -35,35 +33,51 @@ function ProductDetail() {
 
   }, [id]);
 
-
   if (loading) {
-    return <h2>در حال بارگذاری...</h2>;
+    return <h2 className="loading">در حال بارگذاری...</h2>;
   }
 
-
   if (error) {
-    return <h2>{error}</h2>;
+    return <h2 className="error">{error}</h2>;
   }
 
   return (
     <div className="product-detail">
 
-      <img
-        src={product.image}
-        alt={product.name}
-      />
+      <div className="product-card">
 
-      <h1>{product.name}</h1>
+        <div className="image-box">
 
-      <p>{product.description}</p>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="product-image"
+          />
 
-      <h3>{product.price} تومان</h3>
+        </div>
 
-      <p>موجودی: {product.stock}</p>
+        <div className="product-info">
 
-      <button>
-        افزودن به سبد خرید
-      </button>
+          <h1 className="product-title">{product.name}</h1>
+
+          <p className="product-description">{product.description}</p>
+
+          <h3 className="product-price">
+            {product.price.toLocaleString()} تومان
+          </h3>
+
+          <p className="product-stock">
+            موجودی:
+            <span>{product.stock}</span>
+          </p>
+
+          <button className="buy-btn">
+            افزودن به سبد خرید
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
   );
