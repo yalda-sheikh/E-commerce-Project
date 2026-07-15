@@ -465,7 +465,7 @@ public class MainServer {
                 exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
                 exchange.getResponseHeaders().set(
                         "Access-Control-Allow-Methods",
-                        "GET, POST, DELETE, OPTIONS"
+                        "GET, POST, DELETE, OPTIONS, PUT"
                 );
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
@@ -741,7 +741,7 @@ public class MainServer {
 
                         } else {
                             // اگر محصول معمولی بود (می‌تونی کلاس محصول ساده رو بسازی، یا مثل قبل یک لپ‌تاپ با مقادیر صفر بدی)
-                            newProductObj = new Laptop(itemId, name, brand, 0, 0, false);
+                            newProductObj = new BaseProduct(itemId, name, brand);
                         }
 
                         // ساخت شیء فروشنده بر اساس سازنده کلاس Seller
@@ -787,6 +787,166 @@ public class MainServer {
                         os.write(responseBytes);
                         os.close();
                     }
+                    return;
+                }
+                if ("PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+                    try {
+
+                        String path = exchange.getRequestURI().getPath();
+
+                        if (!path.matches("/api/products/\\d+")) {
+                            exchange.sendResponseHeaders(400, -1);
+                            return;
+                        }
+
+                        int itemId = Integer.parseInt(
+                                path.substring("/api/products/".length())
+                        );
+
+                        // خواندن JSON ارسالی
+                        BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(exchange.getRequestBody(), "UTF-8")
+                        );
+
+                        StringBuilder body = new StringBuilder();
+                        String line;
+
+                        while ((line = reader.readLine()) != null) {
+                            body.append(line);
+                        }
+
+                        String jsonBody = body.toString();
+
+                        ProductItem foundItem = null;
+
+                        for (ProductItem item : allProductItems) {
+                            if (item.getItemId() == itemId) {
+                                foundItem = item;
+                                break;
+                            }
+                        }
+
+                        if (foundItem == null) {
+
+                            String error = "{\"error\":\"محصول پیدا نشد\"}";
+                            byte[] response = error.getBytes("UTF-8");
+
+                            exchange.sendResponseHeaders(404, response.length);
+
+                            OutputStream os = exchange.getResponseBody();
+                            os.write(response);
+                            os.close();
+
+                            return;
+                        }
+
+                        // استخراج اطلاعات جدید
+                        String name = extractJsonValue(jsonBody, "name");
+                        String brand = extractJsonValue(jsonBody, "brand");
+                        String color = extractJsonValue(jsonBody, "color");
+
+                        double price = Double.parseDouble(
+                                extractJsonValue(jsonBody, "price")
+                        );
+
+                        int stock = Integer.parseInt(
+                                extractJsonValue(jsonBody, "stock")
+                        );
+
+                        // آپدیت ProductItem
+                        foundItem.setColor(color);
+                        foundItem.setPrice(price);
+                        foundItem.setStock(stock);
+
+                        // آپدیت Product
+                        foundItem.getProduct().setName(name);
+                        foundItem.getProduct().setBrand(brand);
+
+                        // اگر لپ‌تاپ بود
+                        if (foundItem.getProduct() instanceof Laptop) {
+
+                            Laptop laptop = (Laptop) foundItem.getProduct();
+
+                            laptop.setRamSize(
+                                    Integer.parseInt(extractJsonValue(jsonBody, "ram"))
+                            );
+
+                            laptop.setStorage(
+                                    Integer.parseInt(extractJsonValue(jsonBody, "storage"))
+                            );
+
+                            laptop.setGraphics(
+                                    Boolean.parseBoolean(
+                                            extractJsonValue(jsonBody, "graphics")
+                                    )
+                            );
+                        }
+
+                        // اگر موبایل بود
+                        if (foundItem.getProduct() instanceof Mobile) {
+
+                            Mobile mobile = (Mobile) foundItem.getProduct();
+
+                            mobile.setCameraMP(
+                                    Integer.parseInt(extractJsonValue(jsonBody, "cameraMP"))
+                            );
+
+                            mobile.setBatteryMah(
+                                    Integer.parseInt(extractJsonValue(jsonBody, "batteryMah"))
+                            );
+
+                            mobile.set5G(
+                                    Boolean.parseBoolean(
+                                            extractJsonValue(jsonBody, "is5G")
+                                    )
+                            );
+                        }
+                        try (
+                                PrintWriter writer = new PrintWriter(
+                                        new FileWriter("products.txt", false)
+                                )
+                        ) {
+
+                            for (ProductItem item : allProductItems) {
+
+                                String productLine  = String.format(
+                                        "%d,%s,%s,%s,%.2f,%d,%s",
+                                        item.getItemId(),
+                                        item.getProduct().getName(),
+                                        item.getProduct().getBrand(),
+                                        item.color,
+                                        item.getPrice(),
+                                        item.getStock(),
+                                        item.getSeller().username
+                                );
+
+                                writer.println(productLine);
+                            }
+                        }
+                        String success = "{\"message\":\"محصول با موفقیت ویرایش شد\"}";
+                        byte[] response = success.getBytes("UTF-8");
+
+                        exchange.sendResponseHeaders(200, response.length);
+
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(response);
+                        os.close();
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        String error = "{\"error\":\"خطا در ویرایش محصول\"}";
+                        byte[] response = error.getBytes("UTF-8");
+
+                        exchange.sendResponseHeaders(400, response.length);
+
+                        OutputStream os = exchange.getResponseBody();
+                        os.write(response);
+                        os.close();
+                    }
+
                     return;
                 }
                 if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {

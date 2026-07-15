@@ -240,7 +240,7 @@ const handleRemove = (itemId) => {
 <p className="discount-item"><strong>مقدار:</strong> {discount.value}</p>
 
 <p className="discount-item">
-<strong>حداقل خرید:</strong> {discount.minimumPrice.toLocaleString()} تومان
+<strong>حداقل خرید:</strong>{ (discount.minimumPrice || 0).toLocaleString() }تومان
 </p>
 
 <p className="discount-item">

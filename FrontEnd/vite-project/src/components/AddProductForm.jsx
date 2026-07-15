@@ -3,7 +3,7 @@ import axios from 'axios';
 import "./AddProductForm.css"
 
 export default function AddProductForm({ user }) {
-
+  const [editingId, setEditingId] = useState(null);
   const [productType, setProductType] = useState('BASE'); 
   const [generalFields, setGeneralFields] = useState({
     name: '', brand: '', color: '', price: '', stock: '' // 💡 itemId از اینجا حذف شد
@@ -67,12 +67,49 @@ export default function AddProductForm({ user }) {
     };
   
     try {
-      const response = await axios.post('http://localhost:8080/api/products', finalPayload);
-      alert(response.data.message || 'محصول با موفقیت ثبت شد!'); 
-      fetchProducts(); 
+
+      let response;
+    
+      if (editingId) {
+    
+        response = await axios.put(
+          `http://localhost:8080/api/products/${editingId}`,
+          finalPayload
+        );
+    
+      } else {
+    
+        response = await axios.post(
+          'http://localhost:8080/api/products',
+          finalPayload
+        );
+    
+      }
+    
+    
+      alert(response.data.message || 'عملیات با موفقیت انجام شد!');
+    
+    
+      // برگرداندن فرم به حالت افزودن
+      setEditingId(null);
+    
+      setGeneralFields({
+        name: '',
+        brand: '',
+        color: '',
+        price: '',
+        stock: ''
+      });
+    
+    
+      fetchProducts();
+    
+    
     } catch (error) {
-      console.error('خطا در فرستادن کالا به جاوا:', error);
-      alert('خطایی در ثبت محصول رخ داد!');
+    
+      console.error("خطا در ذخیره محصول:", error);
+      alert("خطایی رخ داد!");
+    
     }
   };
 
@@ -113,18 +150,55 @@ export default function AddProductForm({ user }) {
       console.log("خطا در حذف محصول:", error.message);
     }
   };
+  const handelEdit = (product) => {
 
+    console.log(product);
+  
+    setEditingId(product.itemId);
+  
+    setGeneralFields({
+      name: product.name || "",
+      brand: product.brand || "",
+      color: product.color || "",
+      price: product.price || "",
+      stock: product.stock || ""
+    });
+  
+    setProductType(product.productType || "BASE");
+  
+  
+    if(product.productType === "LAPTOP") {
+  
+      setLaptopFields({
+        ram: product.ram || "",
+        storage: product.storage || "",
+        graphics: product.graphics || "false"
+      });
+  
+    }
+  
+  
+    if(product.productType === "MOBILE") {
+  
+      setMobileFields({
+        cameraMP: product.cameraMP || "",
+        batteryMah: product.batteryMah || "",
+        is5G: product.is5G === true || product.is5G === "true"
+      });
+  
+    }
+  };
   return (
     <div className="seller-page">
       <form onSubmit={handleSubmit}>
         <h3>➕ افزودن محصول جدید (داشبورد فروشنده: {user?.username})</h3>
 
         {/* 💡 اینپوت دستی itemId کلاً حذف شد تا سیستم خودش داینامیک بسازه */}
-        <input type="text" name="name" placeholder="نام محصول" onChange={handleGeneralChange} required />
-        <input type="text" name="brand" placeholder="برند" onChange={handleGeneralChange} required />
-        <input type="text" name="color" placeholder="رنگ" onChange={handleGeneralChange} required />
-        <input type="number" name="price" placeholder="قیمت" onChange={handleGeneralChange} required />
-        <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleGeneralChange} required />
+        <input type="text" name="name" placeholder="نام محصول" onChange={handleGeneralChange} required   value={generalFields.name || ""}/>
+        <input type="text" name="brand" placeholder="برند" onChange={handleGeneralChange} required   value={generalFields.brand || ""}/>
+        <input type="text" name="color" placeholder="رنگ" onChange={handleGeneralChange} required  value={generalFields.color || ""}/>
+        <input type="number" name="price" placeholder="قیمت" onChange={handleGeneralChange} required  value={generalFields.price || ""} />
+        <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleGeneralChange} required   value={generalFields.stock || ""}/>
         
         <label>نوع محصول:</label>
         <select value={productType} onChange={(e) => setProductType(e.target.value)}>
@@ -177,7 +251,7 @@ export default function AddProductForm({ user }) {
         )}
 
 <button className="submit-product-btn" type="submit">
-    ثبت و ارسال به سرور جاوا
+    {editingId ? "💾 ذخیره تغییرات" : "➕ ثبت محصول جدید"}
 </button>
       </form>
 
@@ -210,6 +284,12 @@ export default function AddProductForm({ user }) {
                     <th>موجودی</th>
                     <th>نوع کالا</th>
                     <th>✨ ویژگی‌های اختصاصی</th>
+                    <th>
+                      __
+                    </th>
+                    <th>
+                      __
+                    </th>
                     
                 </tr>
 
@@ -221,7 +301,6 @@ export default function AddProductForm({ user }) {
             {products
             .filter(p => p.sellerName === user?.username)
             .map((item)=>(
-              console.log(products),
 
                 <tr key={item.itemId}>
                   
@@ -323,6 +402,7 @@ export default function AddProductForm({ user }) {
 
 
                     </td>
+                    <td><button className='btn btn-primary' onClick={() => handelEdit(item)}>ویرایش</button></td>
                     <td> <button className='btn btn-primary' onClick={() => handleDelete(item.itemId)}>حذف محصول</button></td>
 
 

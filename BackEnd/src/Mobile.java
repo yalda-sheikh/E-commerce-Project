@@ -1,7 +1,7 @@
 public class Mobile extends Product {
-    private final int cameraMP;
-    private final int batteryMah;
-    private final boolean is5G;
+    private int cameraMP;
+    private int batteryMah;
+    private boolean is5G;
     public Mobile( int productId, String name, String brand ,int cameraMP , int batteryMah , boolean is5G ){
         super(productId, name, brand);
         this.batteryMah = batteryMah;
@@ -12,6 +12,17 @@ public class Mobile extends Product {
     public int getCameraMP() { return cameraMP; }
     public int getBatteryMah() { return batteryMah; }
     public boolean is5G() { return is5G; }
+    public void setCameraMP(int cameraMP) {
+        this.cameraMP = cameraMP;
+    }
+
+    public void setBatteryMah(int batteryMah) {
+        this.batteryMah = batteryMah;
+    }
+
+    public void set5G(boolean is5G) {
+        this.is5G = is5G;
+    }
     public String getBatteryStatus() {
         if (batteryMah < 4000) {
             return "ضعیف";

@@ -16,7 +16,17 @@ public class Laptop extends Product implements Tax {
     public int getStorage(){
         return storage;
     }
+    public void setRamSize(int ramSize) {
+        this.ramSize = ramSize;
+    }
 
+    public void setStorage(int storage) {
+        this.storage = storage;
+    }
+
+    public void setGraphics(boolean hasGraphicsCard) {
+        this.hasGraphicsCard = hasGraphicsCard;
+    }
     public boolean isGamingLaptop() {
         return ramSize >= 16 && hasGraphicsCard;
     }

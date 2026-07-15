@@ -29,7 +29,21 @@ public class ProductItem implements StockManageable, Discountable {
     public Seller getSeller(){
         return this.seller;
     }
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
 
 
     @Override
