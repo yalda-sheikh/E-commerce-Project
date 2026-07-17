@@ -1,2 +1,3 @@
 CUSTOMER,1,helia,password123,5.0E7
 SELLER,2,fafa2020sh@gmail.com,235425,0.0
+CUSTOMER,3,fafa2020sh@gasvmail.com,235425,100000.0

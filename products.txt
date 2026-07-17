@@ -1,2 +1,4 @@
-0,Galaxy Watch 6,Samsung,نقره‌ای,12000000.00,8,TechShop
-122473384,djjdfiuytr,fj,fj,5.00,6,fafa2020sh@gmail.com
+50,iPad Pro,Apple
+60,Apple Watch 9,Apple
+51,Galaxy Tab S9,Samsung
+62,Galaxy Watch 6,Samsung
