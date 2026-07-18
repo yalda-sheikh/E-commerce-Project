@@ -69,23 +69,23 @@ function ProductDetail() {
           <p className="product-description">{product.description}</p>
           <div className="colors">
 
-  <h4>انتخاب رنگ:</h4>
+  <h4 className="color-title">انتخاب رنگ</h4>
 
-  {
-    product.variants?.map((variant)=>(
+  <div className="color-list">
+    {product.variants?.map((variant) => (
       <button
         key={variant.itemId}
-        className={
+        className={`color-btn ${
           selectedVariant?.itemId === variant.itemId
-          ? "selected-color"
-          : ""
-        }
+            ? "selected-color"
+            : ""
+        }`}
         onClick={() => setSelectedVariant(variant)}
       >
         {variant.color}
       </button>
-    ))
-  }
+    ))}
+  </div>
 
 </div>
 
@@ -93,10 +93,20 @@ function ProductDetail() {
   {selectedVariant?.price.toLocaleString()} تومان
 </h3>
 
-          <p className="product-stock">
-            موجودی:
-            <span>{selectedVariant?.stock}</span>
-          </p>
+<p className="product-stock">
+  موجودی:
+  <span
+    className={
+      selectedVariant?.stock > 0
+        ? "stock-available"
+        : "stock-unavailable"
+    }
+  >
+    {selectedVariant?.stock > 0
+      ? `${selectedVariant.stock} عدد`
+      : "ناموجود"}
+  </span>
+</p>
 
           <button className="buy-btn">
             افزودن به سبد خرید

@@ -225,7 +225,7 @@ if (
         <input type="text" name="color" placeholder="رنگ" onChange={handleVariantChange} required  value={currentVariant.color || ""}/>
         <input type="number" name="price" placeholder="قیمت" onChange={handleVariantChange} required  value={currentVariant.price || ""} />
         <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleVariantChange} required   value={currentVariant.stock || ""}/>
-        <button
+        <button className='btn btn-primary'
     type="button"
     onClick={() => {
 
@@ -365,9 +365,9 @@ if (
             {products
             .filter(p => p.sellerName === user?.username)
             .map((item)=>(
-              // console.log(item.variants?.[0].color),
 
-                <tr key={item.variants.itemId}>
+
+                <tr key={item.itemId}>
                   
 
                     <td>
@@ -378,29 +378,30 @@ if (
 
                     <td>{item.brand}</td>
 
-                    <td>{item.variants?.[0].color}</td>
-
-
                     <td>
-                        {item.variants?.[0].price 
-                        ? item.variants?.[0].price.toLocaleString()
-                        : 0}
-                    </td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.color}
+    </div>
+  ))}
+</td>
 
 
-                    <td className={
-                        item.variants?.[0].stock > 0 
-                        ? "stock-good"
-                        : "stock-bad"
-                    }>
+<td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.price.toLocaleString()}
+    </div>
+  ))}
+</td>
 
-                        {
-                        item.variants?.[0].stock > 0 
-                        ? `${item.variants?.[0].stock} عدد`
-                        : "ناموجود"
-                        }
-
-                    </td>
+<td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.stock} عدد
+    </div>
+  ))}
+</td>
 
 
                     <td>
