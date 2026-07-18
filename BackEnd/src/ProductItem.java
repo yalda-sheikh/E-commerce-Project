@@ -7,6 +7,7 @@ public class ProductItem implements StockManageable, Discountable {
     double price;
     double discountPercent;
     int stock;
+
     public ProductItem(int itemId , Product product  , Seller seller, String color , double price, double discountPercent , int stock){
         this.itemId = itemId;
         this.price = price;

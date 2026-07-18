@@ -5,6 +5,7 @@ import "./ProductDetail.css";
 function ProductDetail() {
 
   const { id } = useParams();
+  const [selectedVariant, setSelectedVariant] = useState(null);
 
   const [product, setProduct] = useState(null);
 
@@ -24,6 +25,11 @@ function ProductDetail() {
       })
       .then((data) => {
         setProduct(data);
+      
+        if (data.variants && data.variants.length > 0) {
+          setSelectedVariant(data.variants[0]);
+        }
+      
         setLoading(false);
       })
       .catch((err) => {
@@ -61,14 +67,35 @@ function ProductDetail() {
           <h1 className="product-title">{product.name}</h1>
 
           <p className="product-description">{product.description}</p>
+          <div className="colors">
+
+  <h4>انتخاب رنگ:</h4>
+
+  {
+    product.variants?.map((variant)=>(
+      <button
+        key={variant.itemId}
+        className={
+          selectedVariant?.itemId === variant.itemId
+          ? "selected-color"
+          : ""
+        }
+        onClick={() => setSelectedVariant(variant)}
+      >
+        {variant.color}
+      </button>
+    ))
+  }
+
+</div>
 
           <h3 className="product-price">
-            {product.price.toLocaleString()} تومان
-          </h3>
+  {selectedVariant?.price.toLocaleString()} تومان
+</h3>
 
           <p className="product-stock">
             موجودی:
-            <span>{product.stock}</span>
+            <span>{selectedVariant?.stock}</span>
           </p>
 
           <button className="buy-btn">

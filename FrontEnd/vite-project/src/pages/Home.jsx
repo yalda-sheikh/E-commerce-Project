@@ -6,7 +6,7 @@ import FilterHandler from '../components/FilterHandler';
 function Home({ user }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState(''); // اضافه شده برای رفع خطا
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:8080/api/products')
@@ -63,7 +63,7 @@ function Home({ user }) {
 }
 
   if (loading) return <h3 className="loading-state">⏳ در حال بارگذاری محصولات...</h3>;
-
+  console.log(products);
   return (
     <div className="home-container">
       <h2 className="home-title">🏪 ویترین فروشگاه دیجیتال</h2>
@@ -75,30 +75,32 @@ function Home({ user }) {
         {products.length === 0 ? (
           <p className="empty-msg">محصولی برای نمایش یافت نشد.</p>
         ) : (
+
           products.map((item , index) => (
-            <Link   key={`${item.itemId}-${index}`}
+
+            <Link   key={`${item.variants?.[0].itemId}-${index}`}
             className="store-card"
-            to={`/product/${item.itemId}`}>
+            to={`/product/${item.variants?.[0].itemId}`}>
               <div className="product-emoji-wrapper">
                 {item.name?.toLowerCase().includes('watch') ? '⌚' : '📱'}
               </div>
               <div className="product-info">
                 <h3 className="product-name">{item.name} ({item.brand})</h3>
-                <p className="product-meta">رنگ: {item.color}</p>
-                <p className={`stock-status ${item.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                  {item.stock > 0 ? `📦 موجود: ${item.stock} عدد` : '❌ ناموجود'}
+                <p className="product-meta">رنگ: {item.variants?.[0].color}</p>
+                <p className={`stock-status ${item.variants?.[0].stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                  {item.variants?.[0].stock > 0 ? `📦 موجود: ${item.variants?.[0].stock} عدد` : '❌ ناموجود'}
                 </p>
               </div>
               <div className="card-footer">
-                <span className="price-tag">{item.price?.toLocaleString()} تومان</span>
+                <span className="price-tag">{item.variants?.[0].price?.toLocaleString()} تومان</span>
                 <button 
                   onClick={(e) => { e.preventDefault(); 
-                  handleAddToCart(item.itemId) ;
+                  handleAddToCart(item.variants?.[0].itemId) ;
                 }}
-                  disabled={item.stock === 0}
+                  disabled={item.variants?.[0].stock === 0}
                   className="add-to-cart-btn"
                 >
-                  {item.stock > 0 ? '🛒 افزودن' : 'ناموجود'}
+                  {item.variants?.[0].stock > 0 ? '🛒 افزودن' : 'ناموجود'}
                 </button>
               </div>
             </Link>

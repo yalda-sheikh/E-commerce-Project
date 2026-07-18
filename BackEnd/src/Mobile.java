@@ -15,7 +15,6 @@ public class Mobile extends Product {
     public void setCameraMP(int cameraMP) {
         this.cameraMP = cameraMP;
     }
-
     public void setBatteryMah(int batteryMah) {
         this.batteryMah = batteryMah;
     }

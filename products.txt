@@ -2,3 +2,5 @@
 60,Apple Watch 9,Apple
 51,Galaxy Tab S9,Samsung
 62,Galaxy Watch 6,Samsung
+1,1,گوشی,سامسونگ,آبی,12.00,2,fafa2020sh@gmail.com
+1,2,گوشی,سامسونگ,زرد,13.00,2,fafa2020sh@gmail.com

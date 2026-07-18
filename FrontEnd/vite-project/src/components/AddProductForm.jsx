@@ -6,8 +6,14 @@ export default function AddProductForm({ user }) {
   const [editingId, setEditingId] = useState(null);
   const [productType, setProductType] = useState('BASE'); 
   const [generalFields, setGeneralFields] = useState({
-    name: '', brand: '', color: '', price: '', stock: '' // 💡 itemId از اینجا حذف شد
+    name: '', brand: ''
   });
+  const [currentVariant, setCurrentVariant] = useState({
+    color: "",
+    price: "",
+    stock: ""
+});
+const [variants, setVariants] = useState([]);
   const [laptopFields, setLaptopFields] = useState({
     ram: '', storage: '', graphics: 'false'
   });
@@ -23,6 +29,7 @@ export default function AddProductForm({ user }) {
     try {
       const response = await axios.get('http://localhost:8080/api/products');
       setProducts(response.data); 
+      console.log(response.data);
       setLoading(false);
     } catch (error) {
       console.error('خطا در دریافت لیست محصولات از جاوا:', error);
@@ -37,6 +44,12 @@ export default function AddProductForm({ user }) {
   const handleGeneralChange = (e) => {
     setGeneralFields({ ...generalFields, [e.target.name]: e.target.value });
   };
+  const handleVariantChange = (e) => {
+    setCurrentVariant({
+      ...currentVariant,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleLaptopChange = (e) => {
     setLaptopFields({ ...laptopFields, [e.target.name]: e.target.value });
@@ -47,11 +60,21 @@ export default function AddProductForm({ user }) {
   
     // 💡 تولید یک شناسه عددی کاملاً یکتا که در محدوده Integer جاوا جا شود
     const automaticItemId = Date.now() % 2000000000;
-  
+
+  let finalVariants = [...variants];
+
+if (
+  currentVariant.color &&
+  currentVariant.price &&
+  currentVariant.stock
+) {
+  finalVariants.push(currentVariant);
+}
     // جفت‌وجور کردن دیتای نهایی
     const finalPayload = {
       itemId: String(automaticItemId), // ✨ ارسال شناسه اتوماتیک و یکتا برای راضی نگه‌داشتن جاوا
       ...generalFields,
+      variants: finalVariants,
       sellerName: user?.username || 'نامشخص', 
       productType: productType,
       ...(productType === 'LAPTOP' && {
@@ -96,10 +119,13 @@ export default function AddProductForm({ user }) {
       setGeneralFields({
         name: '',
         brand: '',
-        color: '',
-        price: '',
-        stock: ''
       });
+      setCurrentVariant({
+        color: "",
+        price: "",
+        stock: ""
+      })
+      setVariants([])
     
     
       fetchProducts();
@@ -196,10 +222,48 @@ export default function AddProductForm({ user }) {
         {/* 💡 اینپوت دستی itemId کلاً حذف شد تا سیستم خودش داینامیک بسازه */}
         <input type="text" name="name" placeholder="نام محصول" onChange={handleGeneralChange} required   value={generalFields.name || ""}/>
         <input type="text" name="brand" placeholder="برند" onChange={handleGeneralChange} required   value={generalFields.brand || ""}/>
-        <input type="text" name="color" placeholder="رنگ" onChange={handleGeneralChange} required  value={generalFields.color || ""}/>
-        <input type="number" name="price" placeholder="قیمت" onChange={handleGeneralChange} required  value={generalFields.price || ""} />
-        <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleGeneralChange} required   value={generalFields.stock || ""}/>
-        
+        <input type="text" name="color" placeholder="رنگ" onChange={handleVariantChange} required  value={currentVariant.color || ""}/>
+        <input type="number" name="price" placeholder="قیمت" onChange={handleVariantChange} required  value={currentVariant.price || ""} />
+        <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleVariantChange} required   value={currentVariant.stock || ""}/>
+        <button
+    type="button"
+    onClick={() => {
+
+        if (
+            !currentVariant.color ||
+            !currentVariant.price ||
+            !currentVariant.stock
+        ) {
+            alert("اطلاعات رنگ را کامل وارد کنید.");
+            return;
+        }
+
+        setVariants([
+            ...variants,
+            currentVariant
+        ]);
+
+        setCurrentVariant({
+            color: "",
+            price: "",
+            stock: ""
+        });
+
+    }}
+>
+    ➕ افزودن رنگ
+</button>
+{variants.map((v, index) => (
+
+<div key={index}>
+
+    {v.color} |
+    {v.price} |
+    {v.stock}
+
+</div>
+
+))}
         <label>نوع محصول:</label>
         <select value={productType} onChange={(e) => setProductType(e.target.value)}>
           <option value="BASE">محصول معمولی (ساده)</option>
@@ -301,37 +365,38 @@ export default function AddProductForm({ user }) {
             {products
             .filter(p => p.sellerName === user?.username)
             .map((item)=>(
+              // console.log(item.variants?.[0].color),
 
-                <tr key={item.itemId}>
+                <tr key={item.variants.itemId}>
                   
 
                     <td>
-                        <strong>{item.itemId}</strong>
+                        <strong>{item.variants?.[0].itemId}</strong>
                     </td>
 
                     <td>{item.name}</td>
 
                     <td>{item.brand}</td>
 
-                    <td>{item.color}</td>
+                    <td>{item.variants?.[0].color}</td>
 
 
                     <td>
-                        {item.price 
-                        ? item.price.toLocaleString()
+                        {item.variants?.[0].price 
+                        ? item.variants?.[0].price.toLocaleString()
                         : 0}
                     </td>
 
 
                     <td className={
-                        item.stock > 0 
+                        item.variants?.[0].stock > 0 
                         ? "stock-good"
                         : "stock-bad"
                     }>
 
                         {
-                        item.stock > 0 
-                        ? `${item.stock} عدد`
+                        item.variants?.[0].stock > 0 
+                        ? `${item.variants?.[0].stock} عدد`
                         : "ناموجود"
                         }
 

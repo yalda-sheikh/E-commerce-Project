@@ -7,13 +7,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 public class MainServer {
     // لیست‌های عمومی و استاتیک برای نگهداری داده‌های سیستم در حافظه (RAM)
     public static List<User> allUsers = new ArrayList<>(); // ذخیره تمامی کاربران سیستم (مشتری، ادمین و...)
     public static List<Product> allBaseProducts = new ArrayList<>(); // ذخیره اطلاعات پایه محصولات
     public static List<ProductItem> allProductItems = new ArrayList<>();
     public static List<DiscountCode> allDiscountCodes = new ArrayList<>();
+    private static int nextProductId = 1;
+    private static int nextItemId = 1;
 
 
     public static void main(String[] args) throws IOException {
@@ -487,22 +490,35 @@ public class MainServer {
                         String idString = path.substring("/api/products/".length());
                         int itemId = Integer.parseInt(idString);
 
-                        ProductItem item = null;
+                        ProductItem mainItem = null;
+                        ArrayList<ProductItem> variants = new ArrayList<>();
 
                         for (ProductItem p : allProductItems) {
+
                             if (p.getItemId() == itemId) {
-                                item = p;
-                                break;
+                                mainItem = p;
                             }
                         }
 
-                        if (item == null) {
+
+                        if (mainItem != null) {
+
+                            for (ProductItem p : allProductItems) {
+
+                                if (p.product == mainItem.product) {
+                                    variants.add(p);
+                                }
+
+                            }
+                        }
+
+                        if (mainItem == null) {
                             exchange.sendResponseHeaders(404, -1);
                             return;
                         }
 
-                        String productName = (item.product != null) ? item.product.getName() : "نامشخص";
-                        String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
+                        String productName = (mainItem.product != null) ? mainItem.product.getName() : "نامشخص";
+                        String brandName = (mainItem.product != null) ? mainItem.product.getBrand() : "نامشخص";
 
                         boolean isRealLaptop = false;
                         boolean isRealMobile = false;
@@ -514,9 +530,9 @@ public class MainServer {
                         int batteryVal = 0;
                         boolean is5GVal = false;
 
-                        if (item.product instanceof Laptop) {
+                        if (mainItem.product instanceof Laptop) {
 
-                            Laptop laptop = (Laptop) item.product;
+                            Laptop laptop = (Laptop) mainItem.product;
 
                             ramVal = laptop.getRamSize();
                             storageVal = laptop.getStorage();
@@ -525,9 +541,9 @@ public class MainServer {
                                 isRealLaptop = true;
                             }
 
-                        } else if (item.product instanceof Mobile) {
+                        } else if (mainItem.product instanceof Mobile) {
 
-                            Mobile mobile = (Mobile) item.product;
+                            Mobile mobile = (Mobile) mainItem.product;
 
                             cameraVal = mobile.getCameraMP();
                             batteryVal = mobile.getBatteryMah();
@@ -539,13 +555,29 @@ public class MainServer {
                         StringBuilder json = new StringBuilder();
 
                         json.append("{");
-                        json.append("\"itemId\":").append(item.getItemId()).append(",");
+                        json.append("\"itemId\":").append(mainItem.getItemId()).append(",");
                         json.append("\"name\":\"").append(productName).append("\",");
                         json.append("\"brand\":\"").append(brandName).append("\",");
-                        json.append("\"color\":\"").append(item.color).append("\",");
-                        json.append("\"price\":").append(item.getFinalPrice()).append(",");
-                        json.append("\"stock\":").append(item.getStock()).append(",");
-                        json.append("\"sellerName\":\"").append(item.seller.username).append("\",");
+                        json.append("\"variants\":[");
+
+                        for(int i=0; i<variants.size(); i++){
+
+                            ProductItem v = variants.get(i);
+
+                            json.append("{");
+                            json.append("\"itemId\":").append(v.getItemId()).append(",");
+                            json.append("\"color\":\"").append(v.color).append("\",");
+                            json.append("\"price\":").append(v.getFinalPrice()).append(",");
+                            json.append("\"stock\":").append(v.getStock());
+                            json.append("}");
+
+                            if(i < variants.size()-1){
+                                json.append(",");
+                            }
+                        }
+
+                        json.append("],");
+                        json.append("\"sellerName\":\"").append(mainItem.seller.username).append("\",");
 
                         json.append("\"productType\":\"");
 
@@ -588,10 +620,22 @@ public class MainServer {
 
                     StringBuilder jsonBuilder = new StringBuilder();
                     jsonBuilder.append("[");
+                    ArrayList<Product> shownProducts = new ArrayList<>();
+                    int productIndex = 0;
 
                     for (int i = 0; i < allProductItems.size(); i++) {
 
                         ProductItem item = allProductItems.get(i);
+                        if (shownProducts.contains(item.product)) {
+                            continue;
+                        }
+
+                        shownProducts.add(item.product);
+                        if(productIndex > 0){
+                            jsonBuilder.append(",");
+                        }
+
+                        productIndex++;
 
                         String productName = (item.product != null) ? item.product.getName() : "نامشخص";
                         String brandName = (item.product != null) ? item.product.getBrand() : "نامشخص";
@@ -631,9 +675,51 @@ public class MainServer {
                         jsonBuilder.append("\"itemId\":").append(item.getItemId()).append(",");
                         jsonBuilder.append("\"name\":\"").append(productName).append("\",");
                         jsonBuilder.append("\"brand\":\"").append(brandName).append("\",");
-                        jsonBuilder.append("\"color\":\"").append(item.color).append("\",");
-                        jsonBuilder.append("\"price\":").append(item.getFinalPrice()).append(",");
-                        jsonBuilder.append("\"stock\":").append(item.getStock()).append(",");
+                        jsonBuilder.append("\"variants\":[");
+
+                        ArrayList<ProductItem> productVariants = new ArrayList<>();
+
+
+                        for(ProductItem p : allProductItems){
+
+                            if(p.product == item.product){
+                                productVariants.add(p);
+                            }
+
+                        }
+
+
+                        for(int j = 0; j < productVariants.size(); j++){
+
+                            ProductItem v = productVariants.get(j);
+
+                            jsonBuilder.append("{");
+
+                            jsonBuilder.append("\"itemId\":")
+                                    .append(v.getItemId())
+                                    .append(",");
+
+                            jsonBuilder.append("\"color\":\"")
+                                    .append(v.color)
+                                    .append("\",");
+
+                            jsonBuilder.append("\"price\":")
+                                    .append(v.getFinalPrice())
+                                    .append(",");
+
+                            jsonBuilder.append("\"stock\":")
+                                    .append(v.getStock());
+
+                            jsonBuilder.append("}");
+
+
+                            if(j < productVariants.size() - 1){
+                                jsonBuilder.append(",");
+                            }
+
+                        }
+
+                        jsonBuilder.append("],");
                         jsonBuilder.append("\"sellerName\":\"").append(item.seller.username).append("\",");
 
                         jsonBuilder.append("\"productType\":\"");
@@ -662,12 +748,13 @@ public class MainServer {
 
                         jsonBuilder.append("}");
 
-                        if (i < allProductItems.size() - 1) {
-                            jsonBuilder.append(",");
-                        }
                     }
 
                     jsonBuilder.append("]");
+                    if(jsonBuilder.toString().endsWith(","))
+                    {
+                        jsonBuilder.deleteCharAt(jsonBuilder.length()-1);
+                    }
 
                     byte[] responseBytes = jsonBuilder.toString().getBytes("UTF-8");
 
@@ -691,57 +778,45 @@ public class MainServer {
                             bodyBuilder.append(line);
                         }
                         String jsonBody = bodyBuilder.toString();
+                        Gson gson = new Gson();
+                        ProductRequest request = gson.fromJson(jsonBody, ProductRequest.class);
 
                         // ۲. استخراج فیلدها از JSON به صورت دستی (اسم متغیر به jsonBody اصلاح شد)
-                        int itemId = Integer.parseInt(extractJsonValue(jsonBody, "itemId"));
-                        String name = extractJsonValue(jsonBody, "name");
-                        String brand = extractJsonValue(jsonBody, "brand");
-                        String color = extractJsonValue(jsonBody, "color");
-                        double price = Double.parseDouble(extractJsonValue(jsonBody, "price"));
-                        int stock = Integer.parseInt(extractJsonValue(jsonBody, "stock"));
-                        String sellerName = extractJsonValue(jsonBody, "sellerName");
+                        int productId = nextProductId++;
 
-                        // ✨ اضافه شد: استخراج نوع محصول (BASE یا LAPTOP)
-                        String productType = extractJsonValue(jsonBody, "productType");
+                        String name = request.getName();
+                        String brand = request.getBrand();
+                        String sellerName = request.getSellerName();
+                        String productType = request.getProductType();
 
-                        // ۳. ذخیره سازی در فایل متنی
-                        try (FileWriter fw = new FileWriter("products.txt", true);
-                             BufferedWriter bw = new BufferedWriter(fw);
-                             PrintWriter out = new PrintWriter(bw)) {
 
-                            String productLine = String.format("%d,%s,%s,%s,%.2f,%d,%s",
-                                    itemId, name, brand, color, price, stock, sellerName);
-                            out.println(productLine);
-                        }
 
-                        // ۴. ساخت شیء محصول به صورت داینامیک بر اساس دیتای واقعی ریکت
                         Product newProductObj = null;
 
                         if ("LAPTOP".equalsIgnoreCase(productType)) {
                             // بیرون کشیدن رم، هارد و گرافیک واقعی از دیتای ارسالی فرانت
-                            String ramStr = extractJsonValue(jsonBody, "ram");
-                            String storageStr = extractJsonValue(jsonBody, "storage");
-                            String graphicsStr = extractJsonValue(jsonBody, "graphics");
-
-                            // تبدیل متن‌ها به عدد و بونین واقعی
-                            int realRam = (ramStr != null) ? Integer.parseInt(ramStr.trim()) : 8;
-                            int realStorage = (storageStr != null) ? Integer.parseInt(storageStr.trim()) : 256;
-                            boolean realGraphics = "true".equalsIgnoreCase(graphicsStr);
+                            int realRam = request.getRam();
+                            int realStorage = request.getStorage();
+                            boolean realGraphics = request.isGraphics();
 
                             // ساخت لپ‌تاپ با دیتای واقعی فرانت
-                            newProductObj = new Laptop(itemId, name, brand, realRam, realStorage, realGraphics);
+                            newProductObj = new Laptop(productId, name, brand, realRam, realStorage, realGraphics);
                         } else if ("MOBILE".equalsIgnoreCase(productType)) {
-                            String batteryMah = extractJsonValue(jsonBody , "batteryMah");
-                            String cameraMP = extractJsonValue(jsonBody , "cameraMP");
-                            String is5G = extractJsonValue(jsonBody , "is5G");
-                            int realBattery = (batteryMah != null) ? Integer.parseInt(batteryMah.trim()): 5;
-                            int realCamera = (cameraMP != null) ? Integer.parseInt(cameraMP.trim()): 28;
-                            boolean realis5G = "true".equalsIgnoreCase(is5G);
-                            newProductObj = new Mobile(itemId, name, brand, realBattery, realCamera , realis5G);
+                            int realBattery = request.getBatteryMah();
+                            int realCamera = request.getCameraMP();
+                            boolean realIs5G = request.isIs5G();
+                            newProductObj = new Mobile(
+                                    productId,
+                                    name,
+                                    brand,
+                                    realBattery,
+                                    realCamera,
+                                    realIs5G
+                            );
 
                         } else {
                             // اگر محصول معمولی بود (می‌تونی کلاس محصول ساده رو بسازی، یا مثل قبل یک لپ‌تاپ با مقادیر صفر بدی)
-                            newProductObj = new BaseProduct(itemId, name, brand);
+                            newProductObj = new BaseProduct(productId, name, brand);
                         }
 
                         // ساخت شیء فروشنده بر اساس سازنده کلاس Seller
@@ -754,21 +829,45 @@ public class MainServer {
                         double defaultDiscount = 0.0;
 
                         // ساخت ProductItem با تمام پارامترهای سازنده شما
-                        ProductItem newProductItem = new ProductItem(
-                                itemId,
-                                newProductObj,
-                                currentSeller,
-                                color,
-                                price,
-                                defaultDiscount,
-                                stock
-                        );
+                        for (VariantRequest variant : request.getVariants()) {
 
-                        // الف) اضافه کردن محصول جدید به لیست اصلی انبار کل سایت
-                        allProductItems.add(newProductItem);
+                            int itemId = nextItemId++;
 
-                        // ب) اضافه کردن محصول به لیست اختصاصی خود این فروشنده
-                        currentSeller.addProductItem(newProductItem);
+                            // ذخیره هر رنگ به صورت جداگانه
+                            try (FileWriter fw = new FileWriter("products.txt", true);
+                                 BufferedWriter bw = new BufferedWriter(fw);
+                                 PrintWriter out = new PrintWriter(bw)) {
+
+                                String productLine = String.format(
+                                        "%d,%d,%s,%s,%s,%.2f,%d,%s",
+                                        productId,
+                                        itemId,
+                                        name,
+                                        brand,
+                                        variant.getColor(),
+                                        variant.getPrice(),
+                                        variant.getStock(),
+                                        sellerName
+                                );
+
+                                out.println(productLine);
+                            }
+
+
+                            ProductItem item = new ProductItem(
+                                    itemId,
+                                    newProductObj,
+                                    currentSeller,
+                                    variant.getColor(),
+                                    variant.getPrice(),
+                                    defaultDiscount,
+                                    variant.getStock()
+                            );
+
+                            allProductItems.add(item);
+                            currentSeller.addProductItem(item);
+                        }
+
 
                         // ۵. ارسال پاسخ موفقیت به فرانت‌اند
                         String successMessage = "{\"message\": \"محصول با موفقیت ذخیره و منتشر شد\"}";
