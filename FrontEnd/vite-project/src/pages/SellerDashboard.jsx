@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
-import AddProductForm from '../components/AddProductForm'; // همین فرمی که گام اول ساختیم
-import Discount from './Discount';
+import React from "react";
+import AddProductForm from "../components/AddProductForm";
+import Discount from "./Discount";
+import "./SellerDashboard.css";
 
-
-export default function SellerDashboard({user}) {
-
+export default function SellerDashboard({ user }) {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>داشبورد فروشنده 🏪</h1>
-      <hr />
-      <AddProductForm user = {user}/>
+    <div className="seller-dashboard">
+
+      <div className="dashboard-header">
+        <h1>🏪 داشبورد فروشنده</h1>
+        <p>مدیریت محصولات، موجودی و کدهای تخفیف</p>
+      </div>
+
+      <AddProductForm user={user} />
+
       <Discount />
+
     </div>
   );
 }

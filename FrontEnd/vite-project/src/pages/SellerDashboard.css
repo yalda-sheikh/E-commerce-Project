@@ -1,0 +1,77 @@
+/* ================= Dashboard ================= */
+
+.seller-dashboard{
+
+    max-width:1400px;
+
+    margin:35px auto;
+
+    padding:20px;
+
+    background:#f5f7fb;
+
+    min-height:100vh;
+
+}
+
+/* ================= Header ================= */
+
+.dashboard-header{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px 30px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.08);
+
+    border-left:5px solid #2563eb;
+
+}
+
+.dashboard-header h1{
+
+    margin:0;
+
+    color:#2563eb;
+
+    font-size:32px;
+
+}
+
+.dashboard-header p{
+
+    margin-top:10px;
+
+    color:#666;
+
+    font-size:15px;
+
+}
+
+/* ================= Responsive ================= */
+
+@media(max-width:768px){
+
+    .seller-dashboard{
+
+        padding:12px;
+
+    }
+
+    .dashboard-header{
+
+        padding:20px;
+
+    }
+
+    .dashboard-header h1{
+
+        font-size:25px;
+
+    }
+
+}

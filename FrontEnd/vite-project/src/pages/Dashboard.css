@@ -1,871 +1,438 @@
-/* ===========================
-   GOOGLE FONT
-=========================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Vazirmatn',sans-serif;
-    background:#f5f7fa;
-    color:#333;
-}
-
-.dashboard-container{
-    width:min(1400px,95%);
-    margin:40px auto;
-    display:flex;
-    flex-direction:column;
-    gap:28px;
-}
-
-/* ===========================
-   CARD
-=========================== */
-
-.dashboard-card{
-    background:#fff;
-    border-radius:20px;
-    padding:28px;
-    box-shadow:
-        0 10px 35px rgba(0,0,0,.05),
-        0 3px 10px rgba(0,0,0,.04);
-
-    transition:.35s;
-    animation:fadeUp .55s ease;
-}
-
-.dashboard-card:hover{
-    transform:translateY(-5px);
-    box-shadow:
-        0 18px 45px rgba(0,0,0,.08),
-        0 8px 18px rgba(0,0,0,.05);
-}
-
-/* ===========================
-   TITLE
-=========================== */
-
-.card-title{
-    font-size:1.45rem;
-    font-weight:800;
-    color:#1f2937;
-    margin-bottom:25px;
-    padding-bottom:14px;
-    border-bottom:2px solid #edf1f7;
-}
-
-/* ===========================
-   WALLET
-=========================== */
-
-.wallet-status{
-    background:linear-gradient(135deg,#0ea5e9,#2563eb);
-    color:white;
-    border-radius:16px;
-    padding:22px;
-    font-size:1.08rem;
-    margin-bottom:25px;
-    box-shadow:0 10px 25px rgba(37,99,235,.25);
-}
-
-.wallet-status strong{
-    display:block;
-    margin-top:10px;
-    font-size:1.45rem;
-    font-weight:800;
-}
-
-/* ===========================
-   FORM
-=========================== */
-
-.charge-form{
-    display:flex;
-    gap:16px;
-    align-items:center;
-    flex-wrap:wrap;
-}
-
-.dashboard-input{
-    flex:1;
-    min-width:260px;
-
-    height:54px;
-
-    border:1px solid #d9e2ec;
-
-    border-radius:14px;
-
-    padding:0 18px;
-
-    font-size:15px;
-
-    transition:.3s;
-
-    background:#fafbfd;
-}
-
-.dashboard-input:focus{
-
-    outline:none;
-
-    border-color:#3b82f6;
-
-    background:white;
-
-    box-shadow:0 0 0 4px rgba(59,130,246,.12);
-
-}
-
-/* ===========================
-   BUTTONS
-=========================== */
-
-.btn{
-
-    border:none;
-
-    border-radius:14px;
-
-    padding:14px 22px;
-
-    font-size:15px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-    color:white;
-
-}
-
-.btn:hover{
-
-    transform:translateY(-2px);
-
-}
-
-.btn:active{
-
-    transform:scale(.96);
-
-}
-
-.btn-success{
-
-    background:linear-gradient(135deg,#22c55e,#16a34a);
-
-}
-
-.btn-success:hover{
-
-    box-shadow:0 12px 25px rgba(34,197,94,.3);
-
-}
-
-.btn-primary{
-
-    background:linear-gradient(135deg,#2563eb,#1d4ed8);
-
-}
-
-.btn-primary:hover{
-
-    box-shadow:0 12px 25px rgba(37,99,235,.35);
-
-}
-
-.btn-info{
-
-    background:linear-gradient(135deg,#06b6d4,#0891b2);
-
-}
-
-.btn-info:hover{
-
-    box-shadow:0 12px 25px rgba(6,182,212,.3);
-
-}
-
-/* ===========================
-   MESSAGE
-=========================== */
-
-.dashboard-message{
-
-    padding:18px 24px;
-
-    border-radius:15px;
-
-    font-weight:700;
-
-    animation:fadeDown .45s;
-
-}
-
-.success-msg{
-
-    background:#ecfdf5;
-
-    color:#15803d;
-
-    border:1px solid #bbf7d0;
-
-}
-
-.error-msg{
-
-    background:#fef2f2;
-
-    color:#dc2626;
-
-    border:1px solid #fecaca;
-
-}
-
-/* ===========================
-   EMPTY
-=========================== */
-
-.empty-state{
-
-    text-align:center;
-
-    color:#6b7280;
-
-    padding:40px 0;
-
-    font-size:17px;
-
-}
-
-/* ===========================
-   LOADING
-=========================== */
-
-.dashboard-loading{
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    min-height:60vh;
-
-    font-size:22px;
-
-    font-weight:700;
-
-}
-
-/* ===========================
-   ANIMATION
-=========================== */
-
-@keyframes fadeUp{
-
-from{
-
-opacity:0;
-
-transform:translateY(25px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
-@keyframes fadeDown{
-
-from{
-
-opacity:0;
-
-transform:translateY(-15px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-/*=====================================
-        DISCOUNT CARDS
-======================================*/
-
-.discount-list-card{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.discount-card{
-  background:#fafbff;
-  border:1px solid #e8eef8;
-  border-radius:18px;
-  padding:18px 22px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  transition:.35s;
-  position:relative;
-  overflow:hidden;
-  margin-bottom: 10px;
-}
-
-.discount-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  right:0;
-  width:6px;
-  height:100%;
-  background:linear-gradient(#2563eb,#38bdf8);
-}
-
-.discount-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 28px rgba(0,0,0,.08);
-  background:white;
-}
-
-.discount-item{
-  font-size:15px;
-  color:#475569;
-  line-height:1.9;
-}
-
-.discount-item strong{
-  color:#111827;
-}
-
-/*=====================================
-      TABLE
-======================================*/
-
-.table-responsive{
-  width:100%;
-  overflow-x:auto;
-  border-radius:18px;
-}
-
-.dashboard-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:760px;
-  background:white;
-}
-
-.dashboard-table thead{
-  background:linear-gradient(135deg,#2563eb,#3b82f6);
-  color:white;
-}
-
-.dashboard-table th{
-  padding:18px;
-  font-size:15px;
-  font-weight:700;
-  text-align:center;
-}
-
-.dashboard-table td{
-  padding:18px;
-  text-align:center;
-  border-bottom:1px solid #edf2f7;
-  transition:.25s;
-}
-
-.dashboard-table tbody tr{
-  transition:.3s;
-}
-
-.dashboard-table tbody tr:nth-child(even){
-  background:#fafcff;
-}
-
-.dashboard-table tbody tr:hover{
-  background:#eef6ff;
-}
-
-/*=====================================
-    DISCOUNT SECTION
-======================================*/
-
-.discount-section{
-  display:flex;
-  gap:15px;
-  margin-top:28px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.discount-section .dashboard-input{
-  flex:1;
-}
-
-/*=====================================
-    CHECKOUT
-======================================*/
-
-.checkout-section{
-
-  margin-top:30px;
-
-  background:#f8fbff;
-
-  border:1px solid #dbeafe;
-
-  border-radius:18px;
-
-  padding:22px;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  gap:20px;
-
-  flex-wrap:wrap;
-
-}
-
-.total-price{
-
-  font-size:20px;
-
-  font-weight:800;
-
-  color:#2563eb;
-
-}
-
-/*=====================================
-    STATUS
-======================================*/
-
-.status-success{
-
-  color:#16a34a;
-
-  font-weight:700;
-
-}
-
-/*=====================================
-    SCROLLBAR
-======================================*/
-
-.table-responsive::-webkit-scrollbar{
-
-  height:8px;
-
-}
-
-.table-responsive::-webkit-scrollbar-thumb{
-
-  background:#cbd5e1;
-
-  border-radius:20px;
-
-}
-
-.table-responsive::-webkit-scrollbar-thumb:hover{
-
-  background:#94a3b8;
-
-}
-
-/*=====================================
-    INPUT PLACEHOLDER
-======================================*/
-
-.dashboard-input::placeholder{
-
-  color:#94a3b8;
-
-}
-
-/*=====================================
-    BUTTON EFFECT
-======================================*/
-
-.btn{
-
-  position:relative;
-
-  overflow:hidden;
-
-}
-
-.btn::after{
-
-  content:"";
-
-  position:absolute;
-
-  width:0;
-
-  height:100%;
-
-  top:0;
-
-  right:0;
-
-  background:rgba(255,255,255,.18);
-
-  transition:.35s;
-
-}
-
-.btn:hover::after{
-
-  width:100%;
-
-}
-
-/*==================================
-        CARD ANIMATION
-===================================*/
-
-.dashboard-card{
-  opacity:0;
-  animation:cardShow .6s ease forwards;
-}
-
-.dashboard-card:nth-child(1){animation-delay:.08s;}
-.dashboard-card:nth-child(2){animation-delay:.18s;}
-.dashboard-card:nth-child(3){animation-delay:.28s;}
-.dashboard-card:nth-child(4){animation-delay:.38s;}
-
-@keyframes cardShow{
-
-  from{
-      opacity:0;
-      transform:translateY(35px);
+/* ==========================================================================
+   ۱. تنظیمات ساختاری و رنگی لوکس داشبورد
+   ========================================================================== */
+   :root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --success-color: #10b981;
+    --success-bg: #f0fdf4;
+    --info-color: #06b6d4;
+    --danger-color: #ef4444;
+    --bg-dashboard: #fafafa;
+    --surface-card: #ffffff;
+    --text-main: #0f172a;
+    --text-sub: #475569;
+    --border-delicate: #f1f5f9;
+    --radius-premium: 24px;
+    --radius-button: 14px;
+    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
-  to{
-      opacity:1;
-      transform:translateY(0);
+  
+  .dashboard-container {
+    direction: rtl;
+    background-color: var(--bg-dashboard);
+    min-height: 100vh;
+    padding: 2.5rem;
+    font-family: 'Vazirmatn', 'IRANSans', Tahoma, sans-serif;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
-
-}
-
-/*==================================
-      HOVER EFFECT
-===================================*/
-
-.dashboard-card{
-  position:relative;
-  overflow:hidden;
-}
-
-.dashboard-card::after{
-
-  content:"";
-
-  position:absolute;
-
-  top:-150%;
-
-  left:-50%;
-
-  width:40%;
-
-  height:350%;
-
-  background:rgba(255,255,255,.22);
-
-  transform:rotate(25deg);
-
-  transition:1s;
-
-}
-
-.dashboard-card:hover::after{
-
-  left:130%;
-
-}
-
-/*==================================
-      TABLE ANIMATION
-===================================*/
-
-.dashboard-table tbody tr{
-
-  animation:rowFade .45s ease;
-
-}
-
-@keyframes rowFade{
-
-  from{
-
-      opacity:0;
-
-      transform:translateY(12px);
-
+  
+  /* ==========================================================================
+     ۲. باکس اعلان پیام‌های وضعیت سیستم (Toast Alert Style)
+     ========================================================================== */
+  .dashboard-message {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-button);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: right;
+    animation: slideDownFadeIn 0.5s ease-out;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
   }
-
-  to{
-
-      opacity:1;
-
-      transform:none;
-
+  
+  .success-msg {
+    background-color: var(--success-bg);
+    color: var(--success-color);
+    border-right: 4px solid var(--success-color);
   }
-
-}
-
-/*==================================
-      INPUT
-===================================*/
-
-.dashboard-input{
-
-  transition:
-      border .25s,
-      box-shadow .25s,
-      transform .25s;
-
-}
-
-.dashboard-input:focus{
-
-  transform:translateY(-2px);
-
-}
-
-/*==================================
-      DISCOUNT CARD
-===================================*/
-
-.discount-card{
-
-  cursor:pointer;
-
-}
-
-.discount-card:hover{
-
-  border-color:#3b82f6;
-
-}
-
-.discount-item{
-
-  transition:.25s;
-
-}
-
-.discount-card:hover .discount-item{
-
-  transform:translateX(-3px);
-
-}
-
-/*==================================
-      BUTTON
-===================================*/
-
-.btn{
-
-  letter-spacing:.3px;
-
-}
-
-.btn:hover{
-
-  filter:brightness(1.03);
-
-}
-
-/*==================================
-      MOBILE
-===================================*/
-
-@media(max-width:992px){
-
-.dashboard-container{
-
-width:94%;
-
-margin:25px auto;
-
-}
-
-.dashboard-card{
-
-padding:22px;
-
-}
-
-.checkout-section{
-
-flex-direction:column;
-
-align-items:stretch;
-
-}
-
-.total-price{
-
-text-align:center;
-
-font-size:18px;
-
-}
-
-.btn{
-
-width:100%;
-
-}
-
-.discount-section{
-
-flex-direction:column;
-
-}
-
-.dashboard-input{
-
-width:100%;
-
-}
-
-}
-
-@media(max-width:768px){
-
-.card-title{
-
-font-size:20px;
-
-}
-
-.wallet-status{
-
-padding:18px;
-
-}
-
-.wallet-status strong{
-
-font-size:24px;
-
-}
-
-.dashboard-table{
-
-min-width:650px;
-
-}
-
-.discount-card{
-
-grid-template-columns:1fr;
-
-}
-
-}
-
-@media(max-width:480px){
-
-.dashboard-container{
-
-gap:20px;
-
-}
-
-.dashboard-card{
-
-border-radius:16px;
-
-padding:18px;
-
-}
-
-.dashboard-table th,
-
-.dashboard-table td{
-
-padding:14px;
-
-font-size:13px;
-
-}
-
-.wallet-status{
-
-font-size:14px;
-
-}
-
-.total-price{
-
-font-size:17px;
-
-}
-
-}
-
-/*==================================
-      SCROLL FIX
-===================================*/
-
-html{
-
-scroll-behavior:smooth;
-
-overflow-x:hidden;
-
-}
-
-body{
-
-overflow-x:hidden;
-
-}
-
-.dashboard-container{
-
-overflow:hidden;
-
-}
-
-/*==================================
-      SELECTION
-===================================*/
-
-::selection{
-
-background:#2563eb;
-
-color:white;
-
-}
+  
+  .error-msg {
+    background-color: #fef2f2;
+    color: var(--danger-color);
+    border-right: 4px solid var(--danger-color);
+  }
+  
+  /* ==========================================================================
+     ۳. بیس کارت‌های داشبورد (Dashboard Cards)
+     ========================================================================== */
+  .dashboard-card {
+    background: var(--surface-card);
+    border-radius: var(--radius-premium);
+    padding: 2.2rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.01);
+    animation: cardPulseEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .card-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
+    position: relative;
+    padding-bottom: 0.8rem;
+  }
+  
+  .card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), transparent);
+    border-radius: 2px;
+  }
+  
+  /* ==========================================================================
+     ۴. وضعیت مالی و فرم افزایش موجودی
+     ========================================================================== */
+  .wallet-status {
+    font-size: 1.1rem;
+    color: var(--text-sub);
+  }
+  
+  .wallet-status strong {
+    color: var(--success-color);
+    font-size: 1.3rem;
+    background: var(--success-bg);
+    padding: 0.2rem 0.8rem;
+    border-radius: 10px;
+    margin: 0 0.4rem;
+  }
+  
+  .charge-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .dashboard-input {
+    flex: 1;
+    min-width: 260px;
+    padding: 0.9rem 1.2rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-delicate);
+    background-color: #f8fafc;
+    border-radius: var(--radius-button);
+    outline: none;
+    transition: var(--transition-smooth);
+  }
+  
+  .dashboard-input:focus {
+    background-color: #fff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  }
+  
+  /* ==========================================================================
+     ۵. کارت‌های کوپن تخفیف لوکس (Tear-off Coupon Vouchers)
+     ========================================================================== */
+  .discount-list-card + .dashboard-card {
+    /* هدف قرار دادن کانتینر کدهای تخفیف */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+  
+  .discount-list-card + .dashboard-card .card-title {
+    grid-column: 1 / -1;
+  }
+  
+  .discount-card {
+    background: #fafafa;
+    border: 1px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 1.2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: var(--transition-smooth);
+  }
+  
+  .discount-card:hover {
+    transform: scale(1.02);
+    border-color: var(--primary-color);
+    background-color: #f5f7ff;
+  }
+  
+  .discount-item {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .discount-item strong {
+    color: var(--text-main);
+  }
+  
+  /* ==========================================================================
+     ۶. سبد خرید و فاکتورها (ساختار منعطف و بدون اسکرول)
+     ========================================================================== */
+  .table-responsive {
+    width: 100%;
+    overflow: hidden; /* حذف هرگونه اسکرول ناخواسته */
+  }
+  
+  .dashboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.8rem;
+    text-align: right;
+  }
+  
+  .dashboard-table th {
+    color: var(--text-sub);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .dashboard-table tbody tr {
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    transition: var(--transition-smooth);
+  }
+  
+  .dashboard-table tbody tr:hover {
+    transform: translateX(-4px);
+    background-color: #fdfdfd;
+  }
+  
+  .dashboard-table td {
+    padding: 1.2rem 1rem;
+    border-top: 1px solid var(--border-delicate);
+    border-bottom: 1px solid var(--border-delicate);
+    font-size: 0.95rem;
+  }
+  
+  .dashboard-table td:first-child {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border-left: none;
+    font-weight: bold;
+  }
+  
+  .dashboard-table td:last-child {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+    border-right: none;
+  }
+  
+  .empty-state {
+    text-align: center;
+    color: var(--text-sub);
+    padding: 3rem 0;
+    font-size: 0.95rem;
+  }
+  
+  /* بخش اعمال کد تخفیف انتهای سبد */
+  .discount-section {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    max-width: 400px;
+  }
+  
+  /* تسویه نهایی */
+  .checkout-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border-delicate);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .total-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  
+  .status-success {
+    color: var(--success-color);
+    font-weight: 700;
+  }
+  
+  /* ==========================================================================
+     ۷. دکمه‌های پرمیوم با فیدبک لمسی
+     ========================================================================== */
+  .btn {
+    padding: 0.8rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  
+  .btn-success {
+    background: linear-gradient(135deg, var(--success-color), #34d399);
+    color: white;
+  }
+  
+  .btn-success:hover {
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #818cf8);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+    transform: translateY(-2px);
+  }
+  
+  .btn-info {
+    background: #f1f5f9;
+    color: var(--text-main);
+    border: 1px solid #cbd5e1;
+  }
+  
+  .btn-info:hover {
+    background: var(--text-main);
+    color: white;
+  }
+  
+  /* دکمه حذف سطل آشغال ظریف داخل جدول */
+  .dashboard-table .btn-primary {
+    background: #fff5f5;
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .dashboard-table .btn-primary:hover {
+    background: var(--danger-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  }
+  
+  /* بارگذاری صفحه */
+  .dashboard-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--bg-dashboard);
+    color: var(--text-sub);
+  }
+  
+  /* ==========================================================================
+     ۸. انیمیشن‌های ظریف سیستم
+     ========================================================================== */
+  @keyframes cardPulseEntrance {
+    0% {
+      opacity: 0;
+      transform: scale(0.98) translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  @keyframes slideDownFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ==========================================================================
+     ۹. ریسپانسیوسازی هوشمند موبایل (تبدیل به مینی‌کارت بدون فعال شدن اسکرول)
+     ========================================================================== */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 1rem;
+    }
+    
+    .dashboard-card {
+      padding: 1.5rem;
+    }
+  
+    .dashboard-table, 
+    .dashboard-table thead, 
+    .dashboard-table tbody, 
+    .dashboard-table th, 
+    .dashboard-table td, 
+    .dashboard-table tr {
+      display: block;
+      width: 100%;
+    }
+  
+    .dashboard-table thead {
+      display: none;
+    }
+  
+    .dashboard-table tbody tr {
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-delicate);
+      border-radius: 16px;
+      padding: 0.8rem;
+      box-sizing: border-box;
+    }
+  
+    .dashboard-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.5rem;
+      border: none !important;
+      border-bottom: 1px dashed #f8fafc !important;
+    }
+  
+    .dashboard-table td:last-child {
+      border-bottom: none !important;
+    }
+  
+    /* بازسازی عناوین سطرها در حالت موبایل */
+    .dashboard-table tbody tr td::before {
+      font-weight: 700;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+  
+    /* کانتینر سبد خرید */
+    .dashboard-table:not(:has(.status-success)) td:nth-child(1)::before { content: "📦 کالا:"; }
+    .dashboard-table:not(:has(.status-success)) td:nth-child(2)::before { content: "💰 قیمت واحد:"; }
+    .dashboard-table:not(:has(.status-success)) td:nth-child(3)::before { content: "🔢 تعداد:"; }
+    .dashboard-table:not(:has(.status-success)) td:nth-child(4)::before { content: "📊 جمع کل:"; }
+    .dashboard-table:not(:has(.status-success)) td:nth-child(5)::before { content: "🛠 عملیات:"; }
+  
+    /* کانتینر تاریخچه خرید */
+    .dashboard-table:has(.status-success) td:nth-child(1)::before { content: "🧾 شماره فاکتور:"; }
+    .dashboard-table:has(.status-success) td:nth-child(2)::before { content: "📅 تاریخ ثبت:"; }
+    .dashboard-table:has(.status-success) td:nth-child(3)::before { content: "💳 مبلغ پرداختی:"; }
+    .dashboard-table:has(.status-success) td:nth-child(4)::before { content: "🔍 وضعیت:"; }
+  }

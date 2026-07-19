@@ -1,5 +1,4 @@
-0,Galaxy Watch 6,Samsung,نقره‌ای,12000000.00,8,TechShop
-1,گوشی,سامسونگ,آبی,12.00,2,fafa2020sh@gmail.com
-2,گوشی,سامسونگ,زرد,13.00,3,fafa2020sh@gmail.com
-3,گوشی,سامسونگ,قرمز,14.00,4,fafa2020sh@gmail.com
-4,گوشی,سامسونگ,بنفشbg,20.00,7,fafa2020sh@gmail.com
+50,iPad Pro,Apple
+60,Apple Watch 9,Apple
+51,Galaxy Tab S9,Samsung
+62,Galaxy Watch 6,Samsung
