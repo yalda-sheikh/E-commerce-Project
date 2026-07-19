@@ -457,6 +457,7 @@ public class MainServer {
         });
 
         server.createContext("/api/search", (new SearchHandler(allProductItems)));
+        server.createContext("/api/seller-discounts", (new SellerDiscountHandler(allDiscountCodes)));
         // ۳. کانتکست دریافت لیست محصولات
         // مدیریت مسیر /api/products برای ارسال لیست تمام کالاهای موجود در انبار به کامپوننت داشبورد خرید
         server.createContext("/api/products", new HttpHandler() {
@@ -1634,13 +1635,15 @@ public class MainServer {
                     double value = Double.parseDouble(parts[2]);
                     double minimumPrice = Double.parseDouble(parts[3]);
                     boolean active = Boolean.parseBoolean(parts[4]);
+                    String sellerName = parts[5];
 
                     DiscountCode discount = new DiscountCode(
                             code,
                             discountType,
                             value,
                             minimumPrice,
-                            active
+                            active,sellerName
+
                     );
 
                     allDiscountCodes.add(discount);

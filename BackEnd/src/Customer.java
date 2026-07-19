@@ -214,7 +214,8 @@ public class Customer extends User {
                 "PERCENT",
                 5,
                 0,
-                true
+                true,
+                "ADMIN"
         );
 
         MainServer.allDiscountCodes.add(newDiscount);

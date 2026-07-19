@@ -20,6 +20,19 @@
     gap:15px;
     margin-bottom:35px;
 }
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: right;
+  }
 
 .seller-page h3{
     margin:0 0 10px;

@@ -61,51 +61,72 @@ public class DiscountHandler implements HttpHandler {
         }
 
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            try {
+                InputStream is = exchange.getRequestBody();
 
-            InputStream is = exchange.getRequestBody();
+                String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                System.out.println("BODY = " + body);
 
-            String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                String code = body.split("\"code\":\"")[1].split("\"")[0];
 
-            String code = body.split("\"code\":\"")[1].split("\"")[0];
+                String discountType = body.split("\"discountType\":\"")[1].split("\"")[0];
 
-            String discountType = body.split("\"discountType\":\"")[1].split("\"")[0];
+                double value = Double.parseDouble(
+                        body.split("\"value\":")[1].split(",")[0]
+                );
 
-            double value = Double.parseDouble(
-                    body.split("\"value\":")[1].split(",")[0]
-            );
+                double minimumPrice = Double.parseDouble(
+                        body.split("\"minimumPrice\":")[1].split(",")[0]
+                );
 
-            double minimumPrice = Double.parseDouble(
-                    body.split("\"minimumPrice\":")[1].split(",")[0]
-            );
+                boolean active = Boolean.parseBoolean(
+                        body.split("\"active\":")[1].split("}")[0]
+                );
+                String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
 
-            boolean active = Boolean.parseBoolean(
-                    body.split("\"active\":")[1].split("}")[0]
-            );
+                DiscountCode discount = new DiscountCode(
+                        code,
+                        discountType,
+                        value,
+                        minimumPrice,
+                        active,
+                        sellerName
 
-            DiscountCode discount = new DiscountCode(
-                    code,
-                    discountType,
-                    value,
-                    minimumPrice,
-                    active
-            );
+                );
 
-            allDiscountCodes.add(discount);
-            MainServer.saveData();
-            String responseJson =
-                    "{\"message\":\"Discount Created Successfully\"}";
+                allDiscountCodes.add(discount);
+                MainServer.saveData();
+                String responseJson =
+                        "{\"message\":\"Discount Created Successfully\"}";
 
-            byte[] response = responseJson.getBytes(StandardCharsets.UTF_8);
+                byte[] response = responseJson.getBytes(StandardCharsets.UTF_8);
 
-            exchange.sendResponseHeaders(201, response.length);
+                exchange.sendResponseHeaders(201, response.length);
 
-            OutputStream os = exchange.getResponseBody();
+                OutputStream os = exchange.getResponseBody();
 
-            os.write(response);
+                os.write(response);
 
-            os.close();
+                os.close();
 
-            return;
+                return;
+
+            }
+            catch (Exception e) {
+
+                e.printStackTrace();
+
+                String error = "{\"error\":\"" + e.getMessage() + "\"}";
+                byte[] response = error.getBytes(StandardCharsets.UTF_8);
+
+                exchange.sendResponseHeaders(500, response.length);
+
+                OutputStream os = exchange.getResponseBody();
+                os.write(response);
+                os.close();
+            }
+
+
         }
 
         exchange.sendResponseHeaders(405, -1);

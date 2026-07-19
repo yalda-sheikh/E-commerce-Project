@@ -14,7 +14,7 @@ export default function SellerDashboard({ user }) {
 
       <AddProductForm user={user} />
 
-      <Discount />
+      <Discount  user={user}/>
 
     </div>
   );

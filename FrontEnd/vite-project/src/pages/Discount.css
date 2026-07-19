@@ -5,7 +5,7 @@
 
 .discount-page{
 
-    width:min(600px,92%);
+    width:min(90%);
 
     margin:50px auto;
 
@@ -19,6 +19,7 @@
 
 
 .discount-form-card{
+
 
     background:white;
 
@@ -235,3 +236,114 @@ transform:translateY(0);
 }
 
 }
+/* ===========================
+   Discount Section
+=========================== */
+
+.discount-list {
+    margin-top: 40px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  .discount-list-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .discount-empty {
+    text-align: center;
+    font-size: 17px;
+    color: #777;
+    padding: 30px 0;
+  }
+  
+  /* ===========================
+     Table
+  =========================== */
+  
+  .discount-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 14px;
+  }
+  
+  .discount-table thead {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .discount-table th {
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  
+  .discount-table td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #ececec;
+    font-size: 14px;
+  }
+  
+  .discount-table tbody tr {
+    transition: 0.25s;
+  }
+  
+  .discount-table tbody tr:hover {
+    background: #f8fbff;
+  }
+  
+  /* ===========================
+     Buttons
+  =========================== */
+  
+  .discount-table .btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: .25s;
+  }
+  
+  .discount-table .btn-primary {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .discount-table .btn-primary:hover {
+    background: #1d4ed8;
+  }
+  
+  .discount-table .btn-danger {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .discount-table .btn-danger:hover {
+    background: #dc2626;
+  }
+  
+  /* ===========================
+     Responsive
+  =========================== */
+  
+  @media (max-width: 900px) {
+  
+    .discount-list {
+      overflow-x: auto;
+    }
+  
+    .discount-table {
+      min-width: 800px;
+    }
+  
+  }

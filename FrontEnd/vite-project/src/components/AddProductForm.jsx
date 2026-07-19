@@ -239,39 +239,67 @@ if (
       <form onSubmit={handleSubmit}>
         <h3>➕ افزودن محصول جدید (داشبورد فروشنده: {user?.username})</h3>
 
-        {/* 💡 اینپوت دستی itemId کلاً حذف شد تا سیستم خودش داینامیک بسازه */}
-        <input type="text" name="name" placeholder="نام محصول" onChange={handleGeneralChange} required   value={generalFields.name || ""}/>
-        <input type="text" name="brand" placeholder="برند" onChange={handleGeneralChange} required   value={generalFields.brand || ""}/>
-       {/* =================== حالت افزودن محصول =================== */}
+        <div className="input-group">
+  <label>نام محصول</label>
+  <input
+    className="form-input"
+    type="text"
+    name="name"
+    onChange={handleGeneralChange}
+    required
+    value={generalFields.name || ""}
+  />
+</div>
+
+<div className="input-group">
+  <label>برند</label>
+  <input
+    className="form-input"
+    type="text"
+    name="brand"
+    onChange={handleGeneralChange}
+    required
+    value={generalFields.brand || ""}
+  />
+</div>
 
 {!editingId && (
   <>
-    <input
-      type="text"
-      name="color"
-      placeholder="رنگ"
-      onChange={handleVariantChange}
-      value={currentVariant.color}
-      required
-    />
+    <div className="input-group">
+  <label>رنگ</label>
+  <input
+    className="form-input"
+    type="text"
+    name="color"
+    onChange={handleVariantChange}
+    value={currentVariant.color}
+    required
+  />
+</div>
 
-    <input
-      type="number"
-      name="price"
-      placeholder="قیمت"
-      onChange={handleVariantChange}
-      value={currentVariant.price}
-      required
-    />
+<div className="input-group">
+  <label>قیمت</label>
+  <input
+    className="form-input"
+    type="number"
+    name="price"
+    onChange={handleVariantChange}
+    value={currentVariant.price}
+    required
+  />
+</div>
 
-    <input
-      type="number"
-      name="stock"
-      placeholder="موجودی انبار"
-      onChange={handleVariantChange}
-      value={currentVariant.stock}
-      required
-    />
+<div className="input-group">
+  <label>موجودی انبار</label>
+  <input
+    className="form-input"
+    type="number"
+    name="stock"
+    onChange={handleVariantChange}
+    value={currentVariant.stock}
+    required
+  />
+</div>
 
     <button
       className="btn btn-primary"
@@ -322,29 +350,41 @@ if (
           marginBottom: "10px"
         }}
       >
-        <input
-          type="text"
-          value={v.color}
-          onChange={(e) =>
-            handleVariantEdit(index, "color", e.target.value)
-          }
-        />
+<div className="input-group">
+  <label>رنگ</label>
+  <input
+    className="form-input"
+    type="text"
+    value={v.color}
+    onChange={(e) =>
+      handleVariantEdit(index, "color", e.target.value)
+    }
+  />
+</div>
 
-        <input
-          type="number"
-          value={v.price}
-          onChange={(e) =>
-            handleVariantEdit(index, "price", e.target.value)
-          }
-        />
+<div className="input-group">
+  <label>قیمت</label>
+  <input
+    className="form-input"
+    type="number"
+    value={v.price}
+    onChange={(e) =>
+      handleVariantEdit(index, "price", e.target.value)
+    }
+  />
+</div>
 
-        <input
-          type="number"
-          value={v.stock}
-          onChange={(e) =>
-            handleVariantEdit(index, "stock", e.target.value)
-          }
-        />
+<div className="input-group">
+  <label>موجودی</label>
+  <input
+    className="form-input"
+    type="number"
+    value={v.stock}
+    onChange={(e) =>
+      handleVariantEdit(index, "stock", e.target.value)
+    }
+  />
+</div>
       </div>
     ))}
   </>
