@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import "./ProductDetail.css";
 
-function ProductDetail() {
+function ProductDetail({user}) {
 
   const { id } = useParams();
   const [selectedVariant, setSelectedVariant] = useState(null);
 
   const [product, setProduct] = useState(null);
-
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState("");
@@ -38,6 +38,32 @@ function ProductDetail() {
       });
 
   }, [id]);
+  const handleAddToCart = (itemId) => {
+    if (!selectedVariant) return;
+    if (!user) {
+      alert('❌ برای اضافه کردن کالا به سبد خرید، ابتدا باید وارد حساب خود شوید!');
+      return;
+    }
+
+    fetch('http://localhost:8080/api/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+      body: JSON.stringify({ userId: user.userId, itemId: itemId, quantity: 1 })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'خطا در اضافه کردن به سبد خرید');
+        return data;
+      })
+      .then((data) => {
+        setMessage(data.message || "✅ محصول با موفقیت اضافه شد.");
+        setTimeout(() => setMessage(''), 3000);
+      })
+      .catch((err) => {
+        setMessage(`❌ ${err.message}`);
+        setTimeout(() => setMessage(''), 4000);
+      });
+  };
 
   if (loading) {
     return <h2 className="loading">در حال بارگذاری...</h2>;
@@ -48,6 +74,7 @@ function ProductDetail() {
   }
 
   return (
+    
     <div className="product-detail">
 
       <div className="product-card">
@@ -70,7 +97,7 @@ function ProductDetail() {
           <div className="colors">
 
   <h4 className="color-title">انتخاب رنگ</h4>
-
+  {message && <div className="home-alert">{message}</div>}
   <div className="color-list">
     {product.variants?.map((variant) => (
       <button
@@ -108,8 +135,12 @@ function ProductDetail() {
   </span>
 </p>
 
-          <button className="buy-btn">
-            افزودن به سبد خرید
+          <button className="buy-btn"
+                            onClick={(e) => { 
+                              handleAddToCart(selectedVariant.itemId) ;
+                            }}
+                              disabled={selectedVariant.stock === 0}>
+          {selectedVariant.stock > 0 ? '🛒 افزودن' : 'ناموجود'}
           </button>
 
         </div>

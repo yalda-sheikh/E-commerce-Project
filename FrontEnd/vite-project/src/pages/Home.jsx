@@ -63,7 +63,7 @@ function Home({ user }) {
 }
 
   if (loading) return <h3 className="loading-state">⏳ در حال بارگذاری محصولات...</h3>;
-  console.log(products);
+
   return (
     <div className="home-container">
       <h2 className="home-title">🏪 ویترین فروشگاه دیجیتال</h2>

@@ -274,7 +274,8 @@ const handleRemove = (itemId) => {
                 <tbody>
                   {cartItems.map((item) => (
                     <tr key={item.itemId}>
-                      <td>{item.name}</td>
+                      <td>{item.name}-{item.color} </td>
+
                       <td>{item.price.toLocaleString()} تومان</td>
                       <td>{item.quantity} عدد</td>
                       <td>{(item.price * item.quantity).toLocaleString()} تومان</td>

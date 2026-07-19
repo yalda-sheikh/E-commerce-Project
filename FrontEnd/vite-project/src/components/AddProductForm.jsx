@@ -72,22 +72,27 @@ if (
 }
     // جفت‌وجور کردن دیتای نهایی
     const finalPayload = {
-      itemId: String(automaticItemId), // ✨ ارسال شناسه اتوماتیک و یکتا برای راضی نگه‌داشتن جاوا
       ...generalFields,
       variants: finalVariants,
-      sellerName: user?.username || 'نامشخص', 
-      productType: productType,
-      ...(productType === 'LAPTOP' && {
+      sellerName: user?.username || "نامشخص",
+      productType,
+    
+      ...(productType === "LAPTOP" && {
         ram: laptopFields.ram,
         storage: laptopFields.storage,
         graphics: laptopFields.graphics
       }),
-      ...(productType === 'MOBILE' && {
+    
+      ...(productType === "MOBILE" && {
         cameraMP: String(mobileFields.cameraMP),
         batteryMah: String(mobileFields.batteryMah),
-        is5G: String(mobileFields.is5G) 
+        is5G: String(mobileFields.is5G)
       })
     };
+    
+    if (!editingId) {
+      finalPayload.itemId = String(automaticItemId);
+    }
   
     try {
 
@@ -185,10 +190,13 @@ if (
     setGeneralFields({
       name: product.name || "",
       brand: product.brand || "",
-      color: product.color || "",
-      price: product.price || "",
-      stock: product.stock || ""
     });
+    setVariants(product.variants || [])
+    setCurrentVariant({
+      color : "",
+      price:"",
+      stock : ""
+    })
   
     setProductType(product.productType || "BASE");
   
@@ -214,6 +222,18 @@ if (
   
     }
   };
+  const handleVariantEdit = (index, field, value) => {
+
+    const updatedVariants = [...variants];
+  
+    updatedVariants[index] = {
+      ...updatedVariants[index],
+      [field]: value
+    };
+  
+    setVariants(updatedVariants);
+  
+  };
   return (
     <div className="seller-page">
       <form onSubmit={handleSubmit}>
@@ -222,48 +242,113 @@ if (
         {/* 💡 اینپوت دستی itemId کلاً حذف شد تا سیستم خودش داینامیک بسازه */}
         <input type="text" name="name" placeholder="نام محصول" onChange={handleGeneralChange} required   value={generalFields.name || ""}/>
         <input type="text" name="brand" placeholder="برند" onChange={handleGeneralChange} required   value={generalFields.brand || ""}/>
-        <input type="text" name="color" placeholder="رنگ" onChange={handleVariantChange} required  value={currentVariant.color || ""}/>
-        <input type="number" name="price" placeholder="قیمت" onChange={handleVariantChange} required  value={currentVariant.price || ""} />
-        <input type="number" name="stock" placeholder="موجودی انبار" onChange={handleVariantChange} required   value={currentVariant.stock || ""}/>
-        <button className='btn btn-primary'
-    type="button"
-    onClick={() => {
+       {/* =================== حالت افزودن محصول =================== */}
+
+{!editingId && (
+  <>
+    <input
+      type="text"
+      name="color"
+      placeholder="رنگ"
+      onChange={handleVariantChange}
+      value={currentVariant.color}
+      required
+    />
+
+    <input
+      type="number"
+      name="price"
+      placeholder="قیمت"
+      onChange={handleVariantChange}
+      value={currentVariant.price}
+      required
+    />
+
+    <input
+      type="number"
+      name="stock"
+      placeholder="موجودی انبار"
+      onChange={handleVariantChange}
+      value={currentVariant.stock}
+      required
+    />
+
+    <button
+      className="btn btn-primary"
+      type="button"
+      onClick={() => {
 
         if (
-            !currentVariant.color ||
-            !currentVariant.price ||
-            !currentVariant.stock
+          !currentVariant.color ||
+          !currentVariant.price ||
+          !currentVariant.stock
         ) {
-            alert("اطلاعات رنگ را کامل وارد کنید.");
-            return;
+          alert("اطلاعات رنگ را کامل وارد کنید.");
+          return;
         }
 
-        setVariants([
-            ...variants,
-            currentVariant
-        ]);
+        setVariants([...variants, currentVariant]);
 
         setCurrentVariant({
-            color: "",
-            price: "",
-            stock: ""
+          color: "",
+          price: "",
+          stock: ""
         });
 
-    }}
->
-    ➕ افزودن رنگ
-</button>
-{variants.map((v, index) => (
+      }}
+    >
+      ➕ افزودن رنگ
+    </button>
 
-<div key={index}>
+    {variants.map((v, index) => (
+      <div key={index}>
+        {v.color} | {v.price} | {v.stock}
+      </div>
+    ))}
+  </>
+)}
+{/* =================== حالت ویرایش محصول =================== */}
 
-    {v.color} |
-    {v.price} |
-    {v.stock}
+{editingId && (
+  <>
+    <h4>رنگ‌های محصول</h4>
 
-</div>
+    {variants.map((v , index) => (
+      <div
+        key={v.itemId}
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginBottom: "10px"
+        }}
+      >
+        <input
+          type="text"
+          value={v.color}
+          onChange={(e) =>
+            handleVariantEdit(index, "color", e.target.value)
+          }
+        />
 
-))}
+        <input
+          type="number"
+          value={v.price}
+          onChange={(e) =>
+            handleVariantEdit(index, "price", e.target.value)
+          }
+        />
+
+        <input
+          type="number"
+          value={v.stock}
+          onChange={(e) =>
+            handleVariantEdit(index, "stock", e.target.value)
+          }
+        />
+      </div>
+    ))}
+  </>
+)}
         <label>نوع محصول:</label>
         <select value={productType} onChange={(e) => setProductType(e.target.value)}>
           <option value="BASE">محصول معمولی (ساده)</option>

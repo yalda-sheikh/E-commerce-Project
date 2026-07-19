@@ -97,6 +97,7 @@ public class MainServer {
                             // ساخت ساختار آبجکت JSON برای هر آیتم سبد خرید
                             jsonBuilder.append("{");
                             jsonBuilder.append("\"itemId\":").append(item.getItemId()).append(",");
+                            jsonBuilder.append("\"color\":\"").append(item.color).append("\",");
                             jsonBuilder.append("\"name\":\"").append(productName).append("\",");
                             jsonBuilder.append("\"price\":").append(item.getPriceAfterDiscount()).append(",");
                             jsonBuilder.append("\"quantity\":").append(quantity);
@@ -915,8 +916,36 @@ public class MainServer {
                         }
 
                         String jsonBody = body.toString();
+                        Gson gson = new Gson();
+
+                        ProductRequest request =
+                                gson.fromJson(jsonBody, ProductRequest.class);
+
+                        String name = request.getName();
+                        String brand = request.getBrand();
+                        for (VariantRequest variant : request.getVariants()) {
+
+                            for (ProductItem item : allProductItems) {
+
+                                if (item.getItemId() == variant.getItemId()) {
+
+                                    item.setColor(variant.getColor());
+
+                                    item.setPrice(variant.getPrice());
+
+                                    item.setStock(variant.getStock());
+
+                                    break;
+                                }
+
+                            }
+
+                        }
 
                         ProductItem foundItem = null;
+
+
+
 
                         for (ProductItem item : allProductItems) {
                             if (item.getItemId() == itemId) {
@@ -939,24 +968,6 @@ public class MainServer {
                             return;
                         }
 
-                        // استخراج اطلاعات جدید
-                        String name = extractJsonValue(jsonBody, "name");
-                        String brand = extractJsonValue(jsonBody, "brand");
-                        String color = extractJsonValue(jsonBody, "color");
-
-                        double price = Double.parseDouble(
-                                extractJsonValue(jsonBody, "price")
-                        );
-
-                        int stock = Integer.parseInt(
-                                extractJsonValue(jsonBody, "stock")
-                        );
-
-                        // آپدیت ProductItem
-                        foundItem.setColor(color);
-                        foundItem.setPrice(price);
-                        foundItem.setStock(stock);
-
                         // آپدیت Product
                         foundItem.getProduct().setName(name);
                         foundItem.getProduct().setBrand(brand);
@@ -966,19 +977,11 @@ public class MainServer {
 
                             Laptop laptop = (Laptop) foundItem.getProduct();
 
-                            laptop.setRamSize(
-                                    Integer.parseInt(extractJsonValue(jsonBody, "ram"))
-                            );
+                            laptop.setRamSize(request.getRam());
 
-                            laptop.setStorage(
-                                    Integer.parseInt(extractJsonValue(jsonBody, "storage"))
-                            );
+                            laptop.setStorage(request.getStorage());
 
-                            laptop.setGraphics(
-                                    Boolean.parseBoolean(
-                                            extractJsonValue(jsonBody, "graphics")
-                                    )
-                            );
+                            laptop.setGraphics(request.isGraphics());
                         }
 
                         // اگر موبایل بود
@@ -986,19 +989,11 @@ public class MainServer {
 
                             Mobile mobile = (Mobile) foundItem.getProduct();
 
-                            mobile.setCameraMP(
-                                    Integer.parseInt(extractJsonValue(jsonBody, "cameraMP"))
-                            );
+                            mobile.setCameraMP(request.getCameraMP());
 
-                            mobile.setBatteryMah(
-                                    Integer.parseInt(extractJsonValue(jsonBody, "batteryMah"))
-                            );
+                            mobile.setBatteryMah(request.getBatteryMah());
 
-                            mobile.set5G(
-                                    Boolean.parseBoolean(
-                                            extractJsonValue(jsonBody, "is5G")
-                                    )
-                            );
+                            mobile.set5G(request.isIs5G());
                         }
                         try (
                                 PrintWriter writer = new PrintWriter(

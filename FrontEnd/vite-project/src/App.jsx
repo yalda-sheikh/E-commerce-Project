@@ -64,7 +64,7 @@ function App() {
               )
             } 
           />
-           <Route path="/product/:id" element={<ProductDetail />} />
+           <Route path="/product/:id" element={<ProductDetail  user={user}/>}/>
         </Routes>
       </main>
     </div>
