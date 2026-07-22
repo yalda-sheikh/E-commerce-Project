@@ -27,6 +27,13 @@ const createDiscount = () => {
         alert("کاربر هنوز بارگذاری نشده است.");
         return;
     }
+    console.log({
+        code,
+        discountType,
+        value,
+        minimumPrice,
+        active
+    });
 
     fetch("http://localhost:8080/api/discount",{
         method : "post",
@@ -55,9 +62,57 @@ const createDiscount = () => {
     .catch(err => console.log(err));
 
 }
-// const updateDiscount = () => {
-//     ...
-// }
+const updateDiscount = () => {
+
+    fetch("http://localhost:8080/api/seller-discounts", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            code,
+            discountType,
+            value: Number(value),
+            minimumPrice: Number(minimumPrice),
+            active,
+            sellerName: user.username
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+
+            alert(data.message);
+
+            loadDiscounts();
+
+            setEditingDiscount(null);
+
+            setCode("");
+            setDiscountType("PERCENT");
+            setValue("");
+            setMinimumPrice("");
+            setActive(true);
+
+        })
+        .catch(err => console.log(err));
+
+};
+const deleteDiscount = (code) => {
+
+    fetch(`http://localhost:8080/api/seller-discounts?code=${code}&sellerName=${user.username}`, {
+        method: "DELETE"
+    })
+        .then(res => res.json())
+        .then(data => {
+
+            alert(data.message);
+
+            loadDiscounts();
+
+        })
+        .catch(err => console.log(err));
+
+};
 return(
     <div className="discount-page">
 
@@ -129,14 +184,12 @@ return(
 
 
 
-            <button 
-                className="discount-submit-btn"
-                onClick={createDiscount}
-            >
-                {editingDiscount ? "💾 ذخیره تغییرات" : "➕ ثبت کد تخفیف"}
-
-
-            </button>
+            <button
+  className="discount-submit-btn"
+  onClick={editingDiscount ? updateDiscount : createDiscount}
+>
+  {editingDiscount ? "💾 ذخیره تغییرات" : "➕ ثبت کد تخفیف"}
+</button>
 
         </div>
         <div className="discount-list">
@@ -176,13 +229,13 @@ return(
           <td>{discount.code}</td>
 
           <td>
-            {discount.type === "PERCENT"
+            {discount.discountType === "PERCENT"
               ? "درصدی"
               : "مبلغ ثابت"}
           </td>
 
           <td>
-            {discount.type === "PERCENT"
+            {discount.discountType === "PERCENT"
               ? `${discount.value}%`
               : `${discount.value.toLocaleString()} تومان`}
           </td>
@@ -215,13 +268,7 @@ return(
           <td>
             <button
               className="btn btn-danger"
-              onClick={() =>
-                setDiscounts(
-                  discounts.filter(
-                    d => d.code !== discount.code
-                  )
-                )
-              }
+              onClick={() => deleteDiscount(discount.code)}
             >
               حذف
             </button>

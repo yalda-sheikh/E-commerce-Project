@@ -1,5 +1,1 @@
-nhdt,PERCENT,55.0,5.0,false
-ایبب,FIXED,65.0,6.0,false
-jdf,PERCENT,44.0,4.0,false
-dfn,PERCENT,44.0,4.0,false
-سیذسذز,PERCENT,4.0,4.0,false
+fb,PERCENT,44.0,44.0,true

@@ -1628,7 +1628,7 @@ public class MainServer {
 
                 String[] parts = line.split(",");
 
-                if (parts.length == 5) {
+                if (parts.length == 6) {
 
                     String code = parts[0];
                     String discountType = parts[1];

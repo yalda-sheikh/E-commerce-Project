@@ -24,7 +24,7 @@ public class DiscountHandler implements HttpHandler {
 
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
-        exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS ,PUT , DELETE" );
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
         if("OPTIONS".equalsIgnoreCase((exchange.getRequestMethod()))){
@@ -67,6 +67,7 @@ public class DiscountHandler implements HttpHandler {
                 String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 System.out.println("BODY = " + body);
 
+
                 String code = body.split("\"code\":\"")[1].split("\"")[0];
 
                 String discountType = body.split("\"discountType\":\"")[1].split("\"")[0];
@@ -80,8 +81,9 @@ public class DiscountHandler implements HttpHandler {
                 );
 
                 boolean active = Boolean.parseBoolean(
-                        body.split("\"active\":")[1].split("}")[0]
+                        body.split("\"active\":")[1].split(",")[0]
                 );
+                System.out.println("active = " + active);
                 String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
 
                 DiscountCode discount = new DiscountCode(
@@ -129,7 +131,6 @@ public class DiscountHandler implements HttpHandler {
 
         }
 
-        exchange.sendResponseHeaders(405, -1);
 
     }
     }

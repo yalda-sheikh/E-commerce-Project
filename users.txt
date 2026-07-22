@@ -1,2 +1,1 @@
 CUSTOMER,1,helia,password123,5.0E7
-SELLER,2,fafa2020sh@gmail.com,235425,0.0
