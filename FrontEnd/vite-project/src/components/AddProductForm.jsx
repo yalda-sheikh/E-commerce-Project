@@ -1,6 +1,8 @@
 import React, { useState , useEffect} from 'react'; 
 import axios from 'axios'; 
 import "./AddProductForm.css"
+import AlertModal from './AlertModal';
+import useAlert from './useAlert';
 
 export default function AddProductForm({ user }) {
   const [editingId, setEditingId] = useState(null);
@@ -8,6 +10,7 @@ export default function AddProductForm({ user }) {
   const [generalFields, setGeneralFields] = useState({
     name: '', brand: ''
   });
+  const {alert, showAlert, closeAlert} = useAlert()
   const [currentVariant, setCurrentVariant] = useState({
     color: "",
     price: "",
@@ -114,8 +117,14 @@ if (
     
       }
     
-    
-      alert(response.data.message || 'عملیات با موفقیت انجام شد!');
+  
+    if(editingId){
+      showAlert("موفق" ,"تغییرات با موفقیت اعمال شد.","success")
+    }
+    if(!editingId){
+      showAlert("موفق" ,"محصول با موفقیت اضافه شد.","success")
+    }
+
     
     
       // برگرداندن فرم به حالت افزودن
@@ -148,11 +157,11 @@ if (
     return <p style={{ textAlign: 'center', fontSize: '18px' }}>🔄 در حال بارگذاری محصولات...</p>;
   }
   const handleDelete = async (itemId) => {
-    const confirmDelete = window.confirm(
-      "آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟"
-    );
+    // const confirmDelete = window.confirm(
+    //   "آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟"
+    // );
   
-    if (!confirmDelete) return;
+    // if (!confirmDelete) return;
   
     try {
       const res = await fetch(
@@ -163,6 +172,7 @@ if (
       );
   
       const data = await res.json();
+      showAlert("موفق" ,"محصول با موفقیت حذف شد.","success")
   
       if (!res.ok) {
         throw new Error(data.error);
@@ -179,6 +189,7 @@ if (
   
     } catch (error) {
       console.log("خطا در حذف محصول:", error.message);
+      showAlert("نا موفق" ,"حذف محصول با خطا مواجه شد.","error")
     }
   };
   const handelEdit = (product) => {
@@ -312,6 +323,7 @@ if (
           !currentVariant.stock
         ) {
           alert("اطلاعات رنگ را کامل وارد کنید.");
+
           return;
         }
 
@@ -611,6 +623,8 @@ if (
 )}
 
 </div>
+<AlertModal {...alert}  onClose={closeAlert} />
+
     </div>
   );
 }

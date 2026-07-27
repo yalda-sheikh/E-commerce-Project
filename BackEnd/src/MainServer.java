@@ -187,7 +187,6 @@ public class MainServer {
 
                         // ساختن ریسپانس موفقیت به همراه موجودی جدید کیف پول
                         responseText = "{"
-                                + "\"message\":\"✅ حساب شما با موفقیت شارژ شد.\","
                                 + "\"newWallet\":" + foundUser.getWallet()
                                 + "}";
                         exchange.sendResponseHeaders(200, responseText.getBytes("UTF-8").length);

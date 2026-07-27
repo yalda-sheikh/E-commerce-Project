@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Discount.css"
+import useAlert from "../components/useAlert";
+import AlertModal from "../components/AlertModal";
 function Discount({user}){
 const [code, setCode] = useState("");
 const [discountType, setDiscountType] = useState("PERCENT");
@@ -8,6 +10,8 @@ const [minimumPrice, setMinimumPrice] = useState("");
 const [active, setActive] = useState(true);
 const [editingDiscount, setEditingDiscount] = useState(null);
 const [discounts, setDiscounts] = useState([]);
+const {alert , showAlert, closeAlert} = useAlert();
+
 
 const loadDiscounts = () => {
 
@@ -23,18 +27,6 @@ useEffect(() => {
 }, [user]);
 
 const createDiscount = () => {
-    if (!user) {
-        alert("کاربر هنوز بارگذاری نشده است.");
-        return;
-    }
-    console.log({
-        code,
-        discountType,
-        value,
-        minimumPrice,
-        active
-    });
-
     fetch("http://localhost:8080/api/discount",{
         method : "post",
         headers: {
@@ -50,7 +42,7 @@ const createDiscount = () => {
         })
     }).then(res => res.json())
     .then(data => {
-        alert(data.message);
+        showAlert("موفق" ,"کد تخفیف با موفقیت ایجاد شد.","success")
         loadDiscounts();
         setCode("");
         setDiscountType("PERCENT");
@@ -58,8 +50,10 @@ const createDiscount = () => {
         setMinimumPrice("");
         setActive(true);
 
+
     })
-    .catch(err => console.log(err));
+    .catch
+        showAlert("نا موفق" ,"ایجاد کد تخفیف با خطا مواجه شد.","error")
 
 }
 const updateDiscount = () => {
@@ -81,7 +75,7 @@ const updateDiscount = () => {
         .then(res => res.json())
         .then(data => {
 
-            alert(data.message);
+            showAlert("موفق" ,"تغییرات کد تخفیف با موفقیت اعمال شد.","success")
 
             loadDiscounts();
 
@@ -94,7 +88,9 @@ const updateDiscount = () => {
             setActive(true);
 
         })
-        .catch(err => console.log(err));
+        .catch(err => (
+            console.log(err),
+            showAlert("نا موفق" ,"ادیت کد تخفیف با خطا مواجه شد","error")));
 
 };
 const deleteDiscount = (code) => {
@@ -105,12 +101,13 @@ const deleteDiscount = (code) => {
         .then(res => res.json())
         .then(data => {
 
-            alert(data.message);
+            showAlert("موفق" ,"کد تخفیف با موفقیت حذف شد.","success")
 
             loadDiscounts();
 
         })
         .catch(err => console.log(err));
+        showAlert("نا موفق" ,"حذف کد تخفیف با خطا مواجه شد","error")
 
 };
 return(
@@ -285,6 +282,7 @@ return(
 )}
 
 </div>
+<AlertModal {...alert} onClose={closeAlert}/>
 
     </div>
 )

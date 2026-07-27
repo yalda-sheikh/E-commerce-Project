@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
+import AlertModal from "../components/AlertModal";
 import './Home.css'; 
 import { Link } from 'react-router';
 import Search from '../components/Search';
 import FilterHandler from '../components/FilterHandler';
+import useAlert from '../components/useAlert';
 function Home({ user }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-
+  const {alert, showAlert, closeAlert} = useAlert()
   useEffect(() => {
     fetch('http://localhost:8080/api/products')
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -23,7 +25,7 @@ function Home({ user }) {
 
   const handleAddToCart = (itemId) => {
     if (!user) {
-      alert('❌ برای اضافه کردن کالا به سبد خرید، ابتدا باید وارد حساب خود شوید!');
+      showAlert( "ناموفق" ,'❌ برای اضافه کردن کالا به سبد خرید، ابتدا باید وارد حساب خود شوید!' , "error");
       return;
     }
 
@@ -61,7 +63,8 @@ function Home({ user }) {
         .then(res => res.json())
         .then(data => setProducts(data));
 }
-
+console.log("PRODUCTS =", products);
+console.log("IS ARRAY =", Array.isArray(products));
   if (loading) return <h3 className="loading-state">⏳ در حال بارگذاری محصولات...</h3>;
 
   return (
@@ -107,6 +110,9 @@ function Home({ user }) {
           ))
         )}
       </div>
+      <AlertModal
+{...alert }  onClose={closeAlert}
+      />
     </div>
   );
 }

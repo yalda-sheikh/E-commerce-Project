@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './Dashboard.css' // اضافه کردن فایل استایل داشبورد
+import './Dashboard.css' 
+import AlertModal from "../components/AlertModal";
+import useAlert from '../components/useAlert';
 
 function Dashboard({ user, setUser }) {
   const navigate = useNavigate()
@@ -8,12 +10,11 @@ function Dashboard({ user, setUser }) {
   const [discountCode, setDiscountCode] = useState('')
   const [chargeAmount, setChargeAmount] = useState('')
   const [message, setMessage] = useState('')
-
   const [cartItems, setCartItems] = useState([])
   const [totalCartPrice, setTotalCartPrice] = useState(0)
   const [purchaseHistory, setPurchaseHistory] = useState([])
   const [loading, setLoading] = useState(true)
-
+  const {alert, showAlert, closeAlert} = useAlert()
   const fetchDashboardData = () => {
     if (!user) return
 
@@ -63,7 +64,7 @@ function Dashboard({ user, setUser }) {
 
   useEffect(() => {
     if (!user) {
-      alert('❌ ابتدا باید وارد حساب کاربری خود شوید!')
+      showAlert("نا موفق", "❌ ابتدا باید وارد حساب کاربری خود شوید!", "warning");
       navigate('/auth') 
       return
     }
@@ -85,7 +86,9 @@ function Dashboard({ user, setUser }) {
     })
       .then(async (res) => {
         const data = await res.json()
+
         if (!res.ok) throw new Error(data.error || 'خطا در شارژ حساب')
+        
         return data
       })
       .then((data) => {
@@ -94,6 +97,7 @@ function Dashboard({ user, setUser }) {
         localStorage.setItem('user', JSON.stringify(updatedUser))
         setChargeAmount('')
         setMessage(data.message)
+        showAlert("موفق", "شارژ کیف پول با موفقیت انجام شد!", "success");
       })
       .catch((err) => {
         setMessage(`❌ ${err.message}`)
@@ -114,10 +118,11 @@ function Dashboard({ user, setUser }) {
       .then(async (res) => {
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || 'تسویه حساب ناموفق بود')
+        showAlert("موفق", "تسویه حساب با موفقیت انجام شد!", "success");
         return data
       })
       .then((data) => {
-        setMessage(data.message || '✅ تسویه حساب با موفقیت انجام شد.')
+      
         setDiscountCode('')
         fetchDashboardData() 
       })
@@ -134,6 +139,7 @@ function Dashboard({ user, setUser }) {
   })
   .catch(err => {
     console.log(err);
+    showAlert("نا موفق", "تسویه حساب با خطا مواجه شد!", "warning");
   });
   }
 
@@ -158,12 +164,12 @@ function Dashboard({ user, setUser }) {
     })
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        if (!res.ok) throw new Error(data.error); 
         return data;
       })
       .then((data) => {
         setTotalCartPrice(data.newPrice);
-        setMessage("✅ کد تخفیف اعمال شد.");
+        showAlert("موفق", "کد تخفیف اعمال شد.", "success");
       })
       .then(async (res) => {
         const data = await res.JSON();
@@ -175,6 +181,7 @@ function Dashboard({ user, setUser }) {
       })
       .catch((err) => {
         console.log("❌ " + err.message);
+        showAlert("ناموفق", "کد تخفیف نامعتبر است.", "error");
       });
   };
 const handleRemove = (itemId) => {
@@ -348,6 +355,9 @@ const handleRemove = (itemId) => {
           </div>
         )}
       </div>
+      <AlertModal
+{...alert }  onClose={closeAlert}
+      />
 
     </div>
   )

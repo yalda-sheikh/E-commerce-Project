@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class FilterHandler implements HttpHandler {
@@ -18,155 +16,220 @@ public class FilterHandler implements HttpHandler {
         this.allProductItems = allProductItems;
     }
     @Override
-    public void handle(HttpExchange exchange) throws IOException{
+    public void handle(HttpExchange exchange) throws IOException {
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, OPTIONS");
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
-        if("OPTIONS".equalsIgnoreCase((exchange.getRequestMethod()))){
-            exchange.sendResponseHeaders(204 , -1);
-            return;
-        }
-        if(!"GET" .equalsIgnoreCase((exchange.getRequestMethod()))){
+        if ("OPTIONS".equalsIgnoreCase((exchange.getRequestMethod()))) {
             exchange.sendResponseHeaders(204, -1);
             return;
         }
-        Map<String , String> params = new HashMap<>();
-        String query = exchange.getRequestURI().getQuery();
-        if(query != null){
-            String[] pairs = query.split("&");
-            for(String pair : pairs){
-                String[] kv = pair.split("=");
-                if(kv.length == 2){
-                    params.put(
-                            URLDecoder.decode(kv[0] , StandardCharsets.UTF_8),
-                            URLDecoder.decode(kv[1] , StandardCharsets.UTF_8)
-                    );
+        if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+            Map<String, String> params = new HashMap<>();
+
+            String query = exchange.getRequestURI().getQuery();
+
+            if (query != null) {
+
+                String[] pairs = query.split("&");
+
+                for (String pair : pairs) {
+
+                    String[] kv = pair.split("=");
+
+                    if (kv.length == 2) {
+
+                        params.put(
+                                URLDecoder.decode(kv[0], StandardCharsets.UTF_8),
+                                URLDecoder.decode(kv[1], StandardCharsets.UTF_8)
+                        );
+
+                    }
+
                 }
 
             }
 
-        }
-        String brand = params.getOrDefault("brand", "").trim();
-        String type = params.getOrDefault("type", "").trim();
-        double minPrice = 0;
-        double maxPrice = Double.MAX_VALUE;
+            String brand = params.getOrDefault("brand", "").trim();
+            String type = params.getOrDefault("type", "").trim();
 
-        if (!params.getOrDefault("minPrice", "").isEmpty()) {
-            minPrice = Double.parseDouble(params.get("minPrice"));
-        }
+            double minPrice = 0;
+            double maxPrice = Double.MAX_VALUE;
 
-        if (!params.getOrDefault("maxPrice", "").isEmpty()) {
-            maxPrice = Double.parseDouble(params.get("maxPrice"));
-        }
-        StringBuilder json = new StringBuilder();
-        json.append("[");
-        boolean first = true;
-        for(ProductItem item : allProductItems){
-            System.out.println(item.product.getClass().getSimpleName());
-
-            String productBrand = item.product.getBrand();
-
-            String productType = "BASE";
-
-            if (item.product instanceof Laptop)
-                productType = "LAPTOP";
-
-            else if (item.product instanceof Mobile)
-                productType = "MOBILE";
-
-            boolean match = true;
-            if (!brand.isEmpty()) {
-
-                if (!productBrand.equalsIgnoreCase(brand))
-                    match = false;
-
+            if (!params.getOrDefault("minPrice", "").isEmpty()) {
+                minPrice = Double.parseDouble(params.get("minPrice"));
             }
-            if (!type.isEmpty()) {
 
-                if (!productType.equalsIgnoreCase(type))
-                    match = false;
-
+            if (!params.getOrDefault("maxPrice", "").isEmpty()) {
+                maxPrice = Double.parseDouble(params.get("maxPrice"));
             }
-            if (item.getFinalPrice() < minPrice)
-                match = false;
 
-            if (item.getFinalPrice() > maxPrice)
-                match = false;
+            StringBuilder jsonBuilder = new StringBuilder();
 
+            jsonBuilder.append("[");
 
-            if (match) {
+            boolean firstProduct = true;
 
-                if (!first)
-                    json.append(",");
+            ArrayList<Product> shownProducts = new ArrayList<>();
 
-                json.append("{");
+            for (ProductItem item : allProductItems) {
 
-                json.append("\"itemId\":").append(item.getItemId()).append(",");
-                json.append("\"name\":\"").append(item.product.getName()).append("\",");
-                json.append("\"brand\":\"").append(item.product.getBrand()).append("\",");
-                json.append("\"color\":\"").append(item.color).append("\",");
-                json.append("\"price\":").append(item.getFinalPrice()).append(",");
-                json.append("\"stock\":").append(item.getStock()).append(",");
-                json.append("\"sellerName\":\"").append(item.seller.username).append("\"");
+                if (shownProducts.contains(item.product))
+                    continue;
 
-                if (item.product instanceof Laptop) {
+                shownProducts.add(item.product);
 
-                    Laptop laptop = (Laptop) item.product;
+                Product product = item.product;
 
-                    json.append(",");
-                    json.append("\"productType\":\"LAPTOP\",");
-                    json.append("\"ram\":").append(laptop.getRamSize()).append(",");
-                    json.append("\"storage\":").append(laptop.getStorage());
+                String productType = "BASE";
+
+                if (product instanceof Laptop)
+                    productType = "LAPTOP";
+
+                else if (product instanceof Mobile)
+                    productType = "MOBILE";
+
+                if (!brand.isEmpty() &&
+                        !product.getBrand().equalsIgnoreCase(brand))
+                    continue;
+
+                if (!type.isEmpty() &&
+                        !productType.equalsIgnoreCase(type))
+                    continue;
+
+                ArrayList<ProductItem> productVariants = new ArrayList<>();
+
+                boolean priceMatch = false;
+
+                for (ProductItem p : allProductItems) {
+
+                    if (p.product == product) {
+
+                        productVariants.add(p);
+
+                        if (p.getFinalPrice() >= minPrice &&
+                                p.getFinalPrice() <= maxPrice) {
+
+                            priceMatch = true;
+
+                        }
+
+                    }
 
                 }
 
-                else if (item.product instanceof Mobile) {
+                if (!priceMatch)
+                    continue;
 
-                    Mobile mobile = (Mobile) item.product;
+                if (!firstProduct)
+                    jsonBuilder.append(",");
 
-                    json.append(",");
-                    json.append("\"productType\":\"MOBILE\",");
-                    json.append("\"cameraMP\":").append(mobile.getCameraMP()).append(",");
-                    json.append("\"batteryMah\":").append(mobile.getBatteryMah()).append(",");
-                    json.append("\"is5G\":").append(mobile.is5G());
+                firstProduct = false;
+
+                jsonBuilder.append("{");
+
+                jsonBuilder.append("\"itemId\":")
+                        .append(item.getItemId())
+                        .append(",");
+
+                jsonBuilder.append("\"name\":\"")
+                        .append(product.getName())
+                        .append("\",");
+
+                jsonBuilder.append("\"brand\":\"")
+                        .append(product.getBrand())
+                        .append("\",");
+
+                jsonBuilder.append("\"sellerName\":\"")
+                        .append(item.seller.username)
+                        .append("\",");
+
+                jsonBuilder.append("\"productType\":\"")
+                        .append(productType)
+                        .append("\",");
+
+                if (product instanceof Laptop) {
+
+                    Laptop laptop = (Laptop) product;
+
+                    jsonBuilder.append("\"ram\":")
+                            .append(laptop.getRamSize())
+                            .append(",");
+
+                    jsonBuilder.append("\"storage\":")
+                            .append(laptop.getStorage())
+                            .append(",");
+
+
+                } else if (product instanceof Mobile) {
+
+                    Mobile mobile = (Mobile) product;
+
+                    jsonBuilder.append("\"cameraMP\":")
+                            .append(mobile.getCameraMP())
+                            .append(",");
+
+                    jsonBuilder.append("\"batteryMah\":")
+                            .append(mobile.getBatteryMah())
+                            .append(",");
+
+                    jsonBuilder.append("\"is5G\":")
+                            .append(mobile.is5G())
+                            .append(",");
 
                 }
 
-                else {
+                jsonBuilder.append("\"variants\":[");
 
-                    json.append(",");
-                    json.append("\"productType\":\"BASE\"");
+                for (int j = 0; j < productVariants.size(); j++) {
+
+                    ProductItem v = productVariants.get(j);
+
+                    jsonBuilder.append("{");
+
+                    jsonBuilder.append("\"itemId\":")
+                            .append(v.getItemId())
+                            .append(",");
+
+                    jsonBuilder.append("\"color\":\"")
+                            .append(v.color)
+                            .append("\",");
+
+                    jsonBuilder.append("\"price\":")
+                            .append(v.getFinalPrice())
+                            .append(",");
+
+                    jsonBuilder.append("\"stock\":")
+                            .append(v.getStock());
+
+                    jsonBuilder.append("}");
+
+                    if (j < productVariants.size() - 1)
+                        jsonBuilder.append(",");
 
                 }
 
-                json.append("}");
+                jsonBuilder.append("]");
 
-                first = false;
+                jsonBuilder.append("}");
+
             }
 
+            jsonBuilder.append("]");
 
-            System.out.println("Type from React = " + type);
-            System.out.println("Product = " + item.product.getName());
-            System.out.println("ProductType = " + productType);
-            System.out.println("----------------");
+            byte[] response = jsonBuilder.toString().getBytes(StandardCharsets.UTF_8);
 
+            exchange.sendResponseHeaders(200, response.length);
+
+            OutputStream os = exchange.getResponseBody();
+
+            os.write(response);
+
+            os.close();
+
+            return;
         }
-
-        json.append("]");
-
-        byte[] response = json.toString().getBytes(StandardCharsets.UTF_8);
-
-        exchange.sendResponseHeaders(200, response.length);
-
-        OutputStream os = exchange.getResponseBody();
-
-        os.write(response);
-
-        os.close();
-
-
-}
-        }
-
+    }}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Auth.css'; // متصل کردن فایل استایل اختصاصی فرم‌ها
+import './Auth.css'; 
 import AlertModal from "../components/AlertModal";
 
 function Auth({ setUser }) {
@@ -7,7 +7,7 @@ function Auth({ setUser }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('CUSTOMER')
-  const [wallet, setWallet] = useState('100000') 
+  const [wallet, setWallet] = useState('100000')
   const [message, setMessage] = useState('')
 
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +52,7 @@ function Auth({ setUser }) {
         setUser(data);
         localStorage.setItem('user', JSON.stringify(data));
         setModalData({
-          message : isLogin ? '🟢 با موفقیت وارد شدید!' : '🎉 ثبت‌نام با موفقیت انجام و در فایل متنی ذخیره شد!',
+          message : isLogin ? '🟢 با موفقیت وارد شدید!' : '🎉 ثبت‌نام با موفقیت انجام شد!',
            title : "موفق",
             type : 'success'
         }
