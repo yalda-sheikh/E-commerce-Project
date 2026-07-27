@@ -9,6 +9,7 @@ function Auth({ setUser }) {
   const [role, setRole] = useState('CUSTOMER')
   const [wallet, setWallet] = useState('100000')
   const [message, setMessage] = useState('')
+  const [isReadOnly, setIsReadOnly] = useState(true);
 
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => {
@@ -79,12 +80,15 @@ function Auth({ setUser }) {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>نام کاربری:</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required readOnly={isReadOnly}
+      onFocus={() => setIsReadOnly(false)}/>
+
         </div>
 
         <div className="form-group">
           <label>رمز عبور:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input readOnly={isReadOnly}
+      onFocus={() => setIsReadOnly(false)} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
 
         {!isLogin && (

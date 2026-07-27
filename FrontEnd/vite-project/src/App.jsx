@@ -7,11 +7,22 @@ import SellerDashboard from './pages/SellerDashboard.jsx'
 import './App.css' 
 import ProductDetail from './pages/ProductِDetail.jsx'
 import { useTheme } from './components/ThemeContext'
+import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
+import { useTranslation } from "react-i18next";
+
 function App() {
+
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme();
+const { i18n } = useTranslation();
 
+useEffect(() => {
+  const isPersian = i18n.language === "fa";
+
+  document.documentElement.lang = isPersian ? "fa" : "en";
+  document.documentElement.dir = isPersian ? "rtl" : "ltr";
+}, [i18n.language]);
   useEffect(() => {
     const savedUser = localStorage.getItem('user')
     if (savedUser) {
@@ -36,6 +47,8 @@ function App() {
         <button onClick={toggleTheme} className="theme-toggle-btn">
   {theme === "light" ? "🌙 حالت تیره" : "☀️ حالت روشن"}
 </button>
+<LanguageSwitcher />
+
           {user ? (
             <>
               <Link to="/dashboard" className="nav-link dashboard-link">

@@ -549,3 +549,70 @@
        padding: 24px;
      }
    }
+/* ==========================================================================
+   استایل سوئیچر زبان (Language Switcher)
+   ========================================================================== */
+
+/* کانتینر اصلی سوئیچر */
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast);
+}
+
+/* استایل دکمه‌ها */
+.language-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* آیکون پرچم‌ها */
+.language-btn span {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* حالت Hover برای دکمه غیرفعال */
+.language-btn:hover:not(.active) {
+  color: var(--text-primary);
+  background-color: var(--accent-blue-soft);
+}
+
+/* حالت زبان فعال (Active) */
+.language-btn.active {
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-hover);
+}
+
+/* تنظیم خوانایی رنگ متن دکمه فعال در تم تاریک */
+[data-theme="dark"] .language-btn.active {
+  color: #ffffff;
+  background-color: var(--bg-surface);
+}
+
+/* حالت لمس روی موبایل */
+.language-btn:active {
+  transform: scale(0.96);
+}
