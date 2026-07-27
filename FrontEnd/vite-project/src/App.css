@@ -1,152 +1,551 @@
-/* تنظیمات پایه و ریست کردن فونت */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Vazirmatn', 'Segoe UI', 'Tahoma', sans-serif;
-}
 
-/* کانتینر اصلی اپلیکیشن */
-.app-container {
-  direction: rtl;
-  min-height: 100vh;
-  background-color : #f4f6f9; /* پس‌زمینه لایت و شیک */
-  color: #333a42;
-}
+   @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
 
-/* طراحی مدرن نوار ناوبری (Navbar) */
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #ffffff;
-  padding: 16px 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid #eef2f5;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+   :root {
+     /* --- تم روشن (Light Mode) --- */
+     --bg-app: #f8fafc;
+     --bg-surface: #ffffff;
+     --bg-elevated: #f1f5f9;
+     --bg-glass: rgba(255, 255, 255, 0.82);
+   
+     --text-primary: #0f172a;
+     --text-secondary: #475569;
+     --text-muted: #94a3b8;
+   
+     --accent-red: #ef394e;          /* قرمز پرچم‌دار فروشگاهی */
+     --accent-red-hover: #d62839;
+     --accent-red-soft: rgba(239, 57, 78, 0.08);
+   
+     --accent-blue: #0284c7;         /* رنگ ویژه بخش فروشندگان */
+     --accent-blue-soft: rgba(2, 132, 199, 0.1);
+   
+     --accent-green: #10b981;        /* رنگ قیمت / موجودی مثبت */
+     --accent-green-soft: rgba(16, 185, 129, 0.1);
+   
+     --border-color: #e2e8f0;
+     --border-hover: #cbd5e1;
+   
+     --radius-sm: 8px;
+     --radius-md: 14px;
+     --radius-lg: 20px;
+     --radius-full: 9999px;
+   
+     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+     --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+   
+     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+     --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+   }
+   
+   [data-theme="dark"] {
+     /* --- تم تاریک (Dark Mode) --- */
+     --bg-app: #090d16;
+     --bg-surface: #121824;
+     --bg-elevated: #1a2332;
+     --bg-glass: rgba(18, 24, 36, 0.82);
+   
+     --text-primary: #f8fafc;
+     --text-secondary: #94a3b8;
+     --text-muted: #64748b;
+   
+     --accent-red: #ff4d6d;
+     --accent-red-hover: #ff2a55;
+     --accent-red-soft: rgba(255, 77, 109, 0.15);
+   
+     --accent-blue: #38bdf8;
+     --accent-blue-soft: rgba(56, 189, 248, 0.15);
+   
+     --accent-green: #34d399;
+     --accent-green-soft: rgba(52, 211, 153, 0.15);
+   
+     --border-color: #1e293b;
+     --border-hover: #334155;
+   
+     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+     --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.6);
+   }
+   
+   /* ==========================================================================
+      ۲. ریست عمومی و غیرفعال‌سازی مطلق اسکرول افقی
+      ========================================================================== */
+   *, *::before, *::after {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+   }
+   
+   html, body {
+     width: 100%;
+     max-width: 100vw;
+     overflow-x: hidden !important;
+     direction: rtl;
+     font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+     background-color: var(--bg-app);
+     color: var(--text-primary);
+     line-height: 1.6;
+     scroll-behavior: smooth;
+     -webkit-font-smoothing: antialiased;
+     transition: background-color var(--transition-smooth), color var(--transition-smooth);
+   }
+   
+   a {
+     text-decoration: none;
+     color: inherit;
+   }
+   
+   button {
+     font-family: inherit;
+     cursor: pointer;
+     border: none;
+     outline: none;
+     background: none;
+   }
+   
 
-/* عنوان فروشگاه */
-.nav-brand {
-  text-decoration: none;
-  color: #1a73e8;
-  font-weight: 800;
-  font-size: 19px;
-  letter-spacing: -0.3px;
-  transition: color 0.2s ease;
-}
+   .app-container {
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+     width: 100%;
+     max-width: 100vw;
+     overflow-x: hidden;
+   }
+   
 
-.nav-brand:hover {
-  color: #1557b0;
-}
+   .navbar {
+     position: sticky;
+     top: 0;
+     z-index: 1000;
+     height: 72px;
+     padding: 0 28px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     gap: 16px;
+     background: var(--bg-glass);
+     backdrop-filter: blur(16px);
+     -webkit-backdrop-filter: blur(16px);
+     border-bottom: 1px solid var(--border-color);
+     box-shadow: var(--shadow-sm);
+     transition: background var(--transition-smooth), border-color var(--transition-smooth);
+   }
+   
+   .nav-brand {
+     font-size: 20px;
+     font-weight: 900;
+     color: var(--accent-red);
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     letter-spacing: -0.5px;
+     white-space: nowrap;
+     transition: transform var(--transition-fast);
+   }
+   
+   .nav-brand:hover {
+     transform: scale(1.03);
+   }
+   
 
-/* منوی سمت چپ نوار ناوبری */
-.nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+   .theme-toggle-btn {
+     background: var(--bg-elevated);
+     color: var(--text-primary);
+     border: 1px solid var(--border-color);
+     padding: 8px 16px;
+     border-radius: var(--radius-full);
+     font-size: 13px;
+     font-weight: 700;
+     display: inline-flex;
+     align-items: center;
+     gap: 8px;
+     white-space: nowrap;
+     box-shadow: var(--shadow-sm);
+     transition: var(--transition-fast);
+   }
+   
+   .theme-toggle-btn:hover {
+     border-color: var(--accent-red);
+     color: var(--accent-red);
+     transform: translateY(-1px);
+     box-shadow: 0 4px 12px var(--accent-red-soft);
+   }
+   
+   .theme-toggle-btn:active {
+     transform: scale(0.97);
+   }
+   
+ 
+   .nav-menu {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+   }
+   
+   .nav-link {
+     display: inline-flex;
+     align-items: center;
+     gap: 6px;
+     font-size: 14px;
+     font-weight: 700;
+     color: var(--text-primary);
+     padding: 8px 14px;
+     border-radius: var(--radius-sm);
+     transition: var(--transition-fast);
+   }
+   
+   .nav-link:hover {
+     background: var(--bg-elevated);
+     color: var(--accent-red);
+   }
+   
 
-.nav-link {
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-  color: #4a5568;
-  transition: all 0.2s ease;
-}
+   .user-tag {
+     font-size: 12px;
+     font-weight: 600;
+     color: var(--text-secondary);
+     background: var(--bg-elevated);
+     padding: 4px 10px;
+     border-radius: var(--radius-full);
+     border: 1px solid var(--border-color);
+     margin-right: 6px;
+   }
+   
+ 
+   .btn {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 8px;
+     padding: 9px 18px;
+     border-radius: var(--radius-md);
+     font-size: 14px;
+     font-weight: 700;
+     white-space: nowrap;
+     transition: var(--transition-fast);
+   }
+   
+   .btn-auth {
+     background: var(--accent-red);
+     color: #ffffff !important;
+     box-shadow: 0 4px 12px var(--accent-red-soft);
+   }
+   
+   .btn-auth:hover {
+     background: var(--accent-red-hover);
+     transform: translateY(-2px);
+     box-shadow: 0 6px 16px var(--accent-red-soft);
+   }
+   
+   .btn-logout {
+     background: var(--accent-red-soft);
+     color: var(--accent-red);
+     border: 1px solid rgba(239, 57, 78, 0.2);
+   }
+   
+   .btn-logout:hover {
+     background: var(--accent-red);
+     color: #ffffff;
+   }
+   
 
-.dashboard-link {
-  color: #2e7d32;
-  background-color: #e8f5e9;
-  padding: 8px 16px;
-  border-radius: 20px;
-}
+   .main-content {
+     flex: 1;
+     width: 100%;
+     max-width: 1360px;
+     margin: 0 auto;
+     padding: 28px 16px;
+     animation: fadeIn 0.4s var(--transition-smooth);
+   }
 
-.dashboard-link:hover {
-  background-color: #c8e6c9;
-}
+   .hero-banner {
+     background: linear-gradient(135deg, var(--accent-red) 0%, #b91c1c 100%);
+     border-radius: var(--radius-lg);
+     padding: 36px 40px;
+     color: #ffffff;
+     margin-bottom: 32px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     box-shadow: var(--shadow-md);
+   }
+   
+   .product-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+     gap: 20px;
+     width: 100%;
+   }
+   
+   .product-card {
+     background: var(--bg-surface);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-md);
+     padding: 16px;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     position: relative;
+     overflow: hidden;
+     transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+   }
+   
+   .product-card:hover {
+     transform: translateY(-6px);
+     box-shadow: var(--shadow-lg);
+     border-color: var(--border-hover);
+   }
+   
+   .product-image {
+     width: 100%;
+     aspect-ratio: 1 / 1;
+     object-fit: contain;
+     background: var(--bg-elevated);
+     border-radius: var(--radius-sm);
+     margin-bottom: 12px;
+     transition: transform var(--transition-smooth);
+   }
+   
+   .product-card:hover .product-image {
+     transform: scale(1.06);
+   }
+   
+   .product-title {
+     font-size: 14px;
+     font-weight: 700;
+     color: var(--text-primary);
+     margin-bottom: 12px;
+     line-height: 1.6;
+     height: 44px;
+     display: -webkit-box;
+     -webkit-line-clamp: 2;
+     -webkit-box-orient: vertical;
+     overflow: hidden;
+   }
+   
+   .price-container {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     margin-top: 12px;
+     padding-top: 12px;
+     border-top: 1px dashed var(--border-color);
+   }
+   
+   .price-amount {
+     font-size: 17px;
+     font-weight: 800;
+     color: var(--text-primary);
+   }
 
-.user-tag {
-  font-size: 13px;
-  color: #555;
-  font-weight: normal;
-}
+   .auth-container {
+     max-width: 420px;
+     margin: 40px auto;
+     background: var(--bg-surface);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-lg);
+     padding: 32px;
+     box-shadow: var(--shadow-lg);
+   }
+   
+   .auth-title {
+     font-size: 22px;
+     font-weight: 900;
+     text-align: center;
+     margin-bottom: 24px;
+     color: var(--accent-red);
+   }
+   
+   .form-group {
+     margin-bottom: 18px;
+   }
+   
+   .form-label {
+     display: block;
+     font-size: 13px;
+     font-weight: 700;
+     color: var(--text-secondary);
+     margin-bottom: 6px;
+   }
+   
+   .form-input {
+     width: 100%;
+     padding: 12px 16px;
+     background: var(--bg-elevated);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-md);
+     color: var(--text-primary);
+     font-size: 14px;
+     outline: none;
+     transition: var(--transition-fast);
+   }
+   
+   .form-input:focus {
+     border-color: var(--accent-red);
+     box-shadow: 0 0 0 4px var(--accent-red-soft);
+   }
+   
+   .btn-submit {
+     width: 100%;
+     padding: 12px;
+     background: var(--accent-red);
+     color: #ffffff;
+     border-radius: var(--radius-md);
+     font-weight: 800;
+     font-size: 15px;
+     margin-top: 8px;
+     transition: var(--transition-fast);
+   }
+   
+   .btn-submit:hover {
+     background: var(--accent-red-hover);
+   }
+   
 
-/* بخش بدنه اصلی محتوا */
-.main-content {
-  padding: 40px;
-  max-width: 1300px;
-  margin: 0 auto;
-}
+   .dashboard-header {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     margin-bottom: 24px;
+     padding-bottom: 16px;
+     border-bottom: 1px solid var(--border-color);
+   }
+   
+   .stats-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+     gap: 16px;
+     margin-bottom: 32px;
+   }
+   
+   .stat-card {
+     background: var(--bg-surface);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-md);
+     padding: 20px;
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     box-shadow: var(--shadow-sm);
+   }
+   
+   .stat-value {
+     font-size: 24px;
+     font-weight: 900;
+     color: var(--accent-red);
+   }
+   
+   .seller-card .stat-value {
+     color: var(--accent-blue);
+   }
+   
+   .table-container {
+     width: 100%;
+     overflow-x: auto;
+     background: var(--bg-surface);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-md);
+   }
+   
+   .custom-table {
+     width: 100%;
+     border-collapse: collapse;
+     text-align: right;
+     font-size: 14px;
+   }
+   
+   .custom-table th, .custom-table td {
+     padding: 14px 18px;
+     border-bottom: 1px solid var(--border-color);
+   }
+   
+   .custom-table th {
+     background: var(--bg-elevated);
+     color: var(--text-secondary);
+     font-weight: 800;
+   }
+   
+   /* ==========================================================================
+      ۸. صفحه جزئیات محصول (ProductDetail)
+      ========================================================================== */
+   .product-detail-container {
+     display: grid;
+     grid-template-columns: 1fr 1.2fr;
+     gap: 32px;
+     background: var(--bg-surface);
+     border: 1px solid var(--border-color);
+     border-radius: var(--radius-lg);
+     padding: 32px;
+     box-shadow: var(--shadow-md);
+   }
+   
+   .product-detail-image {
+     width: 100%;
+     max-height: 400px;
+     object-fit: contain;
+     background: var(--bg-elevated);
+     border-radius: var(--radius-md);
+     padding: 16px;
+   }
+   
+   .product-detail-info {
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+   }
+   
+   .status-badge {
+     display: inline-block;
+     padding: 4px 12px;
+     border-radius: var(--radius-full);
+     font-size: 12px;
+     font-weight: 800;
+     background: var(--accent-green-soft);
+     color: var(--accent-green);
+     width: fit-content;
+     margin-bottom: 12px;
+   }
+   
 
-/* دکمه‌های استاندارد و پایه */
-.btn {
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+   @keyframes fadeIn {
+     from { opacity: 0; transform: translateY(8px); }
+     to { opacity: 1; transform: translateY(0); }
+   }
+   
+   @media (max-width: 768px) {
+     .navbar {
+       padding: 12px 16px;
+       height: auto;
+       flex-wrap: wrap;
+       gap: 12px;
+     }
 
-/* دکمه خروج */
-.btn-logout {
-  background-color: #fff1f2;
-  color: #f43f5e;
-  border: 1px solid #ffe4e6;
-}
-
-.btn-logout:hover {
-  background-color: #ffe4e6;
-  transform: translateY(-1px);
-}
-
-/* دکمه ورود و ثبت نام */
-.btn-auth {
-  text-decoration: none;
-  background-color: #1a73e8;
-  color: #ffffff;
-  box-shadow: 0 4px 6px rgba(26, 115, 232, 0.15);
-}
-
-.btn-auth:hover {
-  background-color: #1557b0;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 12px rgba(26, 115, 232, 0.25);
-}
-
-/* --- استایل‌های عمومی که برای فرم‌ها و کارت‌های کل پروژه عالی میشن --- */
-
-/* استایل عمومی برای کارت‌ها (مثل کارت محصول یا فرم‌ها) */
-.card-box {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f0f3f6;
-  margin-bottom: 24px;
-}
-
-/* استایل برای اینپوت‌ها */
-input[type="text"], input[type="number"], input[type="password"], select {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background-color: #f8fafc;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-input:focus, select:focus {
-  border-color: #1a73e8;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
-}
+     .nav-menu {
+       width: 100%;
+       justify-content: space-between;
+       border-top: 1px solid var(--border-color);
+       padding-top: 10px;
+     }
+   
+     .user-tag {
+       display: none; /* برای خلوت ماندن هدر در صفحه کوچک */
+     }
+   
+     .product-grid {
+       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+       gap: 12px;
+     }
+   
+     .product-detail-container {
+       grid-template-columns: 1fr;
+       padding: 16px;
+     }
+   
+     .hero-banner {
+       flex-direction: column;
+       text-align: center;
+       gap: 16px;
+       padding: 24px;
+     }
+   }

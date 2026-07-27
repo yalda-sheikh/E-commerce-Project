@@ -7,10 +7,10 @@ export default function SellerDashboard({ user }) {
   return (
     <div className="seller-dashboard">
 
-      <div className="dashboard-header">
+      {/* <div className="dashboard-header">
         <h1>🏪 داشبورد فروشنده</h1>
         <p>مدیریت محصولات، موجودی و کدهای تخفیف</p>
-      </div>
+      </div> */}
 
       <AddProductForm user={user} />
 

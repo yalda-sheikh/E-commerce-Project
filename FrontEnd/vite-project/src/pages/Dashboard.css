@@ -1,438 +1,312 @@
-/* ==========================================================================
-   ۱. تنظیمات ساختاری و رنگی لوکس داشبورد
-   ========================================================================== */
-   :root {
-    --primary-color: #6366f1;
-    --primary-dark: #4f46e5;
-    --success-color: #10b981;
-    --success-bg: #f0fdf4;
-    --info-color: #06b6d4;
-    --danger-color: #ef4444;
-    --bg-dashboard: #fafafa;
-    --surface-card: #ffffff;
-    --text-main: #0f172a;
-    --text-sub: #475569;
-    --border-delicate: #f1f5f9;
-    --radius-premium: 24px;
-    --radius-button: 14px;
-    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  
-  .dashboard-container {
-    direction: rtl;
-    background-color: var(--bg-dashboard);
-    min-height: 100vh;
-    padding: 2.5rem;
-    font-family: 'Vazirmatn', 'IRANSans', Tahoma, sans-serif;
-    color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+   .dashboard-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    box-sizing: border-box;
-  }
-  
-  /* ==========================================================================
-     ۲. باکس اعلان پیام‌های وضعیت سیستم (Toast Alert Style)
-     ========================================================================== */
-  .dashboard-message {
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius-button);
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-align: right;
-    animation: slideDownFadeIn 0.5s ease-out;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-  }
-  
-  .success-msg {
-    background-color: var(--success-bg);
-    color: var(--success-color);
-    border-right: 4px solid var(--success-color);
-  }
-  
-  .error-msg {
-    background-color: #fef2f2;
-    color: var(--danger-color);
-    border-right: 4px solid var(--danger-color);
-  }
-  
-  /* ==========================================================================
-     ۳. بیس کارت‌های داشبورد (Dashboard Cards)
-     ========================================================================== */
-  .dashboard-card {
-    background: var(--surface-card);
-    border-radius: var(--radius-premium);
-    padding: 2.2rem;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.01);
-    animation: cardPulseEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 24px;
+    padding-bottom: 40px;
+    animation: fadeInDashboard 0.3s ease-out;
+  }
+  
+
+  .dashboard-message {
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .dashboard-message.error-msg {
+    background: rgba(239, 57, 78, 0.1);
+    color: #ef394e;
+    border: 1px solid rgba(239, 57, 78, 0.25);
+  }
+  
+  .dashboard-message.success-msg {
+    background: var(--accent-green-soft, rgba(16, 185, 129, 0.1));
+    color: var(--accent-green, #10b981);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .dashboard-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast);
   }
   
   .card-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
+    font-size: 18px;
     font-weight: 800;
-    color: var(--text-main);
-    position: relative;
-    padding-bottom: 0.8rem;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   
-  .card-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 40px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-color), transparent);
-    border-radius: 2px;
-  }
-  
-  /* ==========================================================================
-     ۴. وضعیت مالی و فرم افزایش موجودی
-     ========================================================================== */
+
   .wallet-status {
-    font-size: 1.1rem;
-    color: var(--text-sub);
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    background: var(--bg-elevated);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border-right: 4px solid var(--accent-green, #10b981);
   }
   
   .wallet-status strong {
-    color: var(--success-color);
-    font-size: 1.3rem;
-    background: var(--success-bg);
-    padding: 0.2rem 0.8rem;
-    border-radius: 10px;
-    margin: 0 0.4rem;
+    color: var(--accent-green, #10b981);
+    font-size: 18px;
+    margin: 0 4px;
   }
   
   .charge-form {
     display: flex;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
+    gap: 12px;
+    max-width: 520px;
   }
   
   .dashboard-input {
     flex: 1;
-    min-width: 260px;
-    padding: 0.9rem 1.2rem;
+    padding: 10px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
     font-family: inherit;
-    font-size: 0.95rem;
-    border: 1px solid var(--border-delicate);
-    background-color: #f8fafc;
-    border-radius: var(--radius-button);
     outline: none;
-    transition: var(--transition-smooth);
+    transition: all var(--transition-fast);
   }
   
   .dashboard-input:focus {
-    background-color: #fff;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    border-color: var(--accent-red);
+    background: var(--bg-surface);
+    box-shadow: 0 0 0 3px var(--accent-red-soft);
   }
   
-  /* ==========================================================================
-     ۵. کارت‌های کوپن تخفیف لوکس (Tear-off Coupon Vouchers)
-     ========================================================================== */
-  .discount-list-card + .dashboard-card {
-    /* هدف قرار دادن کانتینر کدهای تخفیف */
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.2rem;
-  }
-  
-  .discount-list-card + .dashboard-card .card-title {
-    grid-column: 1 / -1;
-  }
-  
+
   .discount-card {
-    background: #fafafa;
-    border: 1px dashed #cbd5e1;
-    border-radius: 16px;
-    padding: 1.2rem;
-    position: relative;
+    border-radius: 14px !important;
+    overflow: hidden; 
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    margin-bottom: 10px;
     display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    transition: var(--transition-smooth);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: border-color var(--transition-fast);
+
   }
   
   .discount-card:hover {
-    transform: scale(1.02);
-    border-color: var(--primary-color);
-    background-color: #f5f7ff;
+    border-color: var(--accent-red);
   }
   
   .discount-item {
+    font-size: 13px;
+    color: var(--text-primary);
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-sub);
-    display: flex;
-    justify-content: space-between;
   }
   
   .discount-item strong {
-    color: var(--text-main);
+    color: var(--text-muted);
+    margin-left: 4px;
   }
-  
-  /* ==========================================================================
-     ۶. سبد خرید و فاکتورها (ساختار منعطف و بدون اسکرول)
-     ========================================================================== */
+
   .table-responsive {
     width: 100%;
-    overflow: hidden; /* حذف هرگونه اسکرول ناخواسته */
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
   }
   
   .dashboard-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 0.8rem;
+    border-collapse: collapse;
     text-align: right;
+    font-size: 14px;
   }
   
   .dashboard-table th {
-    color: var(--text-sub);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
     font-weight: 700;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-  }
-  
-  .dashboard-table tbody tr {
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
-    transition: var(--transition-smooth);
-  }
-  
-  .dashboard-table tbody tr:hover {
-    transform: translateX(-4px);
-    background-color: #fdfdfd;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
   }
   
   .dashboard-table td {
-    padding: 1.2rem 1rem;
-    border-top: 1px solid var(--border-delicate);
-    border-bottom: 1px solid var(--border-delicate);
-    font-size: 0.95rem;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    vertical-align: middle;
   }
   
-  .dashboard-table td:first-child {
-    border-top-right-radius: 14px;
-    border-bottom-right-radius: 14px;
-    border-left: none;
-    font-weight: bold;
+  .dashboard-table tbody tr:last-child td {
+    border-bottom: none;
   }
   
-  .dashboard-table td:last-child {
-    border-top-left-radius: 14px;
-    border-bottom-left-radius: 14px;
-    border-right: none;
+  .dashboard-table tbody tr:hover {
+    background: var(--bg-elevated);
+  }
+  
+  .status-success {
+    color: var(--accent-green, #10b981);
+    font-weight: 800;
   }
   
   .empty-state {
     text-align: center;
-    color: var(--text-sub);
-    padding: 3rem 0;
-    font-size: 0.95rem;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--border-color);
   }
   
-  /* بخش اعمال کد تخفیف انتهای سبد */
+
   .discount-section {
     display: flex;
-    gap: 0.8rem;
-    margin-top: 1.5rem;
-    max-width: 400px;
+    gap: 12px;
+    max-width: 420px;
+    margin-top: 20px;
   }
   
-  /* تسویه نهایی */
   .checkout-section {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--border-delicate);
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--border-color);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 16px;
   }
   
   .total-price {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
   }
   
-  .status-success {
-    color: var(--success-color);
-    font-weight: 700;
-  }
-  
-  /* ==========================================================================
-     ۷. دکمه‌های پرمیوم با فیدبک لمسی
-     ========================================================================== */
+
   .btn {
-    padding: 0.8rem 1.5rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 700;
-    border: none;
-    border-radius: var(--radius-button);
-    cursor: pointer;
-    transition: var(--transition-smooth);
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 800;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
     white-space: nowrap;
-  }
-  
-  .btn-success {
-    background: linear-gradient(135deg, var(--success-color), #34d399);
-    color: white;
-  }
-  
-  .btn-success:hover {
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
-    transform: translateY(-2px);
+    transition: all var(--transition-fast);
   }
   
   .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), #818cf8);
-    color: white;
+    background: var(--accent-red);
+    color: #ffffff;
+    box-shadow: 0 4px 12px var(--accent-red-soft);
   }
   
   .btn-primary:hover {
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
-    transform: translateY(-2px);
+    background: var(--accent-red-hover);
+    transform: translateY(-1px);
+  }
+  
+  .btn-success {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  }
+  
+  .btn-success:hover {
+    background: #059669;
+    transform: translateY(-1px);
   }
   
   .btn-info {
-    background: #f1f5f9;
-    color: var(--text-main);
-    border: 1px solid #cbd5e1;
+    background: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
   }
   
   .btn-info:hover {
-    background: var(--text-main);
-    color: white;
+    background: #0369a1;
+    transform: translateY(-1px);
   }
   
-  /* دکمه حذف سطل آشغال ظریف داخل جدول */
-  .dashboard-table .btn-primary {
-    background: #fff5f5;
-    color: var(--danger-color);
-    font-size: 0.85rem;
-    padding: 0.5rem 1rem;
+  .btn:active {
+    transform: translateY(1px);
   }
   
-  .dashboard-table .btn-primary:hover {
-    background: var(--danger-color);
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+
+  @keyframes fadeInDashboard {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   
-  /* بارگذاری صفحه */
-  .dashboard-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: var(--bg-dashboard);
-    color: var(--text-sub);
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   
-  /* ==========================================================================
-     ۸. انیمیشن‌های ظریف سیستم
-     ========================================================================== */
-  @keyframes cardPulseEntrance {
-    0% {
-      opacity: 0;
-      transform: scale(0.98) translateY(10px);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-  
-  @keyframes slideDownFadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(-15px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* ==========================================================================
-     ۹. ریسپانسیوسازی هوشمند موبایل (تبدیل به مینی‌کارت بدون فعال شدن اسکرول)
-     ========================================================================== */
   @media (max-width: 768px) {
-    .dashboard-container {
-      padding: 1rem;
-    }
-    
     .dashboard-card {
-      padding: 1.5rem;
+      padding: 16px;
     }
   
-    .dashboard-table, 
-    .dashboard-table thead, 
-    .dashboard-table tbody, 
+    .charge-form, 
+    .discount-section {
+      flex-direction: column;
+      max-width: 100%;
+    }
+  
+    .checkout-section {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+  
+    .total-price {
+      font-size: 16px;
+      text-align: center;
+    }
+  
+    .discount-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  
     .dashboard-table th, 
-    .dashboard-table td, 
-    .dashboard-table tr {
-      display: block;
-      width: 100%;
-    }
-  
-    .dashboard-table thead {
-      display: none;
-    }
-  
-    .dashboard-table tbody tr {
-      margin-bottom: 1rem;
-      border: 1px solid var(--border-delicate);
-      border-radius: 16px;
-      padding: 0.8rem;
-      box-sizing: border-box;
-    }
-  
     .dashboard-table td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.6rem 0.5rem;
-      border: none !important;
-      border-bottom: 1px dashed #f8fafc !important;
+      padding: 10px 12px;
+      font-size: 13px;
     }
-  
-    .dashboard-table td:last-child {
-      border-bottom: none !important;
-    }
-  
-    /* بازسازی عناوین سطرها در حالت موبایل */
-    .dashboard-table tbody tr td::before {
-      font-weight: 700;
-      color: var(--text-sub);
-      font-size: 0.85rem;
-    }
-  
-    /* کانتینر سبد خرید */
-    .dashboard-table:not(:has(.status-success)) td:nth-child(1)::before { content: "📦 کالا:"; }
-    .dashboard-table:not(:has(.status-success)) td:nth-child(2)::before { content: "💰 قیمت واحد:"; }
-    .dashboard-table:not(:has(.status-success)) td:nth-child(3)::before { content: "🔢 تعداد:"; }
-    .dashboard-table:not(:has(.status-success)) td:nth-child(4)::before { content: "📊 جمع کل:"; }
-    .dashboard-table:not(:has(.status-success)) td:nth-child(5)::before { content: "🛠 عملیات:"; }
-  
-    /* کانتینر تاریخچه خرید */
-    .dashboard-table:has(.status-success) td:nth-child(1)::before { content: "🧾 شماره فاکتور:"; }
-    .dashboard-table:has(.status-success) td:nth-child(2)::before { content: "📅 تاریخ ثبت:"; }
-    .dashboard-table:has(.status-success) td:nth-child(3)::before { content: "💳 مبلغ پرداختی:"; }
-    .dashboard-table:has(.status-success) td:nth-child(4)::before { content: "🔍 وضعیت:"; }
   }

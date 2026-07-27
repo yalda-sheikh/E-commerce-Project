@@ -61,7 +61,7 @@ const [variants, setVariants] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // 💡 تولید یک شناسه عددی کاملاً یکتا که در محدوده Integer جاوا جا شود
+
     const automaticItemId = Date.now() % 2000000000;
 
   let finalVariants = [...variants];
@@ -73,7 +73,7 @@ if (
 ) {
   finalVariants.push(currentVariant);
 }
-    // جفت‌وجور کردن دیتای نهایی
+
     const finalPayload = {
       ...generalFields,
       variants: finalVariants,
@@ -127,7 +127,7 @@ if (
 
     
     
-      // برگرداندن فرم به حالت افزودن
+
       setEditingId(null);
     
       setGeneralFields({
@@ -178,7 +178,7 @@ if (
         throw new Error(data.error);
       }
   
-      // حذف محصول از صفحه بدون رفرش
+
       setProducts((prevProducts) =>
         prevProducts.filter(
           (product) => product.itemId !== itemId

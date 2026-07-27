@@ -118,16 +118,21 @@ return(
             <h2 className="discount-title">
                 🎁 ایجاد کد تخفیف
             </h2>
+            <label>
+                کد تخفیف
+            </label>
 
 
             <input
                 className="discount-input"
                 type="text"
-                placeholder="کد تخفیف"
+
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
             />
-
+            <label>
+                نوع تخفیف
+            </label>
 
             <select
                 className="discount-input"
@@ -146,21 +151,25 @@ return(
             </select>
 
 
-
+            <label>
+                مقدار تخفیف
+            </label>
             <input
                 className="discount-input"
                 type="number"
-                placeholder="مقدار تخفیف"
+
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
             />
 
 
-
+<label>
+            حداقل مبلغ خرید
+            </label>
             <input
                 className="discount-input"
                 type="number"
-                placeholder="حداقل مبلغ خرید"
+
                 value={minimumPrice}
                 onChange={(e) => setMinimumPrice(e.target.value)}
             />

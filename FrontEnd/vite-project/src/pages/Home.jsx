@@ -5,11 +5,13 @@ import { Link } from 'react-router';
 import Search from '../components/Search';
 import FilterHandler from '../components/FilterHandler';
 import useAlert from '../components/useAlert';
+
 function Home({ user }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const {alert, showAlert, closeAlert} = useAlert()
+
   useEffect(() => {
     fetch('http://localhost:8080/api/products')
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -63,13 +65,16 @@ function Home({ user }) {
         .then(res => res.json())
         .then(data => setProducts(data));
 }
-console.log("PRODUCTS =", products);
-console.log("IS ARRAY =", Array.isArray(products));
+
+  
+
+
   if (loading) return <h3 className="loading-state">⏳ در حال بارگذاری محصولات...</h3>;
 
   return (
     <div className="home-container">
       <h2 className="home-title">🏪 ویترین فروشگاه دیجیتال</h2>
+
       <Search onSearch = {searchProduct} />
       <FilterHandler setProducts={setProducts} />
       {message && <div className="home-alert">{message}</div>}

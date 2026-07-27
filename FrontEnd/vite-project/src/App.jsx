@@ -4,12 +4,13 @@ import Home from './pages/Home'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard.jsx'
 import SellerDashboard from './pages/SellerDashboard.jsx'
-import './App.css' // متصل کردن فایل استایل جدید
+import './App.css' 
 import ProductDetail from './pages/ProductِDetail.jsx'
-
+import { useTheme } from './components/ThemeContext'
 function App() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user')
@@ -26,17 +27,21 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* هدر و نوار ناوبری */}
+
       <nav className="navbar">
         <Link to="/" className="nav-brand">🏪 ویترین فروشگاه</Link>
+
         
         <div className="nav-menu">
+        <button onClick={toggleTheme} className="theme-toggle-btn">
+  {theme === "light" ? "🌙 حالت تیره" : "☀️ حالت روشن"}
+</button>
           {user ? (
             <>
               <Link to="/dashboard" className="nav-link dashboard-link">
                 👤 پنل کاربری <span className="user-tag">({user.username} - {user.role === 'CUSTOMER' ? 'مشتری' : 'فروشنده'})</span>
               </Link>
-              
+
               <button onClick={handleLogout} className="btn btn-logout">
                 خروج از حساب
               </button>
@@ -49,7 +54,7 @@ function App() {
         </div>
       </nav>
 
-      {/* بخش محتوای صفحات */}
+
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home user={user} />} />

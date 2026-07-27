@@ -208,14 +208,13 @@ const handleRemove = (itemId) => {
   return(
     <div className="dashboard-container">
       
-      {/* پیام‌های وضعیت سیستم */}
       {message && (
         <div className={`dashboard-message ${message.startsWith('❌') ? 'error-msg' : 'success-msg'}`}>
           {message}
         </div>
       )}
 
-      {/* بخش اول: اطلاعات مالی و شارژ ولت */}
+
       <div className="dashboard-card discount-list-card">
         <h3 className="card-title">💳 وضعیت مالی و کیف پول</h3>
         <p className="wallet-status">
@@ -258,7 +257,7 @@ const handleRemove = (itemId) => {
 ))}
 </div>
 
-      {/* بخش دوم: سبد خرید و اعمال کد تخفیف */}
+
       <div className="dashboard-card">
         <h3 className="card-title">🛒 سبد خرید شما</h3>
         
@@ -299,7 +298,7 @@ const handleRemove = (itemId) => {
               </table>
             </div>
 
-            {/* بخش اعمال کد تخفیف */}
+
             <div className="discount-section">
               <input 
                 type="text" 
@@ -324,7 +323,7 @@ const handleRemove = (itemId) => {
         )}
       </div>
 
-      {/* بخش سوم: تاریخچه خریدها (فاکتورها) */}
+
       <div className="dashboard-card">
         <h3 className="card-title">📜 تاریخچه خریدها و فاکتورها</h3>
         
