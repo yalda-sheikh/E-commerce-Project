@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function Search({ onSearch }) {
-
     const [keyword, setKeyword] = useState("");
+    const { t } = useTranslation();
 
     const handleSearch = () => {
         onSearch(keyword);
@@ -19,7 +20,7 @@ function Search({ onSearch }) {
 
                 <input
                     type="text"
-                    placeholder="جستجوی محصول، برند یا دسته‌بندی..."
+                    placeholder={t("searchPlaceholder")}
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     onKeyDown={(e) => {
@@ -29,11 +30,11 @@ function Search({ onSearch }) {
                     }}
                 />
 
-                <button 
+                <button
                     className="search-btn"
                     onClick={handleSearch}
                 >
-                    جستجو
+                    {t("search")}
                 </button>
 
             </div>

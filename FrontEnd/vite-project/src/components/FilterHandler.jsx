@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function FilterHandler({ setProducts }) {
 
@@ -6,6 +7,8 @@ function FilterHandler({ setProducts }) {
     const [type, setType] = useState("");
     const [min, setMin] = useState("");
     const [max, setMax] = useState("");
+
+    const { t } = useTranslation();
 
     const Filter = () => {
 
@@ -24,50 +27,50 @@ function FilterHandler({ setProducts }) {
     return (
 
         <div className="filter-box">
-    
+
             <select
                 className="filter-select"
                 value={type}
                 onChange={(e) => setType(e.target.value)}
             >
-                <option value="">همه دسته‌ها</option>
-                <option value="MOBILE">موبایل</option>
-                <option value="LAPTOP">لپ‌تاپ</option>
+                <option value="">{t("allCategories")}</option>
+                <option value="MOBILE">{t("mobile")}</option>
+                <option value="LAPTOP">{t("laptop")}</option>
             </select>
-    
+
             <input
                 className="filter-input"
                 type="text"
-                placeholder="برند"
+                placeholder={t("brand")}
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
             />
-    
+
             <input
                 className="filter-input"
                 type="number"
-                placeholder="حداقل قیمت"
+                placeholder={t("minPrice")}
                 value={min}
                 onChange={(e) => setMin(e.target.value)}
             />
-    
+
             <input
                 className="filter-input"
                 type="number"
-                placeholder="حداکثر قیمت"
+                placeholder={t("maxPrice")}
                 value={max}
                 onChange={(e) => setMax(e.target.value)}
             />
-    
-            <button 
+
+            <button
                 className="filter-btn"
                 onClick={Filter}
             >
-                🔍 اعمال فیلتر
+                🔍 {t("applyFilter")}
             </button>
-    
+
         </div>
-    
+
     );
 
 }

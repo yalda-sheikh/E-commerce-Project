@@ -465,10 +465,7 @@
      color: var(--text-secondary);
      font-weight: 800;
    }
-   
-   /* ==========================================================================
-      ۸. صفحه جزئیات محصول (ProductDetail)
-      ========================================================================== */
+
    .product-detail-container {
      display: grid;
      grid-template-columns: 1fr 1.2fr;
@@ -549,11 +546,7 @@
        padding: 24px;
      }
    }
-/* ==========================================================================
-   استایل سوئیچر زبان (Language Switcher)
-   ========================================================================== */
 
-/* کانتینر اصلی سوئیچر */
 .language-switcher {
   display: inline-flex;
   align-items: center;
@@ -566,7 +559,7 @@
   transition: border-color var(--transition-fast);
 }
 
-/* استایل دکمه‌ها */
+
 .language-btn {
   display: inline-flex;
   align-items: center;
@@ -585,19 +578,18 @@
   white-space: nowrap;
 }
 
-/* آیکون پرچم‌ها */
+
 .language-btn span {
   font-size: 1.05rem;
   line-height: 1;
 }
 
-/* حالت Hover برای دکمه غیرفعال */
+
 .language-btn:hover:not(.active) {
   color: var(--text-primary);
   background-color: var(--accent-blue-soft);
 }
 
-/* حالت زبان فعال (Active) */
 .language-btn.active {
   color: var(--text-primary);
   background-color: var(--bg-surface);
@@ -606,13 +598,28 @@
   border: 1px solid var(--border-hover);
 }
 
-/* تنظیم خوانایی رنگ متن دکمه فعال در تم تاریک */
 [data-theme="dark"] .language-btn.active {
   color: #ffffff;
   background-color: var(--bg-surface);
 }
 
-/* حالت لمس روی موبایل */
+
 .language-btn:active {
   transform: scale(0.96);
 }
+
+html,
+body {
+  transition: all 0.3s ease;
+}
+
+body.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+body.ltr {
+  direction: ltr;
+  text-align: left;
+}
+

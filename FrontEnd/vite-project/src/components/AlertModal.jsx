@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import "./AlertModal.css";
 
 function AlertModal({
@@ -8,6 +9,8 @@ function AlertModal({
   message,
   type = "info",
 }) {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   const typeStyles = {
@@ -67,7 +70,7 @@ function AlertModal({
             className={`modal-btn ${currentStyle.btn}`}
             onClick={onClose}
           >
-            متوجه شدم
+            {t("common.ok")}
           </button>
         </div>
 

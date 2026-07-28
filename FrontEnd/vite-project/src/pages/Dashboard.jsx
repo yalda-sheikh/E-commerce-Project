@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import './Dashboard.css' 
 import AlertModal from "../components/AlertModal";
 import useAlert from '../components/useAlert';
+import { useTranslation } from 'react-i18next';
 
 function Dashboard({ user, setUser }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [discountCodes, setDiscountCodes] = useState([])
   const [discountCode, setDiscountCode] = useState('')
@@ -205,161 +207,301 @@ const handleRemove = (itemId) => {
     
 }).catch((err) => alert(err.message))
 }
-  return(
-    <div className="dashboard-container">
-      
-      {message && (
-        <div className={`dashboard-message ${message.startsWith('❌') ? 'error-msg' : 'success-msg'}`}>
-          {message}
-        </div>
-      )}
+return (
+  <div className="dashboard-container">
 
-
-      <div className="dashboard-card discount-list-card">
-        <h3 className="card-title">💳 وضعیت مالی و کیف پول</h3>
-        <p className="wallet-status">
-          موجودی فعلی حساب شما: <strong>{user?.wallet?.toLocaleString()} تومان</strong>
-        </p>
-        
-        <form onSubmit={handleChargeWallet} className="charge-form">
-          <input 
-            type="number" 
-            placeholder="مبلغ افزایش موجودی (تومان)" 
-            value={chargeAmount} 
-            onChange={(e) => setChargeAmount(e.target.value)} 
-            className="dashboard-input"
-            required 
-            min="1000" 
-          />
-          <button type="submit" className="btn btn-success">➕ شارژ آنلاین کیف پول</button>
-        </form>
+    {message && (
+      <div
+        className={`dashboard-message ${
+          message.startsWith("❌") ? "error-msg" : "success-msg"
+        }`}
+      >
+        {message}
       </div>
-      <div className="dashboard-card">
-      <h3 className="card-title">🎁 کدهای تخفیف من</h3>
+    )}
 
-  {discountCodes.map((discount, index) => (
- <div key={index} className="discount-card">
-<p className="discount-item"><strong>کد:</strong> {discount.code}</p>
+    {/* Wallet */}
 
-<p className="discount-item"><strong>نوع:</strong> {discount.discountType}</p>
+    <div className="dashboard-card discount-list-card">
 
-<p className="discount-item"><strong>مقدار:</strong> {discount.value}</p>
+      <h3 className="card-title">
+        💳 {t("dashboard.wallet")}
+      </h3>
 
-<p className="discount-item">
-<strong>حداقل خرید:</strong>{ (discount.minimumPrice || 0).toLocaleString() }تومان
-</p>
+      <p className="wallet-status">
+        {t("dashboard.currentBalance")}{" "}
+        <strong>
+          {user?.wallet?.toLocaleString()} {t("product.currency")}
+        </strong>
+      </p>
 
-<p className="discount-item">
-<strong>وضعیت:</strong>{" "}
-{discount.active ? "✅ فعال" : "❌ استفاده شده"}
-</p>
-  </div>
-))}
-</div>
+      <form
+        onSubmit={handleChargeWallet}
+        className="charge-form"
+      >
 
+        <input
+          type="number"
+          placeholder={t("dashboard.chargePlaceholder")}
+          value={chargeAmount}
+          onChange={(e) => setChargeAmount(e.target.value)}
+          className="dashboard-input"
+          required
+          min="1000"
+        />
 
-      <div className="dashboard-card">
-        <h3 className="card-title">🛒 سبد خرید شما</h3>
-        
-        {cartItems.length === 0 ? (
-          <p className="empty-state">سبد خرید شما در حال حاضر خالی است.</p>
-        ) : (
-          <div>
-            <div className="table-responsive">
-              <table className="dashboard-table">
-                <thead>
-                  <tr>
-                    <th>نام کالا</th>
-                    <th>قیمت واحد</th>
-                    <th>تعداد درخواست</th>
-                    <th>قیمت کل</th>
+        <button
+          type="submit"
+          className="btn btn-success"
+        >
+          ➕ {t("dashboard.chargeWallet")}
+        </button>
 
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {cartItems.map((item) => (
-                    <tr key={item.itemId}>
-                      <td>{item.name}-{item.color} </td>
-
-                      <td>{item.price.toLocaleString()} تومان</td>
-                      <td>{item.quantity} عدد</td>
-                      <td>{(item.price * item.quantity).toLocaleString()} تومان</td>
-                      <td>
-                    <button className='btn btn-primary'
-          onClick={() => handleRemove(item.itemId)}
-                >
-                      🗑 حذف
-                      </button>
-                    </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-
-            <div className="discount-section">
-              <input 
-                type="text" 
-                placeholder="کد تخفیف (مثلاً: 12345678)" 
-                value={discountCode} 
-                onChange={(e) => setDiscountCode(e.target.value)} 
-                className="dashboard-input" 
-              />
-              <button 
-                onClick={handleApplyDiscount}
-                className="btn btn-info"
-              >
-                ثبت کد
-              </button>
-            </div>
-
-            <div className="checkout-section">
-              <span className="total-price">مبلغ کل قابل پرداخت: {totalCartPrice.toLocaleString()} تومان</span>
-              <button onClick={handleCheckout} className="btn btn-primary">💳 پرداخت و تسویه نهایی</button>
-            </div>
-          </div>
-        )}
-      </div>
-
-
-      <div className="dashboard-card">
-        <h3 className="card-title">📜 تاریخچه خریدها و فاکتورها</h3>
-        
-        {purchaseHistory.length === 0 ? (
-          <p className="empty-state">هنوز هیچ فاکتور یا خریدی در تاریخچه شما ثبت نشده است.</p>
-        ) : (
-          <div className="table-responsive">
-            <table className="dashboard-table">
-              <thead>
-                <tr>
-                  <th>شماره فاکتور</th>
-                  <th>تاریخ ثبت</th>
-                  <th>مبلغ پرداختی</th>
-                  <th>وضعیت فاکتور</th>
-                </tr>
-              </thead>
-              <tbody>
-                {purchaseHistory.map((history) => (
-                  <tr key={history.purchaseId}>
-                    <td>{history.purchaseId}</td>
-                    <td>{history.date}</td>
-                    <td>{history.total.toLocaleString()} تومان</td>
-                    <td className="status-success">{history.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      <AlertModal
-{...alert }  onClose={closeAlert}
-      />
+      </form>
 
     </div>
-  )
+
+    {/* Discount Codes */}
+
+    <div className="dashboard-card">
+
+      <h3 className="card-title">
+        🎁 {t("dashboard.myDiscounts")}
+      </h3>
+
+      {discountCodes.map((discount, index) => (
+
+        <div
+          key={index}
+          className="discount-card"
+        >
+
+          <p className="discount-item">
+            <strong>{t("discount.table.code")}:</strong>{" "}
+            {discount.code}
+          </p>
+
+          <p className="discount-item">
+            <strong>{t("discount.table.type")}:</strong>{" "}
+            {discount.discountType}
+          </p>
+
+          <p className="discount-item">
+            <strong>{t("discount.table.value")}:</strong>{" "}
+            {discount.value}
+          </p>
+
+          <p className="discount-item">
+            <strong>{t("discount.table.minimum")}:</strong>{" "}
+            {(discount.minimumPrice || 0).toLocaleString()}{" "}
+            {t("product.currency")}
+          </p>
+
+          <p className="discount-item">
+            <strong>{t("discount.table.status")}:</strong>{" "}
+            {discount.active
+              ? `✅ ${t("discount.enabled")}`
+              : `❌ ${t("dashboard.used")}`}
+          </p>
+
+        </div>
+
+      ))}
+
+    </div>
+
+    {/* Cart */}
+
+    <div className="dashboard-card">
+
+      <h3 className="card-title">
+        🛒 {t("dashboard.cart")}
+      </h3>
+
+      {cartItems.length === 0 ? (
+
+        <p className="empty-state">
+          {t("dashboard.emptyCart")}
+        </p>
+
+      ) : (
+
+        <div>
+
+          <div className="table-responsive">
+
+            <table className="dashboard-table">
+
+              <thead>
+
+                <tr>
+                  <th>{t("dashboard.product")}</th>
+                  <th>{t("dashboard.unitPrice")}</th>
+                  <th>{t("dashboard.quantity")}</th>
+                  <th>{t("dashboard.totalPrice")}</th>
+                  <th></th>
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {cartItems.map((item) => (
+
+                  <tr key={item.itemId}>
+
+                    <td>
+                      {item.name}-{item.color}
+                    </td>
+
+                    <td>
+                      {item.price.toLocaleString()} {t("product.currency")}
+                    </td>
+
+                    <td>
+                      {item.quantity} {t("product.items")}
+                    </td>
+
+                    <td>
+                      {(item.price * item.quantity).toLocaleString()}{" "}
+                      {t("product.currency")}
+                    </td>
+
+                    <td>
+
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleRemove(item.itemId)}
+                      >
+                        🗑 {t("dashboard.remove")}
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <div className="discount-section">
+
+            <input
+              type="text"
+              placeholder={t("dashboard.discountPlaceholder")}
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value)}
+              className="dashboard-input"
+            />
+
+            <button
+              onClick={handleApplyDiscount}
+              className="btn btn-info"
+            >
+              {t("dashboard.applyDiscount")}
+            </button>
+
+          </div>
+
+          <div className="checkout-section">
+
+            <span className="total-price">
+              {t("dashboard.payable")}{" "}
+              {totalCartPrice.toLocaleString()}{" "}
+              {t("product.currency")}
+            </span>
+
+            <button
+              onClick={handleCheckout}
+              className="btn btn-primary"
+            >
+              💳 {t("dashboard.checkout")}
+            </button>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </div>
+
+    {/* Purchase History */}
+
+    <div className="dashboard-card">
+
+      <h3 className="card-title">
+        📜 {t("dashboard.history")}
+      </h3>
+
+      {purchaseHistory.length === 0 ? (
+
+        <p className="empty-state">
+          {t("dashboard.emptyHistory")}
+        </p>
+
+      ) : (
+
+        <div className="table-responsive">
+
+          <table className="dashboard-table">
+
+            <thead>
+
+              <tr>
+                <th>{t("dashboard.invoice")}</th>
+                <th>{t("dashboard.date")}</th>
+                <th>{t("dashboard.amount")}</th>
+                <th>{t("dashboard.status")}</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {purchaseHistory.map((history) => (
+
+                <tr key={history.purchaseId}>
+
+                  <td>{history.purchaseId}</td>
+
+                  <td>{history.date}</td>
+
+                  <td>
+                    {history.total.toLocaleString()}{" "}
+                    {t("product.currency")}
+                  </td>
+
+                  <td className="status-success">
+                    {history.status}
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      )}
+
+    </div>
+
+    <AlertModal
+      {...alert}
+      onClose={closeAlert}
+    />
+
+  </div>
+);
+
 }
 
-export default Dashboard
+export default Dashboard;
