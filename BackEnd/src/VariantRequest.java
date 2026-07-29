@@ -1,12 +1,12 @@
 public class VariantRequest {
 
-    private int itemId;
+    private long itemId;
 
     private String color;
     private double price;
     private int stock;
 
-    public int getItemId() {
+    public long getItemId() {
         return itemId;
     }
 

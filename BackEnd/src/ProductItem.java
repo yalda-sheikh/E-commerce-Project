@@ -1,6 +1,6 @@
 public class ProductItem implements StockManageable, Discountable {
 
-    int itemId;
+    long itemId;
     Product product;
     Seller seller;
     String color;
@@ -8,7 +8,7 @@ public class ProductItem implements StockManageable, Discountable {
     double discountPercent;
     int stock;
 
-    public ProductItem(int itemId , Product product  , Seller seller, String color , double price, double discountPercent , int stock){
+    public ProductItem(long itemId , Product product  , Seller seller, String color , double price, double discountPercent , int stock){
         this.itemId = itemId;
         this.price = price;
         this.product = product;
@@ -23,7 +23,7 @@ public class ProductItem implements StockManageable, Discountable {
         return price * (1 - (discountPercent / 100.0));
     }
 
-    public int getItemId(){
+    public long getItemId(){
         return itemId;
     }
 

@@ -1,2 +1,0 @@
-yal,PERCENT,12.0,1999.0,false
-62660461,PERCENT,5.0,0.0,true

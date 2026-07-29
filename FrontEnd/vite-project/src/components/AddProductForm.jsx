@@ -150,7 +150,10 @@ if (
     } catch (error) {
     
       console.error("خطا در ذخیره محصول:", error);
-      alert("خطایی رخ داد!");
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log("Backend message:", error.response.data);
+      }
     
     }
   };
@@ -250,13 +253,10 @@ if (
   return (
     <div className="seller-page">
       <form onSubmit={handleSubmit}>
+        <h3>➕ افزودن محصول جدید (داشبورد فروشنده: {user?.username})</h3>
 
-<h3>
-  ➕ {t("seller.addProduct")} ({t("seller.dashboard")}: {user?.username})
-</h3>
-
-<div className="input-group">
-  <label>{t("seller.productName")}</label>
+        <div className="input-group">
+  <label>نام محصول</label>
   <input
     className="form-input"
     type="text"
@@ -268,7 +268,7 @@ if (
 </div>
 
 <div className="input-group">
-  <label>{t("seller.brand")}</label>
+  <label>برند</label>
   <input
     className="form-input"
     type="text"
@@ -282,40 +282,40 @@ if (
 {!editingId && (
   <>
     <div className="input-group">
-      <label>{t("seller.color")}</label>
-      <input
-        className="form-input"
-        type="text"
-        name="color"
-        onChange={handleVariantChange}
-        value={currentVariant.color}
-        required
-      />
-    </div>
+  <label>رنگ</label>
+  <input
+    className="form-input"
+    type="text"
+    name="color"
+    onChange={handleVariantChange}
+    value={currentVariant.color}
+    required
+  />
+</div>
 
-    <div className="input-group">
-      <label>{t("seller.price")}</label>
-      <input
-        className="form-input"
-        type="number"
-        name="price"
-        onChange={handleVariantChange}
-        value={currentVariant.price}
-        required
-      />
-    </div>
+<div className="input-group">
+  <label>قیمت</label>
+  <input
+    className="form-input"
+    type="number"
+    name="price"
+    onChange={handleVariantChange}
+    value={currentVariant.price}
+    required
+  />
+</div>
 
-    <div className="input-group">
-      <label>{t("seller.stock")}</label>
-      <input
-        className="form-input"
-        type="number"
-        name="stock"
-        onChange={handleVariantChange}
-        value={currentVariant.stock}
-        required
-      />
-    </div>
+<div className="input-group">
+  <label>موجودی انبار</label>
+  <input
+    className="form-input"
+    type="number"
+    name="stock"
+    onChange={handleVariantChange}
+    value={currentVariant.stock}
+    required
+  />
+</div>
 
     <button
       className="btn btn-primary"
@@ -327,7 +327,8 @@ if (
           !currentVariant.price ||
           !currentVariant.stock
         ) {
-          alert(t("seller.fillVariant"));
+          alert("اطلاعات رنگ را کامل وارد کنید.");
+
           return;
         }
 
@@ -341,7 +342,7 @@ if (
 
       }}
     >
-      ➕ {t("seller.addColor")}
+      ➕ افزودن رنگ
     </button>
 
     {variants.map((v, index) => (
@@ -351,13 +352,13 @@ if (
     ))}
   </>
 )}
+{/* =================== حالت ویرایش محصول =================== */}
 
 {editingId && (
   <>
-    <h4>{t("seller.productColors")}</h4>
+    <h4>رنگ‌های محصول</h4>
 
-    {variants.map((v, index) => (
-
+    {variants.map((v , index) => (
       <div
         key={v.itemId}
         style={{
@@ -366,156 +367,339 @@ if (
           marginBottom: "10px"
         }}
       >
+<div className="input-group">
+  <label>رنگ</label>
+  <input
+    className="form-input"
+    type="text"
+    value={v.color}
+    onChange={(e) =>
+      handleVariantEdit(index, "color", e.target.value)
+    }
+  />
+</div>
 
-        <div className="input-group">
-          <label>{t("seller.color")}</label>
-          <input
-            className="form-input"
-            type="text"
-            value={v.color}
-            onChange={(e) =>
-              handleVariantEdit(index, "color", e.target.value)
-            }
-          />
-        </div>
+<div className="input-group">
+  <label>قیمت</label>
+  <input
+    className="form-input"
+    type="number"
+    value={v.price}
+    onChange={(e) =>
+      handleVariantEdit(index, "price", e.target.value)
+    }
+  />
+</div>
 
-        <div className="input-group">
-          <label>{t("seller.price")}</label>
-          <input
-            className="form-input"
-            type="number"
-            value={v.price}
-            onChange={(e) =>
-              handleVariantEdit(index, "price", e.target.value)
-            }
-          />
-        </div>
+<div className="input-group">
+  <label>موجودی</label>
+  <input
+    className="form-input"
+    type="number"
+    value={v.stock}
+    onChange={(e) =>
+      handleVariantEdit(index, "stock", e.target.value)
+    }
+  />
+</div>
 
-        <div className="input-group">
-          <label>{t("seller.stock")}</label>
-          <input
-            className="form-input"
-            type="number"
-            value={v.stock}
-            onChange={(e) =>
-              handleVariantEdit(index, "stock", e.target.value)
-            }
-          />
-        </div>
+
 
       </div>
 
+
     ))}
-  </>
-)}
+    <div className="input-group">
+  <label>رنگ جدید</label>
+  <input
+    className="form-input"
+    type="text"
+    name="color"
+    value={currentVariant.color}
+    onChange={handleVariantChange}
+  />
+</div>
 
-<label>{t("seller.productType")}</label>
+<div className="input-group">
+  <label>قیمت</label>
+  <input
+    className="form-input"
+    type="number"
+    name="price"
+    value={currentVariant.price}
+    onChange={handleVariantChange}
+  />
+</div>
 
-<select
-  value={productType}
-  onChange={(e) => setProductType(e.target.value)}
->
-  <option value="BASE">{t("seller.baseProduct")}</option>
-  <option value="LAPTOP">{t("seller.laptop")}</option>
-  <option value="MOBILE">{t("seller.mobile")}</option>
-</select>
-
-{productType === "LAPTOP" && (
-  <div className="special-fields laptop-fields">
-
-    <h4>{t("seller.laptopSpecs")}</h4>
-
-    <input
-      className="special-fields-input"
-      type="number"
-      name="ram"
-      placeholder={t("seller.ram")}
-      onChange={handleLaptopChange}
-      required
-    />
-
-    <input
-      className="special-fields-input"
-      type="number"
-      name="storage"
-      placeholder={t("seller.storage")}
-      onChange={handleLaptopChange}
-      required
-    />
-
-    <label>
-      {t("seller.graphics")}
-
-      <select
-        name="graphics"
-        onChange={handleLaptopChange}
-      >
-        <option value="false">{t("common.no")}</option>
-        <option value="true">{t("common.yes")}</option>
-      </select>
-
-    </label>
-
-  </div>
-)}
-{productType === "MOBILE" && (
-  <div className="special-fields mobile-fields">
-
-    <h4>{t("seller.mobileSpecs")}</h4>
-
-    <div>
-
-      <label>{t("seller.camera")}:</label>
-
-      <input
-        className="special-fields-input"
-        type="number"
-        value={mobileFields.cameraMP}
-        onChange={(e) =>
-          setMobileFields({
-            ...mobileFields,
-            cameraMP: e.target.value,
-          })
-        }
-        placeholder={t("seller.cameraPlaceholder")}
-        required
-      />
-
-    </div>
-
-    <div>
-
-      <label>{t("seller.battery")}:</label>
-
-      <input
-        className="special-fields-input"
-        type="number"
-        value={mobileFields.batteryMah}
-        onChange={(e) =>
-          setMobileFields({
-            ...mobileFields,
-            batteryMah: e.target.value,
-          })
-        }
-        placeholder={t("seller.batteryPlaceholder")}
-        required
-      />
-
-    </div>
-
-  </div>
-)}
+<div className="input-group">
+  <label>موجودی</label>
+  <input
+    className="form-input"
+    type="number"
+    name="stock"
+    value={currentVariant.stock}
+    onChange={handleVariantChange}
+  />
+</div>
 
 <button
-  className="submit-product-btn"
-  type="submit"
->
-  {editingId
-    ? `💾 ${t("seller.saveChanges")}`
-    : `➕ ${t("seller.submitProduct")}`}
-</button>
+  type="button"
+  className="btn btn-success"
+  onClick={() => {
 
-</form>
+    if (
+      !currentVariant.color ||
+      !currentVariant.price ||
+      !currentVariant.stock
+    ) {
+      alert("اطلاعات رنگ را کامل وارد کنید.");
+      return;
+    }
+
+    setVariants(prev => [
+      ...prev,
+      {
+        itemId: Date.now(),
+        color: currentVariant.color,
+        price: Number(currentVariant.price),
+        stock: Number(currentVariant.stock)
+      }
+    ]);
+
+    setCurrentVariant({
+      color: "",
+      price: "",
+      stock: ""
+    });
+
+  }}
+>
+    ➕ افزودن رنگ جدید
+</button>
+  </>
+)}
+        <label>نوع محصول:</label>
+        <select value={productType} onChange={(e) => setProductType(e.target.value)}>
+          <option value="BASE">محصول معمولی (ساده)</option>
+          <option value="LAPTOP">لپ‌تاپ (Laptop)</option>
+          <option value="MOBILE">موبایل (Mobile)</option>
+        </select>
+
+        {productType === 'LAPTOP' && (
+         <div className="special-fields laptop-fields">
+            <h4>ویژگی‌های اختصاصی لپ‌تاپ:</h4>
+            <input className="special-fields-input" type="number" name="ram" placeholder="مقدار رم (GB)" onChange={handleLaptopChange} required />
+            <input className="special-fields-input" type="number" name="storage" placeholder="مقدار حافظه (GB)" onChange={handleLaptopChange} required />
+            <label>
+              کارت گرافیک مجزا دارد؟
+              <select name="graphics" onChange={handleLaptopChange}>
+                <option value="false">خیر</option>
+                <option value="true">بله</option>
+              </select>
+            </label>
+          </div>
+        )}
+
+        {productType === 'MOBILE' && (
+          <div className="special-fields mobile-fields">
+            <h4 >مشخصات فنی موبایل:</h4>
+            <div >
+              <label>کیفیت دوربین (مگاپیکسل): </label>
+              <input className="special-fields-input"
+                type="number" 
+                value={mobileFields.cameraMP} 
+                onChange={(e) => setMobileFields({...mobileFields, cameraMP: e.target.value})} 
+                placeholder="مثلاً 48"
+                required
+              />
+            </div>
+            <div >
+              <label>ظرفیت باتری (mAh): </label>
+              <input className="special-fields-input"
+                type="number" 
+                value={mobileFields.batteryMah} 
+                onChange={(e) => setMobileFields({...mobileFields, batteryMah: e.target.value})} 
+                placeholder="مثلاً 5000"
+                required
+              />
+            </div>
+            <div>
+            </div>
+          </div>
+        )}
+
+<button className="submit-product-btn" type="submit">
+    {editingId ? "💾 ذخیره تغییرات" : "➕ ثبت محصول جدید"}
+</button>
+      </form>
+
+      <div className="inventory-section">
+
+<h3 className="inventory-title">
+    📦 لیست محصولات موجود در انبار شما
+</h3>
+
+{products.filter(p => p.sellerName === user?.username).length === 0 ? (
+
+    <p className="inventory-empty">
+        هیچ محصولی توسط شما ثبت نشده است.
+    </p>
+
+) : (
+
+    <div className="table-wrapper">
+
+        <table className="inventory-table">
+
+            <thead>
+
+                <tr>
+                    <th>شناسه کالا</th>
+                    <th>نام محصول</th>
+                    <th>برند</th>
+                    <th>رنگ</th>
+                    <th>قیمت (تومان)</th>
+                    <th>موجودی</th>
+                    <th>نوع کالا</th>
+                    <th>✨ ویژگی‌های اختصاصی</th>
+                    <th>
+                      __
+                    </th>
+                    <th>
+                      __
+                    </th>
+                    
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {products
+            .filter(p => p.sellerName === user?.username)
+            .map((item)=>(
+
+
+                <tr key={item.itemId}>
+                  
+
+                    <td>
+                        <strong>{item.variants?.[0].itemId}</strong>
+                    </td>
+
+                    <td>{item.name}</td>
+
+                    <td>{item.brand}</td>
+
+                    <td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.color}
+    </div>
+  ))}
+</td>
+
+
+<td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.price.toLocaleString()}
+    </div>
+  ))}
+</td>
+
+<td>
+  {item.variants?.map((v) => (
+    <div key={v.itemId}>
+      {v.stock} عدد
+    </div>
+  ))}
+</td>
+
+
+                    <td>
+
+                        {
+                        item.productType === "LAPTOP"
+                        ? "💻 لپ‌تاپ"
+                        : item.productType === "MOBILE"
+                        ? "📱 موبایل"
+                        : "📦 محصول ساده"
+                        }
+
+                    </td>
+
+
+                    <td className={
+                        item.productType === "LAPTOP"
+                        ? "laptop-detail"
+                        :
+                        item.productType === "MOBILE"
+                        ? "mobile-detail"
+                        :
+                        "base-detail"
+                    }>
+
+
+                        {
+                        item.productType === "LAPTOP" && (
+
+                            <span>
+                                رم: {item.ram}GB 
+                                <br/>
+                                حافظه: {item.storage}GB
+                            </span>
+
+                        )
+                        }
+
+
+                        {
+                        item.productType === "MOBILE" && (
+
+                            <span>
+                                دوربین: {item.cameraMP}MP
+                                <br/>
+                                باتری: {item.batteryMah}mAh
+                                <br/>
+                                {item.is5G === "true" || item.is5G === true
+                                ? "5G"
+                                : "4G"}
+                            </span>
+
+                        )
+                        }
+
+
+                        {
+                        item.productType === "BASE" && (
+                            <span>
+                                ---
+                            </span>
+                        )
+                        }
+
+
+                    </td>
+                    <td><button className='btn btn-primary' onClick={() => handelEdit(item)}>ویرایش</button></td>
+                    <td> <button className='btn btn-primary' onClick={() => handleDelete(item.itemId)}>حذف محصول</button></td>
+
+
+                </tr>
+
+            ))}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+)}
+
+</div>
 <AlertModal {...alert}  onClose={closeAlert} />
 
     </div>

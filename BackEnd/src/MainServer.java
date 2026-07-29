@@ -923,25 +923,6 @@ public class MainServer {
 
                         String name = request.getName();
                         String brand = request.getBrand();
-                        for (VariantRequest variant : request.getVariants()) {
-
-                            for (ProductItem item : allProductItems) {
-
-                                if (item.getItemId() == variant.getItemId()) {
-
-                                    item.setColor(variant.getColor());
-
-                                    item.setPrice(variant.getPrice());
-
-                                    item.setStock(variant.getStock());
-
-                                    break;
-                                }
-
-                            }
-
-                        }
-
                         ProductItem foundItem = null;
 
 
@@ -953,6 +934,47 @@ public class MainServer {
                                 break;
                             }
                         }
+                        if (foundItem == null) {
+
+                            String error = "{\"error\":\"محصول پیدا نشد\"}";
+                            byte[] response = error.getBytes("UTF-8");
+
+                            exchange.sendResponseHeaders(404, response.length);
+
+                            OutputStream os = exchange.getResponseBody();
+                            os.write(response);
+                            os.close();
+
+                            return;
+                        }
+                        for(VariantRequest variant : request.getVariants()){
+                            ProductItem fountVariant = null;
+                            for(ProductItem item : allProductItems){
+                                if(item.getItemId() == variant.getItemId()){
+                                    fountVariant = item;
+                                    break;
+                                }
+                            }
+                            if(fountVariant != null){
+                                fountVariant.setColor(variant.getColor());
+                                fountVariant.setPrice(variant.getPrice());
+                                fountVariant.setStock(variant.getStock());
+                            }else {
+                                ProductItem newItem = new ProductItem(
+                                        variant.getItemId(),
+                                        foundItem.getProduct(),
+                                        foundItem.getSeller(),
+                                        variant.getColor(),
+                                        variant.getPrice(),
+                                        0,
+                                        variant.getStock()
+                                );
+
+                                allProductItems.add(newItem);
+                            }
+                        }
+
+
 
                         if (foundItem == null) {
 
