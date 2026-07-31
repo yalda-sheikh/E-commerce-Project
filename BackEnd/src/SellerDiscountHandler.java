@@ -60,8 +60,16 @@ public class SellerDiscountHandler implements HttpHandler {
                 json.append("\"discountType\":\"").append(discount.getDiscountType()).append("\",");
                 json.append("\"value\":").append(discount.getValue()).append(",");
                 json.append("\"minimumPrice\":").append(discount.getMinimumPrice()).append(",");
-                json.append("\"active\":").append(discount.isActive()).append(",");
-                json.append("\"sellerName\":\"").append(discount.getSellerName()).append("\"");
+                json.append("\"sellerName\":\"").append(discount.getSellerName()).append("\",");
+
+                json.append("\"startDate\":\"")
+                        .append(discount.getStartDate())
+                        .append("\",");
+
+                json.append("\"endDate\":\"")
+                        .append(discount.getEndDate())
+                        .append("\"");
+
                 json.append("}");
 
 
@@ -95,9 +103,6 @@ public class SellerDiscountHandler implements HttpHandler {
                     body.split("\"minimumPrice\":")[1].split(",")[0]
             );
 
-            boolean active = Boolean.parseBoolean(
-                    body.split("\"active\":")[1].split(",")[0]
-            );
 
             String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
 
@@ -109,7 +114,6 @@ public class SellerDiscountHandler implements HttpHandler {
                     discount.setDiscountType(discountType);
                     discount.setValue(value);
                     discount.setMinimumPrice(minimumPrice);
-                    discount.setActive(active);
 
                     MainServer.saveData();
 

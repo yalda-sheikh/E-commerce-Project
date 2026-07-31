@@ -15,7 +15,8 @@ function Discount({ user }) {
     const [active, setActive] = useState(true);
     const [editingDiscount, setEditingDiscount] = useState(null);
     const [discounts, setDiscounts] = useState([]);
-
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const { alert, showAlert, closeAlert } = useAlert();
 
     const loadDiscounts = () => {
@@ -30,8 +31,9 @@ function Discount({ user }) {
         if (!user) return;
         loadDiscounts();
     }, [user]);
-
+    console.log(startDate, endDate)
     const createDiscount = () => {
+      console.log("Before fetch:", startDate, endDate);
 
         fetch("http://localhost:8080/api/discount", {
             method: "POST",
@@ -44,11 +46,14 @@ function Discount({ user }) {
                 value: Number(value),
                 minimumPrice: Number(minimumPrice),
                 active,
-                sellerName: user?.username
+                sellerName: user?.username,
+                startDate,
+                endDate
             })
         })
             .then(res => res.json())
             .then(() => {
+              
 
                 showAlert(
                     t("common.success"),
@@ -218,18 +223,28 @@ function Discount({ user }) {
                   value={minimumPrice}
                   onChange={(e) => setMinimumPrice(e.target.value)}
               />
+
+              <label>
+
+
+<input
+              type="date"
+  value={startDate}
+  onChange={(e) => {setStartDate(e.target.value); console.log("start changed:", e.target.value)}}
   
-              <label className="discount-check">
-  
-                  <input
-                      type="checkbox"
-                      checked={active}
-                      onChange={(e) => setActive(e.target.checked)}
-                  />
-  
-                  {t("discount.active")}
-  
+/>
+تاریخ شروع
               </label>
+              <label>
+                تاریخ پایان
+              <input
+
+type="date"
+value={endDate}
+onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.target.value)}}
+/>
+              </label>
+
   
               <button
                   className="discount-submit-btn"
@@ -265,7 +280,9 @@ function Discount({ user }) {
                               <th>{t("discount.table.type")}</th>
                               <th>{t("discount.table.value")}</th>
                               <th>{t("discount.table.minimum")}</th>
-                              <th>{t("discount.table.status")}</th>
+             
+                              <th>تاریخ شروع</th>
+                              <th>تاریخ پایان</th>
                               <th>{t("discount.table.edit")}</th>
                               <th>{t("discount.table.delete")}</th>
                           </tr>
@@ -295,12 +312,14 @@ function Discount({ user }) {
                                   <td>
                                       {discount.minimumPrice.toLocaleString()} {t("product.currency")}
                                   </td>
-  
                                   <td>
-                                      {discount.active
-                                          ? `🟢 ${t("discount.enabled")}`
-                                          : `🔴 ${t("discount.disabled")}`}
+                                    {discount.startDate || "-"} 
                                   </td>
+                                  <td>
+                                    {discount.endDate || "-"}
+                                  </td>
+  
+
   
                                   <td>
   

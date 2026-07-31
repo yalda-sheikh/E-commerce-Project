@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -5,20 +6,16 @@ import java.util.Random;
 public class Customer extends User {
     private HashMap<ProductItem, Integer> cart;
     private ArrayList<Purchase> purchaseHistory;
-    private ArrayList<String> discountCodes;
 
     public Customer(int userId, String username, String password, double wallet) {
         super(userId, username, password, Role.CUSTOMER, wallet);
         this.cart = new HashMap<>();
         this.purchaseHistory = new ArrayList<>();
-        this.discountCodes = new ArrayList<>();
     }
     public ArrayList<Purchase> getPurchaseHistory(){
         return purchaseHistory;
     }
-    public ArrayList<String> getDiscountCodes() {
-        return discountCodes;
-    }
+
 
     public void addToCart(ProductItem item, int quantity) {
         if (item == null || quantity <= 0) return;
@@ -90,10 +87,14 @@ public class Customer extends User {
 
         return total;
     }
-    public boolean checkout(String discountCode) {
+    public CheckoutResult checkout(String discountCode){
         if (cart.isEmpty()) {
             System.out.println("❌ سبد خرید شما خالی است و محصولی برای تسویه وجود ندارد.");
-            return false;
+            return new CheckoutResult(
+                    false,
+                    "CART_EMPTY",
+                    0
+            );
         }
 
         double totalCost = getCartTotal();
@@ -102,7 +103,26 @@ public class Customer extends User {
 
             DiscountCode discount = MainServer.findDiscountCode(discountCode);
 
-            if (discount != null && discount.isActive()) {
+            if (discount != null) {
+                LocalDate today = LocalDate.now();
+
+                if (today.isBefore(discount.getStartDate())) {
+                    System.out.println("⚠️ این کد تخفیف هنوز فعال نشده است.");
+                    return new CheckoutResult(
+                            false,
+                            "DISCOUNT_NOT_STARTED",
+                            totalCost
+                    );
+                }
+
+                if (today.isAfter(discount.getEndDate())) {
+                    System.out.println("⚠️ این کد تخفیف منقضی شده است.");
+                    return new CheckoutResult(
+                            false,
+                            "DISCOUNT_EXPIRED",
+                            totalCost
+                    );
+                }
 
                 if (totalCost >= discount.getMinimumPrice()) {
 
@@ -124,7 +144,6 @@ public class Customer extends User {
                     }
 
                     usedCode = discountCode;
-                    discount.setActive(false);
 
                     System.out.println(
                             "🎉 کد تخفیف با موفقیت اعمال شد."
@@ -153,7 +172,11 @@ public class Customer extends User {
 
         if (this.wallet < totalCost) {
             System.out.println("❌ خطا: موجودی کیف پول کافی نیست! مبلغ فاکتور: " + totalCost + " تومان");
-            return false;
+            return new CheckoutResult(
+                    false,
+                    "INSUFFICIENT_WALLET",
+                    totalCost
+            );
         }
 
 
@@ -176,11 +199,14 @@ public class Customer extends User {
         Purchase newPurchase = new Purchase(randomPurchaseId, "1405/03/09", cart, totalCost, usedCode);
         purchaseHistory.add(newPurchase);
 
-        generateDiscountCode();
 
         cart.clear();
         System.out.println("✅ تسویه حساب با موفقیت انجام شد و فاکتور شماره " + randomPurchaseId + " ثبت گردید.");
-        return true;
+        return new CheckoutResult(
+                true,
+                "SUCCESS",
+                totalCost
+        );
     }
 
     public boolean canReview(Product product) {
@@ -197,34 +223,6 @@ public class Customer extends User {
         }
     }
 
-    public void generateDiscountCode() {
-
-        Random random = new Random();
-        String code = "";
-
-        for (int i = 0; i < 8; i++) {
-            code += random.nextInt(10);
-        }
-
-        discountCodes.add(code);
-
-
-        DiscountCode newDiscount = new DiscountCode(
-                code,
-                "PERCENT",
-                5,
-                0,
-                true,
-                "ADMIN"
-        );
-
-        MainServer.allDiscountCodes.add(newDiscount);
-
-
-        System.out.println(
-                "🎁 کد تخفیف ۵ درصدی ساخته شد: " + code
-        );
-    }
 
     public void viewPurchaseHistory() {
         System.out.println("📜 === تاریخچه خریدهای شما ===");

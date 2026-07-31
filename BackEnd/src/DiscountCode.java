@@ -1,24 +1,44 @@
+import java.time.LocalDate;
+
 public class DiscountCode {
 
     private String code;              // کد تخفیف
     private String discountType;      // PERCENT یا FIXED
     private double value;             // مقدار تخفیف
     private double minimumPrice;      // حداقل مبلغ خرید
-    private boolean active;
     private String sellerName;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public DiscountCode(String code,
                         String discountType,
                         double value,
-                        double minimumPrice,
-                        boolean active , String sellerName) {
+                        double minimumPrice
+                         , String sellerName, LocalDate startDate,
+                        LocalDate endDate) {
 
         this.code = code;
         this.discountType = discountType;
         this.value = value;
         this.minimumPrice = minimumPrice;
-        this.active = active;
+
         this.sellerName= sellerName;
+        this.endDate = endDate;
+        this.startDate = startDate;
+
+    }
+    public LocalDate getStartDate(){
+        return  startDate;
+    }
+    public LocalDate getEndDate(){
+        return  endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+    public void setStartDate(LocalDate startDate){
+        this.startDate = startDate;
     }
 
     public String getCode() {
@@ -37,9 +57,6 @@ public class DiscountCode {
         return minimumPrice;
     }
 
-    public boolean isActive() {
-        return active;
-    }
 
     public void setCode(String code) {
         this.code = code;
@@ -57,9 +74,7 @@ public class DiscountCode {
         this.minimumPrice = minimumPrice;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+
 
     public String getSellerName() {
         return sellerName;

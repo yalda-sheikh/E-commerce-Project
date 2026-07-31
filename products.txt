@@ -1,5 +1,4 @@
-0,Galaxy Watch 6,Samsung,نقره‌ای,12000000.00,8,TechShop
-1,لپ تاپ,لیر,صل,23.00,33,بل
-2,لپ تاپ,لیر,لصرش,44.00,4,بل
-3,لپ تاپ,لیر,ذُ,444.00,4,بل
-1785344784515,لپ تاپ,لیر,زرد,4666666.00,6,بل
+50,iPad Pro,Apple
+60,Apple Watch 9,Apple
+51,Galaxy Tab S9,Samsung
+62,Galaxy Watch 6,Samsung

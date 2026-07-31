@@ -4,6 +4,7 @@ import './Dashboard.css'
 import AlertModal from "../components/AlertModal";
 import useAlert from '../components/useAlert';
 import { useTranslation } from 'react-i18next';
+import Discount from './Discount';
 
 function Dashboard({ user, setUser }) {
   const { t } = useTranslation()
@@ -131,14 +132,6 @@ function Dashboard({ user, setUser }) {
       .catch((err) => {
         setMessage(`❌ ${err.message}`)
       })
-      fetch(`http://localhost:8080/api/discounts?userId=${user.userId}`)
-  .then(res => {
-    if (!res.ok) throw new Error("خطا در دریافت کدهای تخفیف");
-    return res.json();
-  })
-  .then(data => {
-    setDiscountCodes(data);
-  })
   .catch(err => {
     console.log(err);
     showAlert("نا موفق", "تسویه حساب با خطا مواجه شد!", "warning");
@@ -157,33 +150,58 @@ function Dashboard({ user, setUser }) {
     fetch("http://localhost:8080/api/discount/apply", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json; charset=UTF-8"
+        "Content-Type": "application/json; charset=UTF-8",
       },
       body: JSON.stringify({
-        discountCode: discountCode,
-        userId : user.userId
-      })
+        discountCode,
+        userId: user.userId,
+      }),
     })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error); 
-        return data;
-      })
+      .then((res) => res.json())
       .then((data) => {
+  
+        if (!data.success) {
+  
+          switch (data.message) {
+  
+            case "DISCOUNT_EXPIRED":
+              showAlert("خطا", "کد تخفیف منقضی شده است.", "error");
+              return;
+  
+            case "DISCOUNT_NOT_STARTED":
+              showAlert("خطا", "کد تخفیف هنوز فعال نشده است.", "error");
+              return;
+  
+            case "MINIMUM_PRICE":
+              showAlert("خطا", "حداقل مبلغ خرید رعایت نشده است.", "error");
+              return;
+  
+            case "INSUFFICIENT_WALLET":
+              showAlert("خطا", "موجودی کیف پول کافی نیست.", "error");
+              return;
+  
+            default:
+              showAlert("خطا", "کد تخفیف معتبر نیست.", "error");
+              return;
+          }
+        }
+  
         setTotalCartPrice(data.newPrice);
-        showAlert("موفق", "کد تخفیف اعمال شد.", "success");
-      })
-      .then(async (res) => {
-        const data = await res.JSON();
-        console.log(data);
-      
-        if (!res.ok) throw new Error(data.error);
-      
-        return data;
+  
+        showAlert(
+          "موفق",
+          "کد تخفیف با موفقیت اعمال شد.",
+          "success"
+        );
       })
       .catch((err) => {
-        console.log("❌ " + err.message);
-        showAlert("ناموفق", "کد تخفیف نامعتبر است.", "error");
+        console.error(err);
+  
+        showAlert(
+          "خطا",
+          "ارتباط با سرور برقرار نشد.",
+          "error"
+        );
       });
   };
 const handleRemove = (itemId) => {
@@ -261,14 +279,13 @@ return (
 
     </div>
 
-    {/* Discount Codes */}
 
-    <div className="dashboard-card">
+    {/* <div className="dashboard-card">
 
       <h3 className="card-title">
         🎁 {t("dashboard.myDiscounts")}
-      </h3>
-
+      </h3> */}
+{/* 
       {discountCodes.map((discount, index) => (
 
         <div
@@ -295,20 +312,27 @@ return (
             <strong>{t("discount.table.minimum")}:</strong>{" "}
             {(discount.minimumPrice || 0).toLocaleString()}{" "}
             {t("product.currency")}
-          </p>
-
+          </p> */}
+{/* 
           <p className="discount-item">
             <strong>{t("discount.table.status")}:</strong>{" "}
             {discount.active
               ? `✅ ${t("discount.enabled")}`
               : `❌ ${t("dashboard.used")}`}
+          </p> */}
+          {/* <p className="discount-item">
+            <strong>تاریخ شروع:</strong>
+                {discount.startDate}
           </p>
-
+          <p className="discount-item">
+            <strong>تاریخ انقضا:</strong>
+                {discount.endDate}
+          </p>
         </div>
 
       ))}
 
-    </div>
+    </div> */}
 
     {/* Cart */}
 

@@ -1,7 +1,8 @@
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
-
-
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,11 +11,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 
 public class DiscountHandler implements HttpHandler {
 
     private List<DiscountCode> allDiscountCodes;
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
 
     public DiscountHandler(List<DiscountCode> allDiscountCodes) {
         this.allDiscountCodes = allDiscountCodes;
@@ -22,77 +27,77 @@ public class DiscountHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS ,PUT , DELETE" );
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
         if("OPTIONS".equalsIgnoreCase((exchange.getRequestMethod()))){
-            exchange.sendResponseHeaders(204, -1);
-            return;
-        }
-        if("GET".equalsIgnoreCase(exchange.getRequestMethod())){
-            StringBuilder json = new StringBuilder();
-            json.append("[");
-            for(int i = 0; i< allDiscountCodes.size() ; i++){
-                DiscountCode discount = allDiscountCodes.get(i);
-                json.append("{");
-                json.append("\"code\":\"").append(discount.getCode()).append("\",");
-                json.append("\"discountType\":\"").append(discount.getDiscountType()).append("\",");
-                json.append("\"value\":").append(discount.getValue()).append(",");
-                json.append("\"minimumPrice\":").append(discount.getMinimumPrice()).append(",");
-                json.append("\"active\":").append(discount.isActive());
-                json.append("}");
+            exchange.sendResponseHeaders(204, -1);}
+            if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
 
-                if(i < allDiscountCodes.size() -1){
-                    json.append(",");
+                try {
+
+                    System.out.println("GET /api/discount called");
+                    System.out.println("Discount count: " + allDiscountCodes.size());
+
+                    String json = gson.toJson(allDiscountCodes);
+
+                    byte[] response = json.getBytes(StandardCharsets.UTF_8);
+
+                    exchange.sendResponseHeaders(200, response.length);
+
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(response);
+                    os.close();
+
+                    return;
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+
+                    String error =
+                            "{\"error\":\"" + e.getMessage() + "\"}";
+
+                    byte[] response =
+                            error.getBytes(StandardCharsets.UTF_8);
+
+                    exchange.sendResponseHeaders(500, response.length);
+
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(response);
+                    os.close();
+
+                    return;
                 }
-
-
             }
-            json.append("]");
-            byte[] response = json.toString().getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, response.length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response);
-            os.close();
-            return;
 
-        }
 
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
                 InputStream is = exchange.getRequestBody();
 
                 String body = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                DiscountRequest request = gson.fromJson(body, DiscountRequest.class);
                 System.out.println("BODY = " + body);
+                System.out.println("startDate = " + request.startDate);
+                System.out.println("endDate = " + request.endDate);
+
+                LocalDate startDate = LocalDate.parse(request.startDate);
+                LocalDate endDate = LocalDate.parse(request.endDate);
 
 
-                String code = body.split("\"code\":\"")[1].split("\"")[0];
-
-                String discountType = body.split("\"discountType\":\"")[1].split("\"")[0];
-
-                double value = Double.parseDouble(
-                        body.split("\"value\":")[1].split(",")[0]
-                );
-
-                double minimumPrice = Double.parseDouble(
-                        body.split("\"minimumPrice\":")[1].split(",")[0]
-                );
-
-                boolean active = Boolean.parseBoolean(
-                        body.split("\"active\":")[1].split(",")[0]
-                );
-                System.out.println("active = " + active);
-                String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
 
                 DiscountCode discount = new DiscountCode(
-                        code,
-                        discountType,
-                        value,
-                        minimumPrice,
-                        active,
-                        sellerName
+                        request.code,
+                        request.discountType,
+                        request.value,
+                        request.minimumPrice,
+                        request.sellerName,
+                        startDate,
+                        endDate
 
                 );
 
