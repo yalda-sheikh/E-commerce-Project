@@ -6,8 +6,9 @@ import java.util.Random;
 public class Customer extends User {
     private HashMap<ProductItem, Integer> cart;
     private ArrayList<Purchase> purchaseHistory;
+    private ArrayList<String> usedDiscountCodes = new ArrayList<>();
 
-    public Customer(int userId, String username, String password, double wallet) {
+    public Customer(int userId, String username, String password, double wallet ) {
         super(userId, username, password, Role.CUSTOMER, wallet);
         this.cart = new HashMap<>();
         this.purchaseHistory = new ArrayList<>();
@@ -15,6 +16,23 @@ public class Customer extends User {
     public ArrayList<Purchase> getPurchaseHistory(){
         return purchaseHistory;
     }
+
+    public ArrayList<String> getUsedDiscountCodes() {
+        return usedDiscountCodes;
+    }
+
+    public void setUsedDiscountCodes(ArrayList<String> usedDiscountCodes) {
+        this.usedDiscountCodes = usedDiscountCodes;
+    }
+    public boolean hasUsedCode(String code){
+        return usedDiscountCodes.contains(code);
+    }
+    public void addUsedCode(String code){
+        if(!usedDiscountCodes.contains(code)){
+            usedDiscountCodes.add(code);
+        }
+    }
+
 
 
     public void addToCart(ProductItem item, int quantity) {
@@ -134,6 +152,15 @@ public class Customer extends User {
                     );
 
                 }
+                if (hasUsedCode(discountCode)) {
+
+                    return new CheckoutResult(
+                            false,
+                            "DISCOUNT_ALREADY_USED",
+                            totalCost
+                    );
+
+                }
 
                 if (totalCost < discount.getMinimumPrice()) {
 
@@ -143,6 +170,13 @@ public class Customer extends User {
                             totalCost
                     );
 
+                }
+                if (wallet < totalCost) {
+                    return new CheckoutResult(
+                            false,
+                            "INSUFFICIENT_WALLET",
+                            totalCost
+                    );
                 }
 
                 if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
@@ -168,6 +202,7 @@ public class Customer extends User {
 
                     usedCode = discountCode;
                     discount.setUsedCount(discount.getUsedCount() + 1);
+                    addUsedCode(discountCode);
                     MainServer.saveData();
 
 

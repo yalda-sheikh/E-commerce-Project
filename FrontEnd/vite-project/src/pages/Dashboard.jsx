@@ -118,23 +118,28 @@ function Dashboard({ user, setUser }) {
       headers: { 'Content-Type': 'application/json; charset=UTF-8' },
       body: JSON.stringify({ discountCode: discountCode })
     })
-      .then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'تسویه حساب ناموفق بود')
-        showAlert("موفق", "تسویه حساب با موفقیت انجام شد!", "success");
-        return data
-      })
-      .then((data) => {
-      
-        setDiscountCode('')
-        fetchDashboardData() 
-      })
-      .catch((err) => {
-        setMessage(`❌ ${err.message}`)
-      })
-  .catch(err => {
-    console.log(err);
-    showAlert("نا موفق", "تسویه حساب با خطا مواجه شد!", "warning");
+    .then(async (res) => {
+      const data = await res.json();
+  
+      if (!res.ok) {
+          throw new Error(data.message);
+      }
+  
+      return data;
+  })
+  
+  .then((data) => {
+      // فقط وقتی خرید موفق بوده
+      showAlert("موفق", "تسویه حساب با موفقیت انجام شد!", "success");
+      setDiscountCode("");
+      fetchDashboardData();
+  })
+  
+  .catch((err) => {
+      // فقط وقتی خطا بوده
+      if (err.message === "INSUFFICIENT_WALLET") {
+          showAlert("خطا", "موجودی کیف پول کافی نیست.", "error");
+      }
   });
   }
 
@@ -278,6 +283,7 @@ return (
       </form>
 
     </div>
+
 
 
     {/* <div className="dashboard-card">
