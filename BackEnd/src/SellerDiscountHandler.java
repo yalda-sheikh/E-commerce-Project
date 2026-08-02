@@ -61,6 +61,7 @@ public class SellerDiscountHandler implements HttpHandler {
                 json.append("\"value\":").append(discount.getValue()).append(",");
                 json.append("\"minimumPrice\":").append(discount.getMinimumPrice()).append(",");
                 json.append("\"sellerName\":\"").append(discount.getSellerName()).append("\",");
+                json.append("\"maxDiscount\":").append(discount.getMaxDiscount()).append(",");
 
                 json.append("\"startDate\":\"")
                         .append(discount.getStartDate())

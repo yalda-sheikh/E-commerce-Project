@@ -17,6 +17,7 @@ function Discount({ user }) {
     const [discounts, setDiscounts] = useState([]);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [maxDiscount, setMaxDiscount] = useState("");
     const { alert, showAlert, closeAlert } = useAlert();
 
     const loadDiscounts = () => {
@@ -31,9 +32,9 @@ function Discount({ user }) {
         if (!user) return;
         loadDiscounts();
     }, [user]);
-    console.log(startDate, endDate)
+
     const createDiscount = () => {
-      console.log("Before fetch:", startDate, endDate);
+      console.log("Before fetch:", maxDiscount);
 
         fetch("http://localhost:8080/api/discount", {
             method: "POST",
@@ -48,7 +49,10 @@ function Discount({ user }) {
                 active,
                 sellerName: user?.username,
                 startDate,
-                endDate
+                endDate,
+                usageLimit: 0,
+                maxDiscount: Number(maxDiscount),
+                
             })
         })
             .then(res => res.json())
@@ -68,6 +72,9 @@ function Discount({ user }) {
                 setValue("");
                 setMinimumPrice("");
                 setActive(true);
+                setEndDate("");
+                setStartDate("");
+                setMaxDiscount("");
 
             })
             .catch(() => {
@@ -244,6 +251,11 @@ value={endDate}
 onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.target.value)}}
 />
               </label>
+              <label>
+                سقف مبلغ
+                <input type="number" value={maxDiscount} onChange={(e)=> { setMaxDiscount(e.target.value)}}/>
+
+              </label>
 
   
               <button
@@ -283,6 +295,7 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
              
                               <th>تاریخ شروع</th>
                               <th>تاریخ پایان</th>
+                              <th>سقف مبلغ</th>
                               <th>{t("discount.table.edit")}</th>
                               <th>{t("discount.table.delete")}</th>
                           </tr>
@@ -317,6 +330,14 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                   </td>
                                   <td>
                                     {discount.endDate || "-"}
+                                  </td>
+                                  <td>
+                                  
+    {discount.maxDiscount 
+        ? discount.maxDiscount.toLocaleString() + " " + t("product.currency")
+        : "-"
+    }
+
                                   </td>
   
 

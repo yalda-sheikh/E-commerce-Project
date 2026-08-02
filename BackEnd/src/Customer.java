@@ -124,16 +124,39 @@ public class Customer extends User {
                     );
                 }
 
-                if (totalCost >= discount.getMinimumPrice()) {
 
-                    if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
+                if (discount.getUsedCount() >= discount.getUsageLimit()) {
 
-                        double discountAmount =
-                                totalCost * discount.getValue() / 100;
+                    return new CheckoutResult(
+                            false,
+                            "USAGE_LIMIT_REACHED",
+                            totalCost
+                    );
 
-                        totalCost -= discountAmount;
+                }
 
+                if (totalCost < discount.getMinimumPrice()) {
+
+                    return new CheckoutResult(
+                            false,
+                            "MINIMUM_PRICE",
+                            totalCost
+                    );
+
+                }
+
+                if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
+
+                    double discountAmount =
+                            totalCost * discount.getValue() / 100;
+
+                    if (discountAmount > discount.getMaxDiscount()) {
+                        discountAmount = discount.getMaxDiscount();
                     }
+
+                    totalCost -= discountAmount;
+
+                }
                     else if (discount.getDiscountType().equalsIgnoreCase("FIXED")) {
 
                         totalCost -= discount.getValue();
@@ -144,15 +167,12 @@ public class Customer extends User {
                     }
 
                     usedCode = discountCode;
+                    discount.setUsedCount(discount.getUsedCount() + 1);
+                    MainServer.saveData();
+
 
                     System.out.println(
                             "🎉 کد تخفیف با موفقیت اعمال شد."
-                    );
-
-                } else {
-
-                    System.out.println(
-                            "⚠️ مبلغ خرید به حداقل لازم برای این کد نرسیده است."
                     );
 
                 }
@@ -164,7 +184,7 @@ public class Customer extends User {
                 );
 
             }
-        }
+
 
 
 

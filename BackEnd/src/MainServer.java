@@ -1542,86 +1542,7 @@ public class MainServer {
                     }
                 });
 
-//                server.createContext("/api/discounts", new HttpHandler() {
-//                    @Override
-//                    public void handle(HttpExchange exchange) throws IOException {
-//                        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-//                        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
-//                        exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
-//                        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-//                            exchange.sendResponseHeaders(200, -1);
-//                            return;
-//                        }
-//                        String responseText = "";
-//                        if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
-//                            String query = exchange.getRequestURI().getQuery();
-//                            int userId = -1;
-//                            if (query != null && query.contains("userId=")) {
-//                                userId = Integer.parseInt(query.split("userId=")[1].split("&")[0]);
-//
-//                            }
-//                            Customer customer = null;
-//
-//                            for (User u : allUsers) {
-//                                if (u instanceof Customer && u.userId == userId) {
-//                                    customer = (Customer) u;
-//                                    break;
-//                                }
-//                            }
-//
-//                            if (customer != null) {
-//
-//                                StringBuilder json = new StringBuilder();
-//
-//                                json.append("[");
-//
-//                                ArrayList<String> codes = customer.getDiscountCodes();
-//
-//                                for (int i = 0; i < codes.size(); i++) {
-//
-//                                    json.append("\"").append(codes.get(i)).append("\"");
-//
-//                                    if (i < codes.size() - 1) {
-//                                        json.append(",");
-//                                    }
-//                                }
-//
-//                                json.append("]");
-//
-//                                responseText = json.toString();
-//
-//                                exchange.sendResponseHeaders(
-//                                        200,
-//                                        responseText.getBytes("UTF-8").length
-//                                );
-//
-//                            } else {
-//
-//                                responseText = "{\"error\":\"کاربر پیدا نشد\"}";
-//
-//                                exchange.sendResponseHeaders(
-//                                        400,
-//                                        responseText.getBytes("UTF-8").length
-//                                );
-//                            }
-//
-//                        } else {
-//
-//                            responseText = "{\"error\":\"Method not allowed\"}";
-//
-//                            exchange.sendResponseHeaders(
-//                                    405,
-//                                    responseText.getBytes("UTF-8").length
-//                            );
-//                        }
-//
-//                        OutputStream os = exchange.getResponseBody();
-//                        os.write(responseText.getBytes("UTF-8"));
-//                        os.close();
-//                    }
-//
-//
-//                });
+
 
                 // تنظیم مدیریت نخ‌ها (Threads) روی مقدار نال به منظور استفاده از رفتارهای پیش‌فرض سرور هسته جاوا
                 server.setExecutor(null);
@@ -1708,15 +1629,18 @@ public class MainServer {
 
                         String[] parts = line.split(",");
 
-                        if (parts.length == 7) {
+                        if (parts.length == 10) {
 
                             String code = parts[0];
                             String discountType = parts[1];
                             double value = Double.parseDouble(parts[2]);
                             double minimumPrice = Double.parseDouble(parts[3]);
-                            String sellerName = parts[4];
-                            LocalDate startDate = LocalDate.parse(parts[5]);
-                            LocalDate endDate = LocalDate.parse(parts[6]);
+                            double maxDiscount = Double.parseDouble(parts[4]);
+                            String sellerName = parts[5];
+                            LocalDate startDate = LocalDate.parse(parts[6]);
+                            LocalDate endDate = LocalDate.parse(parts[7]);
+                            int usageLimit = Integer.parseInt(parts[8]) ;
+                            int usedCount = Integer.parseInt(parts[9]);
 
 
                             DiscountCode discount = new DiscountCode(
@@ -1724,9 +1648,11 @@ public class MainServer {
                                     discountType,
                                     value,
                                     minimumPrice,
-                                     sellerName,
+                                    sellerName,
                                     startDate,
-                                    endDate
+                                    endDate,
+                                    usageLimit,
+                                     maxDiscount
 
                             );
 

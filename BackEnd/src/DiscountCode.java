@@ -9,24 +9,60 @@ public class DiscountCode {
     private String sellerName;
     private LocalDate startDate;
     private LocalDate endDate;
+    private int usageLimit;
+    private int usedCount;
+    private double maxDiscount;
 
-    public DiscountCode(String code,
-                        String discountType,
-                        double value,
-                        double minimumPrice
-                         , String sellerName, LocalDate startDate,
-                        LocalDate endDate) {
+    public DiscountCode(
+            String code,
+            String discountType,
+            double value,
+            double minimumPrice,
+            String sellerName,
+            LocalDate startDate,
+            LocalDate endDate,
+            int usageLimit,
+            double maxDiscount
+    ){
 
         this.code = code;
         this.discountType = discountType;
         this.value = value;
         this.minimumPrice = minimumPrice;
-
         this.sellerName= sellerName;
-        this.endDate = endDate;
         this.startDate = startDate;
+        this.endDate = endDate;
+        this.usageLimit = usageLimit;
+        this.maxDiscount = maxDiscount;
+        this.usedCount = 0;
+
 
     }
+
+    public void setMaxDiscount(double maxDiscount) {
+        this.maxDiscount = maxDiscount;
+    }
+
+    public double getMaxDiscount() {
+        return maxDiscount;
+    }
+
+    public int getUsageLimit() {
+        return usageLimit;
+    }
+
+    public int getUsedCount() {
+        return usedCount;
+    }
+
+    public void setUsageLimit(int usageLimit) {
+        this.usageLimit = usageLimit;
+    }
+
+    public void setUsedCount(int usedCount) {
+        this.usedCount = usedCount;
+    }
+
     public LocalDate getStartDate(){
         return  startDate;
     }
