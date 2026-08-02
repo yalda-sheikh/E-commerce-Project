@@ -18,7 +18,9 @@ function Discount({ user }) {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [maxDiscount, setMaxDiscount] = useState("");
+    const [usageLimit , setUsageLimit]= useState("");
     const { alert, showAlert, closeAlert } = useAlert();
+
 
     const loadDiscounts = () => {
 
@@ -34,7 +36,7 @@ function Discount({ user }) {
     }, [user]);
 
     const createDiscount = () => {
-      console.log("Before fetch:", maxDiscount);
+      console.log("Before fetch:", usageLimit);
 
         fetch("http://localhost:8080/api/discount", {
             method: "POST",
@@ -50,7 +52,7 @@ function Discount({ user }) {
                 sellerName: user?.username,
                 startDate,
                 endDate,
-                usageLimit: 0,
+                usageLimit : Number(usageLimit),
                 maxDiscount: Number(maxDiscount),
                 
             })
@@ -256,6 +258,10 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                 <input type="number" value={maxDiscount} onChange={(e)=> { setMaxDiscount(e.target.value)}}/>
 
               </label>
+              <label>
+                محدودیت تعداد استفاده
+                <input type="number" value={usageLimit} onChange={(e) => {setUsageLimit(e.target.value)}}/>
+              </label>
 
   
               <button
@@ -296,6 +302,9 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                               <th>تاریخ شروع</th>
                               <th>تاریخ پایان</th>
                               <th>سقف مبلغ</th>
+                              <th>
+                                محدودیت تعداد استفاده
+                              </th>
                               <th>{t("discount.table.edit")}</th>
                               <th>{t("discount.table.delete")}</th>
                           </tr>
@@ -331,6 +340,7 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                   <td>
                                     {discount.endDate || "-"}
                                   </td>
+
                                   <td>
                                   
     {discount.maxDiscount 
@@ -338,6 +348,9 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
         : "-"
     }
 
+                                  </td>
+                                  <td>
+                                    {discount.usageLimit || "-"}
                                   </td>
   
 
