@@ -1372,6 +1372,7 @@ public class MainServer {
                 server.createContext("/api/discount/apply", new HttpHandler() {
                     @Override
                     public void handle(HttpExchange exchange) throws IOException {
+                        System.out.println("===== /api/discount/apply =====");
 
                         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -1411,6 +1412,7 @@ public class MainServer {
 
                             Customer customer = null;
 
+
                             for (User u : allUsers) {
                                 if (u instanceof Customer && u.userId == userId) {
                                     customer = (Customer) u;
@@ -1433,21 +1435,42 @@ public class MainServer {
                                 double oldPrice = customer.getCartTotal();
                                 double newPrice = oldPrice;
 
-                                DiscountCode discount =
-                                        findDiscountCode(discountCode);
-                                System.out.println("کد وارد شده: " + discountCode);
-                                System.out.println("نتیجه findDiscountCode: " + discount);
+                                DiscountCode discount = findDiscountCode(discountCode);
+                                if (customer.getAppliedDiscount() != null &&
+                                        customer.getAppliedDiscount().getCode().equalsIgnoreCase(discountCode)) {
 
-                                System.out.println("customer = " + customer);
-                                System.out.println("oldPrice = " + oldPrice);
-                                System.out.println("discount = " + discount);
+                                    responseText =
+                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_APPLIED\"}";
 
-                                if (discount != null) {
-                                    System.out.println("minimumPrice = " + discount.getMinimumPrice());
+                                    exchange.sendResponseHeaders(
+                                            400,
+                                            responseText.getBytes("UTF-8").length
+                                    );
 
+                                    return;
+                                }
+                                if (customer.hasUsedCode(discountCode)) {
+                                    System.out.println("DISCOUNT_ALREADY_USED TRIGGERED");
+
+                                    responseText =
+                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_USED\"}";
+
+                                    exchange.sendResponseHeaders(
+                                            400,
+                                            responseText.getBytes("UTF-8").length
+                                    );
+
+                                    OutputStream os = exchange.getResponseBody();
+                                    os.write(responseText.getBytes("UTF-8"));
+                                    os.close();
+
+                                    return;
                                 }
 
+
+
                                 LocalDate today = LocalDate.now();
+
 
                                 if (discount != null) {
 
@@ -1486,6 +1509,7 @@ public class MainServer {
                                         if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
 
                                             newPrice = oldPrice - (oldPrice * discount.getValue() / 100);
+                                            customer.setAppliedDiscount(discount);
 
                                         } else {
 
@@ -1495,6 +1519,8 @@ public class MainServer {
                                                 newPrice = 0;
                                             }
                                         }
+                                        customer.setAppliedDiscount(discount);
+
 
                                         responseText =
                                                 "{"
@@ -1520,6 +1546,7 @@ public class MainServer {
                                             responseText.getBytes("UTF-8").length
                                     );
                                 }
+
 
                             }
 
@@ -1558,8 +1585,32 @@ public class MainServer {
                     // ۱. نویسنده و ایجاد فایل کاربران
                     PrintWriter writer = new PrintWriter(new FileWriter("users.txt"));
                     for (User u : allUsers) {
-                        // ذخیره اطلاعات فیلدهای کاربر با جداکننده کاما (CSV Style) برای پارس ساده مجدد در متد لودر
-                        writer.println(u.getRole() + "," + u.userId + "," + u.getUsername() + "," + u.getPassword() + "," + u.getWallet());
+
+                        if (u instanceof Customer customer) {
+
+                            String usedCodes =
+                                    String.join(";", customer.getUsedDiscountCodes());
+
+                            writer.println(
+                                    u.getRole() + "," +
+                                            u.userId + "," +
+                                            u.getUsername() + "," +
+                                            u.getPassword() + "," +
+                                            u.getWallet() + "," +
+                                            usedCodes
+                            );
+
+                        } else {
+
+                            writer.println(
+                                    u.getRole() + "," +
+                                            u.userId + "," +
+                                            u.getUsername() + "," +
+                                            u.getPassword() + "," +
+                                            u.getWallet()
+                            );
+
+                        }
                     }
                     writer.close();
 
@@ -1588,9 +1639,12 @@ public class MainServer {
                                         dc.getDiscountType() + "," +
                                         dc.getValue() + "," +
                                         dc.getMinimumPrice() + "," +
-
+                                        dc.getMaxDiscount() + "," +
+                                        dc.getSellerName() + "," +
                                         dc.getStartDate() + "," +
-                                        dc.getEndDate()
+                                        dc.getEndDate() + "," +
+                                        dc.getUsageLimit() + "," +
+                                        dc.getUsedCount()
                         );
                     }
 
@@ -1652,15 +1706,77 @@ public class MainServer {
                                     startDate,
                                     endDate,
                                     usageLimit,
-                                     maxDiscount
+                                     maxDiscount,
+                                    usedCount
 
                             );
 
                             allDiscountCodes.add(discount);
+
+
                         }
                     }
 
                     discountReader.close();
+
+                    BufferedReader userReader =
+                            new BufferedReader(new FileReader("users.txt"));
+
+                    String userLine;
+
+                    while ((userLine = userReader.readLine()) != null) {
+
+                        String[] parts = userLine.split(",");
+
+                        if (parts.length >= 5) {
+
+                            String role = parts[0];
+                            int userId = Integer.parseInt(parts[1]);
+                            String username = parts[2];
+                            String password = parts[3];
+                            double wallet = Double.parseDouble(parts[4]);
+
+                            if (role.equals("CUSTOMER")) {
+
+                                Customer customer = new Customer(
+                                        userId,
+                                        username,
+                                        password,
+                                        wallet
+                                );
+
+                                // اگر کد تخفیف استفاده شده ذخیره شده بود
+                                if (parts.length >= 6 && !parts[5].isEmpty()) {
+
+                                    String[] codes = parts[5].split(";");
+
+                                    ArrayList<String> usedCodes = new ArrayList<>();
+
+                                    for (String code : codes) {
+                                        usedCodes.add(code);
+                                    }
+
+                                    customer.setUsedDiscountCodes(usedCodes);
+                                }
+
+                                allUsers.add(customer);
+
+
+                            } else if (role.equals("SELLER")) {
+
+                                Seller seller = new Seller(
+                                        userId,
+                                        username,
+                                        password,
+                                        wallet
+                                );
+
+                                allUsers.add(seller);
+                            }
+                        }
+                    }
+
+                    userReader.close();
 
                     // پر کردن موقت اطلاعات دمی و فیک برای تست در صورتی که دیتابیس متنی در ابتدا کاملاً خالی باشد
                     if (allUsers.isEmpty()) {

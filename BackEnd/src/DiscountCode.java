@@ -22,7 +22,8 @@ public class DiscountCode {
             LocalDate startDate,
             LocalDate endDate,
             int usageLimit,
-            double maxDiscount
+            double maxDiscount,
+            int usedCount
     ){
 
         this.code = code;
@@ -34,7 +35,7 @@ public class DiscountCode {
         this.endDate = endDate;
         this.usageLimit = usageLimit;
         this.maxDiscount = maxDiscount;
-        this.usedCount = 0;
+        this.usedCount= usedCount;
 
 
     }

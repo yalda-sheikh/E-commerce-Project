@@ -99,7 +99,8 @@ public class DiscountHandler implements HttpHandler {
                         startDate,
                         endDate,
                         request.usageLimit,
-                        request.maxDiscount
+                        request.maxDiscount,
+                        0
 
                 );
 

@@ -121,10 +121,14 @@ function Dashboard({ user, setUser }) {
     .then(async (res) => {
       const data = await res.json();
   
+      console.log("checkout status:", res.status);
+      console.log("checkout response:", data);
+  
       if (!res.ok) {
-          throw new Error(data.message);
+          throw new Error(data.message || "تسویه ناموفق بود");
       }
   
+      showAlert("موفق", "تسویه حساب با موفقیت انجام شد!", "success");
       return data;
   })
   
@@ -162,53 +166,66 @@ function Dashboard({ user, setUser }) {
         userId: user.userId,
       }),
     })
-      .then((res) => res.json())
-      .then((data) => {
-  
-        if (!data.success) {
-  
-          switch (data.message) {
-  
-            case "DISCOUNT_EXPIRED":
-              showAlert("خطا", "کد تخفیف منقضی شده است.", "error");
-              return;
-  
-            case "DISCOUNT_NOT_STARTED":
-              showAlert("خطا", "کد تخفیف هنوز فعال نشده است.", "error");
-              return;
-  
-            case "MINIMUM_PRICE":
-              showAlert("خطا", "حداقل مبلغ خرید رعایت نشده است.", "error");
-              return;
-  
-            case "INSUFFICIENT_WALLET":
-              showAlert("خطا", "موجودی کیف پول کافی نیست.", "error");
-              return;
-  
-            default:
-              showAlert("خطا", "کد تخفیف معتبر نیست.", "error");
-              return;
-          }
+    .then(async (res) => {
+      const data = await res.json();
+    
+      console.log("discount response:", data);
+    
+      return data;
+    })
+    .then((data) => {
+    
+      if (!data.success) {
+    
+        switch (data.message) {
+    
+          case "DISCOUNT_EXPIRED":
+            showAlert("خطا", "کد تخفیف منقضی شده است.", "error");
+            return;
+    
+          case "DISCOUNT_NOT_STARTED":
+            showAlert("خطا", "کد تخفیف هنوز فعال نشده است.", "error");
+            return;
+    
+          case "MINIMUM_PRICE":
+            showAlert("خطا", "حداقل مبلغ خرید رعایت نشده است.", "error");
+            return;
+    
+          case "DISCOUNT_ALREADY_USED":
+            showAlert("خطا", "این کد قبلاً استفاده شده است.", "error");
+            return;
+    
+          case "DISCOUNT_ALREADY_APPLIED":
+            showAlert("خطا", "این کد قبلاً روی سبد اعمال شده است.", "error");
+            return;
+    
+          default:
+            showAlert("خطا", "کد تخفیف معتبر نیست.", "error");
+            return;
         }
-  
-        setTotalCartPrice(data.newPrice);
-  
-        showAlert(
-          "موفق",
-          "کد تخفیف با موفقیت اعمال شد.",
-          "success"
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-  
-        showAlert(
-          "خطا",
-          "ارتباط با سرور برقرار نشد.",
-          "error"
-        );
-      });
-  };
+      }
+    
+    
+      setTotalCartPrice(data.newPrice);
+    
+      showAlert(
+        "موفق",
+        "کد تخفیف با موفقیت اعمال شد.",
+        "success"
+      );
+    
+    })
+    .catch((err) => {
+    
+      console.error("discount error:", err);
+    
+      showAlert(
+        "خطا",
+        "ارتباط با سرور برقرار نشد.",
+        "error"
+      );
+    
+    });}
 const handleRemove = (itemId) => {
   fetch("http://localhost:8080/api/cart/remove",{
     method : "POST",

@@ -7,6 +7,7 @@ public class Customer extends User {
     private HashMap<ProductItem, Integer> cart;
     private ArrayList<Purchase> purchaseHistory;
     private ArrayList<String> usedDiscountCodes = new ArrayList<>();
+    private DiscountCode appliedDiscount;
 
     public Customer(int userId, String username, String password, double wallet ) {
         super(userId, username, password, Role.CUSTOMER, wallet);
@@ -20,11 +21,20 @@ public class Customer extends User {
     public ArrayList<String> getUsedDiscountCodes() {
         return usedDiscountCodes;
     }
+    public DiscountCode getAppliedDiscount() {
+        return appliedDiscount;
+    }
+
+    public void setAppliedDiscount(DiscountCode appliedDiscount) {
+        this.appliedDiscount = appliedDiscount;
+    }
 
     public void setUsedDiscountCodes(ArrayList<String> usedDiscountCodes) {
         this.usedDiscountCodes = usedDiscountCodes;
     }
     public boolean hasUsedCode(String code){
+        System.out.println("USED CODES = " + usedDiscountCodes);
+        System.out.println("CHECK CODE = " + code);
         return usedDiscountCodes.contains(code);
     }
     public void addUsedCode(String code){
@@ -105,9 +115,11 @@ public class Customer extends User {
 
         return total;
     }
-    public CheckoutResult checkout(String discountCode){
+    public CheckoutResult checkout(String discountCode) {
+
         if (cart.isEmpty()) {
-            System.out.println("❌ سبد خرید شما خالی است و محصولی برای تسویه وجود ندارد.");
+            System.out.println("❌ سبد خرید خالی است.");
+
             return new CheckoutResult(
                     false,
                     "CART_EMPTY",
@@ -115,118 +127,70 @@ public class Customer extends User {
             );
         }
 
+
         double totalCost = getCartTotal();
+
         String usedCode = null;
-        if (discountCode != null && !discountCode.isEmpty()) {
 
-            DiscountCode discount = MainServer.findDiscountCode(discountCode);
 
-            if (discount != null) {
-                LocalDate today = LocalDate.now();
+        // ===============================
+        // اعمال تخفیف تایید شده
+        // ===============================
 
-                if (today.isBefore(discount.getStartDate())) {
-                    System.out.println("⚠️ این کد تخفیف هنوز فعال نشده است.");
-                    return new CheckoutResult(
-                            false,
-                            "DISCOUNT_NOT_STARTED",
-                            totalCost
-                    );
-                }
+        if (appliedDiscount != null) {
 
-                if (today.isAfter(discount.getEndDate())) {
-                    System.out.println("⚠️ این کد تخفیف منقضی شده است.");
-                    return new CheckoutResult(
-                            false,
-                            "DISCOUNT_EXPIRED",
-                            totalCost
-                    );
+            DiscountCode discount = appliedDiscount;
+
+
+            if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
+
+                double discountAmount =
+                        totalCost * discount.getValue() / 100;
+
+
+                if (discountAmount > discount.getMaxDiscount()) {
+                    discountAmount = discount.getMaxDiscount();
                 }
 
 
-                if (discount.getUsedCount() >= discount.getUsageLimit()) {
+                totalCost -= discountAmount;
 
-                    return new CheckoutResult(
-                            false,
-                            "USAGE_LIMIT_REACHED",
-                            totalCost
-                    );
 
+            } else if (discount.getDiscountType()
+                    .equalsIgnoreCase("FIXED")) {
+
+
+                totalCost -= discount.getValue();
+
+
+                if (totalCost < 0) {
+                    totalCost = 0;
                 }
-                if (hasUsedCode(discountCode)) {
-
-                    return new CheckoutResult(
-                            false,
-                            "DISCOUNT_ALREADY_USED",
-                            totalCost
-                    );
-
-                }
-
-                if (totalCost < discount.getMinimumPrice()) {
-
-                    return new CheckoutResult(
-                            false,
-                            "MINIMUM_PRICE",
-                            totalCost
-                    );
-
-                }
-                if (wallet < totalCost) {
-                    return new CheckoutResult(
-                            false,
-                            "INSUFFICIENT_WALLET",
-                            totalCost
-                    );
-                }
-
-                if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
-
-                    double discountAmount =
-                            totalCost * discount.getValue() / 100;
-
-                    if (discountAmount > discount.getMaxDiscount()) {
-                        discountAmount = discount.getMaxDiscount();
-                    }
-
-                    totalCost -= discountAmount;
-
-                }
-                    else if (discount.getDiscountType().equalsIgnoreCase("FIXED")) {
-
-                        totalCost -= discount.getValue();
-
-                        if(totalCost < 0){
-                            totalCost = 0;
-                        }
-                    }
-
-                    usedCode = discountCode;
-                    discount.setUsedCount(discount.getUsedCount() + 1);
-                    addUsedCode(discountCode);
-                    MainServer.saveData();
-
-
-                    System.out.println(
-                            "🎉 کد تخفیف با موفقیت اعمال شد."
-                    );
-
-                }
-
-            } else {
-
-                System.out.println(
-                        "⚠️ کد تخفیف نامعتبر یا غیرفعال است."
-                );
-
             }
 
 
+            usedCode = discount.getCode();
+
+
+            System.out.println(
+                    "🎉 تخفیف اعمال شد. مبلغ نهایی: "
+                            + totalCost
+            );
+        }
 
 
 
+        // ===============================
+        // بررسی موجودی کیف پول
+        // ===============================
 
         if (this.wallet < totalCost) {
-            System.out.println("❌ خطا: موجودی کیف پول کافی نیست! مبلغ فاکتور: " + totalCost + " تومان");
+
+            System.out.println(
+                    "❌ موجودی کیف پول کافی نیست."
+            );
+
+
             return new CheckoutResult(
                     false,
                     "INSUFFICIENT_WALLET",
@@ -235,28 +199,121 @@ public class Customer extends User {
         }
 
 
+
+        // ===============================
+        // کم کردن پول
+        // ===============================
+
         this.wallet -= totalCost;
 
+
+
+        // ===============================
+        // کم کردن موجودی و تقسیم پول
+        // ===============================
+
         for (ProductItem item : cart.keySet()) {
+
+
             int quantity = cart.get(item);
-            double itemTotalPrice = item.getPriceAfterDiscount() * quantity;
+
+
+            double itemTotalPrice =
+                    item.getPriceAfterDiscount()
+                            * quantity;
+
+
 
             item.reduceStock(quantity);
 
+
+
             if (item.getSeller() != null) {
-                item.getSeller().updateWallet(itemTotalPrice * 0.90);
+
+                item.getSeller()
+                        .updateWallet(
+                                itemTotalPrice * 0.90
+                        );
             }
-            //به سیستم یا حساب کاربری ادمین اصلی برنامه ( به صورت static در کلاس Main تعریف شده ) دسترسی پیدا می‌کند.
-            Main.adminSystem.updateWallet(itemTotalPrice * 0.10);
+
+
+
+            Main.adminSystem.updateWallet(
+                    itemTotalPrice * 0.10
+            );
         }
 
-        int randomPurchaseId = new Random().nextInt(90000) + 10000;
-        Purchase newPurchase = new Purchase(randomPurchaseId, "1405/03/09", cart, totalCost, usedCode);
+
+
+
+        // ===============================
+        // ثبت خرید
+        // ===============================
+
+        int randomPurchaseId =
+                new Random().nextInt(90000) + 10000;
+
+
+        Purchase newPurchase =
+                new Purchase(
+                        randomPurchaseId,
+                        "1405/03/09",
+                        cart,
+                        totalCost,
+                        usedCode
+                );
+
+
         purchaseHistory.add(newPurchase);
 
 
+
+
+        // ===============================
+        // مصرف کردن کد تخفیف بعد از خرید موفق
+        // ===============================
+
+        if (usedCode != null) {
+
+
+            DiscountCode discount =
+                    MainServer.findDiscountCode(
+                            usedCode
+                    );
+
+
+            if (discount != null) {
+
+
+                discount.setUsedCount(
+                        discount.getUsedCount() + 1
+                );
+            }
+
+
+            addUsedCode(usedCode);
+
+
+            // پاک کردن تخفیف فعال بعد از خرید
+            appliedDiscount = null;
+
+
+            MainServer.saveData();
+        }
+
+
+
+
         cart.clear();
-        System.out.println("✅ تسویه حساب با موفقیت انجام شد و فاکتور شماره " + randomPurchaseId + " ثبت گردید.");
+
+
+
+        System.out.println(
+                "✅ خرید با موفقیت انجام شد."
+        );
+
+
+
         return new CheckoutResult(
                 true,
                 "SUCCESS",
