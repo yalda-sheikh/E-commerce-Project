@@ -12,6 +12,9 @@ public class DiscountCode {
     private int usageLimit;
     private int usedCount;
     private double maxDiscount;
+    private String category;
+    private Integer productId;
+    private boolean sellerOnly;
 
     public DiscountCode(
             String code,
@@ -23,7 +26,10 @@ public class DiscountCode {
             LocalDate endDate,
             int usageLimit,
             double maxDiscount,
-            int usedCount
+            int usedCount,
+            String category,
+            Integer productId,
+            boolean sellerOnly
     ){
 
         this.code = code;
@@ -36,8 +42,33 @@ public class DiscountCode {
         this.usageLimit = usageLimit;
         this.maxDiscount = maxDiscount;
         this.usedCount= usedCount;
+        this.category = category;
+        this.productId = productId;
+        this.sellerOnly = sellerOnly;
 
 
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    public boolean isSellerOnly() {
+        return sellerOnly;
+    }
+    public void setSellerOnly(boolean sellerOnly) {
+        this.sellerOnly = sellerOnly;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 
     public void setMaxDiscount(double maxDiscount) {

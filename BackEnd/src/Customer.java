@@ -42,6 +42,72 @@ public class Customer extends User {
             usedDiscountCodes.add(code);
         }
     }
+    public double getDiscountEligibleTotal(DiscountCode discount) {
+
+
+        if (discount == null) {
+            return 0;
+        }
+
+        double total = 0;
+
+
+        for (ProductItem item : cart.keySet()) {
+
+            int quantity = cart.get(item);
+
+            boolean include = true;
+
+
+            // محدودیت فروشنده
+            if (discount.isSellerOnly()) {
+
+                if (item.getSeller() == null ||
+                        !item.getSeller()
+                                .getUsername()
+                                .equals(discount.getSellerName())) {
+
+                    include = false;
+
+                }
+            }
+
+
+            // محدودیت محصول
+            if (discount.getProductId() != null) {
+
+                if (item.getProduct() == null ||
+                        item.getProduct().getId()
+                                != discount.getProductId()) {
+
+                    include = false;
+                }
+            }
+
+
+            // محدودیت دسته بندی
+            if (discount.getCategory() != null) {
+
+                if (item.getProduct() == null ||
+                        !item.getProduct()
+                                .getCategory()
+                                .equalsIgnoreCase(discount.getCategory())) {
+
+                    include = false;
+                }
+            }
+
+
+            if (include) {
+
+                total += item.getPriceAfterDiscount()
+                        * quantity;
+            }
+        }
+
+
+        return total;
+    }
 
 
 
@@ -142,30 +208,50 @@ public class Customer extends User {
             DiscountCode discount = appliedDiscount;
 
 
-            if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
-
-                double discountAmount =
-                        totalCost * discount.getValue() / 100;
+            double eligiblePrice =
+                    getDiscountEligibleTotal(discount);
 
 
-                if (discountAmount > discount.getMaxDiscount()) {
-                    discountAmount = discount.getMaxDiscount();
+            double discountAmount = 0;
+
+
+            if (discount.getDiscountType()
+                    .equalsIgnoreCase("PERCENT")) {
+
+
+                discountAmount =
+                        eligiblePrice *
+                                discount.getValue() / 100;
+
+
+                if (discount.getMaxDiscount() > 0 &&
+                        discountAmount > discount.getMaxDiscount()) {
+
+                    discountAmount =
+                            discount.getMaxDiscount();
                 }
-
-
-                totalCost -= discountAmount;
 
 
             } else if (discount.getDiscountType()
                     .equalsIgnoreCase("FIXED")) {
 
 
-                totalCost -= discount.getValue();
+                discountAmount =
+                        discount.getValue();
 
 
-                if (totalCost < 0) {
-                    totalCost = 0;
+                if (discountAmount > eligiblePrice) {
+                    discountAmount = eligiblePrice;
                 }
+
+            }
+
+
+            totalCost -= discountAmount;
+
+
+            if (totalCost < 0) {
+                totalCost = 0;
             }
 
 
@@ -176,6 +262,7 @@ public class Customer extends User {
                     "🎉 تخفیف اعمال شد. مبلغ نهایی: "
                             + totalCost
             );
+
         }
 
 

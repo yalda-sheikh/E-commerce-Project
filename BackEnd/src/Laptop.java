@@ -35,6 +35,10 @@ public class Laptop extends Product implements Tax {
     public double calculateTax() {
         return productItem.getPrice() * 0.09;
     }
+    @Override
+    public String getCategory() {
+        return "LAPTOP";
+    }
 
     @Override
     public void displayFullInfo() {

@@ -19,6 +19,9 @@ function Discount({ user }) {
     const [endDate, setEndDate] = useState("");
     const [maxDiscount, setMaxDiscount] = useState("");
     const [usageLimit , setUsageLimit]= useState("");
+    const [category , setCategory] = useState("BASE");
+    const [productId , setProductId] = useState("");
+    const [sellerOnly , setSellerOnly] = useState(false);
     const { alert, showAlert, closeAlert } = useAlert();
 
 
@@ -54,6 +57,14 @@ function Discount({ user }) {
                 endDate,
                 usageLimit : Number(usageLimit),
                 maxDiscount: Number(maxDiscount),
+                category,
+
+                productId: productId 
+                    ? Number(productId)
+                    : null,
+            
+                sellerOnly
+
                 
             })
         })
@@ -77,6 +88,10 @@ function Discount({ user }) {
                 setEndDate("");
                 setStartDate("");
                 setMaxDiscount("");
+                setUsageLimit("");
+setCategory("BASE");
+setProductId("");
+setSellerOnly(false);
 
             })
             .catch(() => {
@@ -255,12 +270,41 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
               </label>
               <label>
                 سقف مبلغ
-                <input type="number" value={maxDiscount} onChange={(e)=> { setMaxDiscount(e.target.value)}}/>
+                <input className="discount-input" type="number" value={maxDiscount} onChange={(e)=> { setMaxDiscount(e.target.value)}}/>
 
               </label>
               <label>
                 محدودیت تعداد استفاده
-                <input type="number" value={usageLimit} onChange={(e) => {setUsageLimit(e.target.value)}}/>
+                <input className="discount-input" type="number" value={usageLimit} onChange={(e) => {setUsageLimit(e.target.value)}}/>
+              </label>
+              <label>
+                دسته بندی
+                <select
+                  className="discount-input"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+              >
+                  <option value="BASE">
+                      همه محصولات
+                  </option>
+                  <option value="LAPTOP">
+                      لپ تاپ
+                  </option>
+  
+                  <option value="MOBILE">
+                      موبایل
+                  </option>
+  
+              </select>
+              </label>
+              <label>
+               آیدی محصول خاص 
+                <input type="number" value={productId} onChange={(e) => setProductId(e.target.value)} />
+                
+              </label>
+              <label>
+                فقط این فروشنده
+                <input  type="checkbox" checked={sellerOnly} onChange={(e) => setSellerOnly(e.target.checked)}/>
               </label>
 
   
@@ -305,6 +349,15 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                               <th>
                                 محدودیت تعداد استفاده
                               </th>
+                              <th>
+                                دسته بندی خاص
+                              </th>
+                              <th>
+                                محصول خاص
+                              </th>
+                              <th>
+                                فروشنده
+                              </th>
                               <th>{t("discount.table.edit")}</th>
                               <th>{t("discount.table.delete")}</th>
                           </tr>
@@ -332,7 +385,10 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                   </td>
   
                                   <td>
-                                      {discount.minimumPrice.toLocaleString()} {t("product.currency")}
+                                  {discount.minimumPrice 
+ ? discount.minimumPrice.toLocaleString()
+ : 0
+}
                                   </td>
                                   <td>
                                     {discount.startDate || "-"} 
@@ -340,6 +396,7 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                   <td>
                                     {discount.endDate || "-"}
                                   </td>
+
 
                                   <td>
                                   
@@ -351,6 +408,17 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                   </td>
                                   <td>
                                     {discount.usageLimit || "-"}
+                                  </td>
+                                  <td>
+                                    {discount.category || "-"}
+                                  </td>
+                                  <td>
+                                    {discount.productId || "-"}
+                                  </td>
+                                  <td>
+                                  <td>
+ {discount.sellerOnly ? "بله" : "خیر"}
+</td>
                                   </td>
   
 

@@ -42,5 +42,10 @@ public abstract class Product {
     public void displayBasicInfo() {
         System.out.println("ID: " + productId + " | Name: " + name + " | Brand: " + brand);
     }
+    public String getCategory() {
+        return "BASE";
+    }
     public abstract void displayFullInfo();
+
+
 }

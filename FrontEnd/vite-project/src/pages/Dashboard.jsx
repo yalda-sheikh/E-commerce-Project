@@ -176,54 +176,58 @@ function Dashboard({ user, setUser }) {
     .then((data) => {
     
       if (!data.success) {
-    
+
         switch (data.message) {
-    
+      
           case "DISCOUNT_EXPIRED":
             showAlert("خطا", "کد تخفیف منقضی شده است.", "error");
             return;
-    
+      
           case "DISCOUNT_NOT_STARTED":
             showAlert("خطا", "کد تخفیف هنوز فعال نشده است.", "error");
             return;
-    
+      
           case "MINIMUM_PRICE":
             showAlert("خطا", "حداقل مبلغ خرید رعایت نشده است.", "error");
             return;
-    
+      
           case "DISCOUNT_ALREADY_USED":
             showAlert("خطا", "این کد قبلاً استفاده شده است.", "error");
             return;
-    
+      
           case "DISCOUNT_ALREADY_APPLIED":
             showAlert("خطا", "این کد قبلاً روی سبد اعمال شده است.", "error");
             return;
-    
+      
+          case "DISCOUNT_INACTIVE":
+            showAlert("خطا", "این کد تخفیف غیرفعال است.", "error");
+            return;
+      
+          case "USAGE_LIMIT_REACHED":
+            showAlert("خطا", "ظرفیت استفاده از این کد به پایان رسیده است.", "error");
+            return;
+      
+          case "CATEGORY_NOT_ALLOWED":
+            showAlert("خطا", "این کد برای محصولات این دسته‌بندی قابل استفاده نیست.", "error");
+            return;
+      
+          case "PRODUCT_NOT_ALLOWED":
+            showAlert("خطا", "این کد فقط برای محصول مشخص‌شده قابل استفاده است.", "error");
+            return;
+      
+          case "SELLER_NOT_ALLOWED":
+            showAlert("خطا", "این کد فقط برای محصولات یک فروشنده قابل استفاده است.", "error");
+            return;
+      
+          case "INVALID_DISCOUNT":
+            showAlert("خطا", "کد تخفیف نامعتبر است.", "error");
+            return;
+      
           default:
-            showAlert("خطا", "کد تخفیف معتبر نیست.", "error");
+            showAlert("خطا", "خطای ناشناخته.", "error");
             return;
         }
       }
-    
-    
-      setTotalCartPrice(data.newPrice);
-    
-      showAlert(
-        "موفق",
-        "کد تخفیف با موفقیت اعمال شد.",
-        "success"
-      );
-    
-    })
-    .catch((err) => {
-    
-      console.error("discount error:", err);
-    
-      showAlert(
-        "خطا",
-        "ارتباط با سرور برقرار نشد.",
-        "error"
-      );
     
     });}
 const handleRemove = (itemId) => {

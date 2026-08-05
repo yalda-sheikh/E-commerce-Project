@@ -11,6 +11,8 @@ public class DiscountRequest {
     String endDate;
 
     int usageLimit;
-
+     String category;
+     Integer productId;
+     boolean sellerOnly;
 
 }

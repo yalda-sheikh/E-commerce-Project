@@ -70,9 +70,37 @@ public class SellerDiscountHandler implements HttpHandler {
 
                 json.append("\"endDate\":\"")
                         .append(discount.getEndDate())
-                        .append("\"");
+                        .append("\",");
+
+
+                json.append("\"category\":");
+
+                if (discount.getCategory() == null) {
+                    json.append("null,");
+                } else {
+                    json.append("\"")
+                            .append(discount.getCategory())
+                            .append("\",");
+                }
+
+
+                json.append("\"productId\":");
+
+                if (discount.getProductId() == null) {
+                    json.append("null,");
+                } else {
+                    json.append(discount.getProductId())
+                            .append(",");
+                }
+
+
+                json.append("\"sellerOnly\":")
+                        .append(discount.isSellerOnly());
+
 
                 json.append("}");
+
+
 
 
 
@@ -107,6 +135,34 @@ public class SellerDiscountHandler implements HttpHandler {
 
 
             String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
+            String category = null;
+
+            if (body.contains("\"category\"")) {
+
+                category =
+                        body.split("\"category\":\"")[1]
+                                .split("\"")[0];
+            }
+
+
+            Integer productId = null;
+
+            if (body.contains("\"productId\":")
+                    && !body.contains("\"productId\":null")) {
+
+                productId = Integer.parseInt(
+                        body.split("\"productId\":")[1]
+                                .split(",")[0]
+                                .trim()
+                );
+            }
+
+
+            boolean sellerOnly = false;
+
+            if (body.contains("\"sellerOnly\":true")) {
+                sellerOnly = true;
+            }
 
             for (DiscountCode discount : allDiscountCodes) {
 
@@ -116,6 +172,10 @@ public class SellerDiscountHandler implements HttpHandler {
                     discount.setDiscountType(discountType);
                     discount.setValue(value);
                     discount.setMinimumPrice(minimumPrice);
+
+                    discount.setCategory(category);
+                    discount.setProductId(productId);
+                    discount.setSellerOnly(sellerOnly);
 
                     MainServer.saveData();
 

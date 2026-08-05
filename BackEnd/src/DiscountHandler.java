@@ -34,7 +34,8 @@ public class DiscountHandler implements HttpHandler {
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
 
         if("OPTIONS".equalsIgnoreCase((exchange.getRequestMethod()))){
-            exchange.sendResponseHeaders(204, -1);}
+            exchange.sendResponseHeaders(204, -1);
+        return;}
             if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
 
                 try {
@@ -100,7 +101,10 @@ public class DiscountHandler implements HttpHandler {
                         endDate,
                         request.usageLimit,
                         request.maxDiscount,
-                        0
+                        0,
+                        request.category,
+                        request.productId,
+                        request.sellerOnly
 
                 );
 

@@ -15,6 +15,10 @@ public class Mobile extends Product {
     public void setCameraMP(int cameraMP) {
         this.cameraMP = cameraMP;
     }
+    @Override
+    public String getCategory() {
+        return "MOBILE";
+    }
     public void setBatteryMah(int batteryMah) {
         this.batteryMah = batteryMah;
     }

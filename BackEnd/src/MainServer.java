@@ -1370,14 +1370,15 @@ public class MainServer {
                     }
                 });
                 server.createContext("/api/discount/apply", new HttpHandler() {
+
                     @Override
                     public void handle(HttpExchange exchange) throws IOException {
-                        System.out.println("===== /api/discount/apply =====");
 
                         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
                         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
                         exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
+
 
                         if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
                             exchange.sendResponseHeaders(200, -1);
@@ -1434,109 +1435,10 @@ public class MainServer {
 
                                 double oldPrice = customer.getCartTotal();
                                 double newPrice = oldPrice;
-
                                 DiscountCode discount = findDiscountCode(discountCode);
-                                if (customer.getAppliedDiscount() != null &&
-                                        customer.getAppliedDiscount().getCode().equalsIgnoreCase(discountCode)) {
-
-                                    responseText =
-                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_APPLIED\"}";
-
-                                    exchange.sendResponseHeaders(
-                                            400,
-                                            responseText.getBytes("UTF-8").length
-                                    );
-
-                                    return;
-                                }
-                                if (customer.hasUsedCode(discountCode)) {
-                                    System.out.println("DISCOUNT_ALREADY_USED TRIGGERED");
-
-                                    responseText =
-                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_USED\"}";
-
-                                    exchange.sendResponseHeaders(
-                                            400,
-                                            responseText.getBytes("UTF-8").length
-                                    );
-
-                                    OutputStream os = exchange.getResponseBody();
-                                    os.write(responseText.getBytes("UTF-8"));
-                                    os.close();
-
-                                    return;
-                                }
 
 
-
-                                LocalDate today = LocalDate.now();
-
-
-                                if (discount != null) {
-
-                                    if (today.isBefore(discount.getStartDate())) {
-
-                                        responseText =
-                                                "{\"success\":false,\"message\":\"DISCOUNT_NOT_STARTED\"}";
-
-                                        exchange.sendResponseHeaders(
-                                                400,
-                                                responseText.getBytes("UTF-8").length
-                                        );
-
-                                    } else if (today.isAfter(discount.getEndDate())) {
-
-                                        responseText =
-                                                "{\"success\":false,\"message\":\"DISCOUNT_EXPIRED\"}";
-
-                                        exchange.sendResponseHeaders(
-                                                400,
-                                                responseText.getBytes("UTF-8").length
-                                        );
-
-                                    } else if (oldPrice < discount.getMinimumPrice()) {
-
-                                        responseText =
-                                                "{\"success\":false,\"message\":\"MINIMUM_PRICE\"}";
-
-                                        exchange.sendResponseHeaders(
-                                                400,
-                                                responseText.getBytes("UTF-8").length
-                                        );
-
-                                    } else {
-
-                                        if (discount.getDiscountType().equalsIgnoreCase("PERCENT")) {
-
-                                            newPrice = oldPrice - (oldPrice * discount.getValue() / 100);
-                                            customer.setAppliedDiscount(discount);
-
-                                        } else {
-
-                                            newPrice = oldPrice - discount.getValue();
-
-                                            if (newPrice < 0) {
-                                                newPrice = 0;
-                                            }
-                                        }
-                                        customer.setAppliedDiscount(discount);
-
-
-                                        responseText =
-                                                "{"
-                                                        + "\"success\":true,"
-                                                        + "\"oldPrice\":" + oldPrice + ","
-                                                        + "\"newPrice\":" + newPrice + ","
-                                                        + "\"message\":\"SUCCESS\""
-                                                        + "}";
-
-                                        exchange.sendResponseHeaders(
-                                                200,
-                                                responseText.getBytes("UTF-8").length
-                                        );
-                                    }
-
-                                } else {
+                                if (discount == null) {
 
                                     responseText =
                                             "{\"success\":false,\"message\":\"INVALID_DISCOUNT\"}";
@@ -1545,20 +1447,214 @@ public class MainServer {
                                             400,
                                             responseText.getBytes("UTF-8").length
                                     );
+
+                                } else {boolean allowed = true;
+                                    String errorMessage = "";
+
+                                    for (ProductItem item : customer.getCart().keySet()) {
+
+
+                                        // محدودیت فروشنده
+                                        if (discount.isSellerOnly()) {
+
+                                            if (item.getSeller() == null ||
+                                                    !item.getSeller()
+                                                            .getUsername()
+                                                            .equals(discount.getSellerName())) {
+
+                                                allowed = false;
+                                                errorMessage = "SELLER_NOT_ALLOWED";
+                                                break;
+                                            }
+                                        }
+
+
+                                        // محدودیت محصول خاص
+                                        if (discount.getProductId() != null) {
+
+                                            if (item.getProduct() == null ||
+                                                    item.getProduct().getId()
+                                                            != discount.getProductId()) {
+
+                                                allowed = false;
+                                                errorMessage = "PRODUCT_NOT_ALLOWED";
+                                                break;
+                                            }
+                                        }
+
+
+                                        // محدودیت دسته بندی
+                                        if (discount.getCategory() != null
+                                                && !discount.getCategory().equals("BASE")) {
+
+
+                                            if (item.getProduct() == null ||
+                                                    !item.getProduct()
+                                                            .getCategory()
+                                                            .equalsIgnoreCase(discount.getCategory())) {
+
+
+                                                allowed = false;
+                                                errorMessage = "CATEGORY_NOT_ALLOWED";
+                                                break;
+                                            }
+                                        }
+                                    }
+
+
+                                    if (!allowed) {
+
+                                        responseText =
+                                                "{\"success\":false,\"message\":\""
+                                                        + errorMessage
+                                                        + "\"}";
+
+
+                                        exchange.sendResponseHeaders(
+                                                400,
+                                                responseText.getBytes("UTF-8").length
+                                        );
+
+
+                                        OutputStream os = exchange.getResponseBody();
+                                        os.write(responseText.getBytes("UTF-8"));
+                                        os.close();
+
+                                        return;
+                                    }
+
+                                    double eligiblePrice =
+                                            customer.getDiscountEligibleTotal(discount);
+
+
+                                    if (eligiblePrice <= 0) {
+
+                                        responseText =
+                                                "{\"success\":false,\"message\":\"NO_ELIGIBLE_PRODUCTS\"}";
+
+                                        exchange.sendResponseHeaders(
+                                                400,
+                                                responseText.getBytes("UTF-8").length
+                                        );
+
+                                    } else {
+
+                                        LocalDate today = LocalDate.now();
+
+
+                                        if (today.isBefore(discount.getStartDate())) {
+
+                                            responseText =
+                                                    "{\"success\":false,\"message\":\"DISCOUNT_NOT_STARTED\"}";
+
+                                            exchange.sendResponseHeaders(
+                                                    400,
+                                                    responseText.getBytes("UTF-8").length
+                                            );
+
+
+                                        } else if (today.isAfter(discount.getEndDate())) {
+
+
+                                            responseText =
+                                                    "{\"success\":false,\"message\":\"DISCOUNT_EXPIRED\"}";
+
+                                            exchange.sendResponseHeaders(
+                                                    400,
+                                                    responseText.getBytes("UTF-8").length
+                                            );
+
+
+                                        } else if (eligiblePrice < discount.getMinimumPrice()) {
+
+
+                                            responseText =
+                                                    "{\"success\":false,\"message\":\"MINIMUM_PRICE\"}";
+
+                                            exchange.sendResponseHeaders(
+                                                    400,
+                                                    responseText.getBytes("UTF-8").length
+                                            );
+
+
+                                        } else {
+
+
+                                            double discountAmount = 0;
+
+
+                                            if (discount.getDiscountType()
+                                                    .equalsIgnoreCase("PERCENT")) {
+
+
+                                                discountAmount =
+                                                        eligiblePrice *
+                                                                discount.getValue() / 100;
+
+
+                                                if (discount.getMaxDiscount() > 0 &&
+                                                        discountAmount > discount.getMaxDiscount()) {
+
+                                                    discountAmount =
+                                                            discount.getMaxDiscount();
+                                                }
+
+
+                                            } else if (discount.getDiscountType()
+                                                    .equalsIgnoreCase("FIXED")) {
+
+
+                                                discountAmount =
+                                                        discount.getValue();
+
+                                                if (discountAmount > eligiblePrice) {
+                                                    discountAmount = eligiblePrice;
+                                                }
+
+                                            }
+
+
+                                            newPrice =
+                                                    oldPrice - discountAmount;
+
+
+                                            if (newPrice < 0) {
+                                                newPrice = 0;
+                                            }
+
+
+                                            customer.setAppliedDiscount(discount);
+
+
+
+                                            responseText =
+                                                    "{"
+                                                            + "\"success\":true,"
+                                                            + "\"oldPrice\":" + oldPrice + ","
+                                                            + "\"eligiblePrice\":" + eligiblePrice + ","
+                                                            + "\"discountAmount\":" + discountAmount + ","
+                                                            + "\"newPrice\":" + newPrice + ","
+                                                            + "\"message\":\"SUCCESS\""
+                                                            + "}";
+
+
+                                            exchange.sendResponseHeaders(
+                                                    200,
+                                                    responseText.getBytes("UTF-8").length
+                                            );
+
+                                        }
+
+                                    }
+
+
+
+                                }
+
                                 }
 
 
-                            }
 
-                        } else {
-
-                            responseText =
-                                    "{\"error\":\"Method not allowed\"}";
-
-                            exchange.sendResponseHeaders(
-                                    405,
-                                    responseText.getBytes("UTF-8").length
-                            );
 
                         }
 
@@ -1644,7 +1740,13 @@ public class MainServer {
                                         dc.getStartDate() + "," +
                                         dc.getEndDate() + "," +
                                         dc.getUsageLimit() + "," +
-                                        dc.getUsedCount()
+                                        dc.getUsedCount() + ","+
+                                        dc.getCategory() + ","+
+                                        dc.getProductId() + ","+
+                                        dc.isSellerOnly()
+
+
+
                         );
                     }
 
@@ -1683,7 +1785,7 @@ public class MainServer {
 
                         String[] parts = line.split(",");
 
-                        if (parts.length == 10) {
+                        if (parts.length == 13) {
 
                             String code = parts[0];
                             String discountType = parts[1];
@@ -1695,6 +1797,18 @@ public class MainServer {
                             LocalDate endDate = LocalDate.parse(parts[7]);
                             int usageLimit = Integer.parseInt(parts[8]) ;
                             int usedCount = Integer.parseInt(parts[9]);
+                            String category = parts[10].equals("null")
+                                    ? null
+                                    : parts[10];
+
+
+                            Integer productId = null;
+
+                            if (!parts[11].equals("null")) {
+                                productId = Integer.parseInt(parts[11]);
+                            };
+                            boolean sellerOnly =
+                                    Boolean.parseBoolean(parts[12]);
 
 
                             DiscountCode discount = new DiscountCode(
@@ -1707,7 +1821,10 @@ public class MainServer {
                                     endDate,
                                     usageLimit,
                                      maxDiscount,
-                                    usedCount
+                                    usedCount,
+                                    category,
+                                    productId,
+                                    sellerOnly
 
                             );
 
