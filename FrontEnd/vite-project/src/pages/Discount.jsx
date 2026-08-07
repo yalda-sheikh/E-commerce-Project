@@ -12,7 +12,6 @@ function Discount({ user }) {
     const [discountType, setDiscountType] = useState("PERCENT");
     const [value, setValue] = useState("");
     const [minimumPrice, setMinimumPrice] = useState("");
-    const [active, setActive] = useState(true);
     const [editingDiscount, setEditingDiscount] = useState(null);
     const [discounts, setDiscounts] = useState([]);
     const [startDate, setStartDate] = useState("");
@@ -51,7 +50,6 @@ function Discount({ user }) {
                 discountType,
                 value: Number(value),
                 minimumPrice: Number(minimumPrice),
-                active,
                 sellerName: user?.username,
                 startDate,
                 endDate,
@@ -84,7 +82,8 @@ function Discount({ user }) {
                 setDiscountType("PERCENT");
                 setValue("");
                 setMinimumPrice("");
-                setActive(true);
+  
+                
                 setEndDate("");
                 setStartDate("");
                 setMaxDiscount("");
@@ -121,8 +120,20 @@ setSellerOnly(false);
                 discountType,
                 value: Number(value),
                 minimumPrice: Number(minimumPrice),
-                active,
-                sellerName: user.username
+
+                sellerName: user.username,
+                startDate,
+                endDate,
+                usageLimit : Number(usageLimit),
+                maxDiscount: Number(maxDiscount),
+                category,
+
+                productId: productId 
+                    ? Number(productId)
+                    : null,
+            
+                sellerOnly
+
             })
 
         })
@@ -145,7 +156,13 @@ setSellerOnly(false);
                 setDiscountType("PERCENT");
                 setValue("");
                 setMinimumPrice("");
-                setActive(true);
+                setEndDate("");
+                setStartDate("");
+                setMaxDiscount("");
+                setUsageLimit("");
+setCategory("BASE");
+setProductId("");
+setSellerOnly(false);
 
             })
 
@@ -435,7 +452,16 @@ onChange={(e) => {setEndDate(e.target.value) ; console.log("end changed:", e.tar
                                               setDiscountType(discount.discountType);
                                               setValue(discount.value);
                                               setMinimumPrice(discount.minimumPrice);
-                                              setActive(discount.active);
+                                              setStartDate(discount.startDate || "");
+        setEndDate(discount.endDate || "");
+
+        setMaxDiscount(discount.maxDiscount || "");
+        setUsageLimit(discount.usageLimit || "");
+
+        setCategory(discount.category || "BASE");
+        setProductId(discount.productId || "");
+
+        setSellerOnly(discount.sellerOnly || false);
   
                                           }}
                                       >

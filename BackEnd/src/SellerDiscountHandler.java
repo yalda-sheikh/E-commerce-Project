@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 
 public class SellerDiscountHandler implements HttpHandler {
@@ -132,9 +133,35 @@ public class SellerDiscountHandler implements HttpHandler {
             double minimumPrice = Double.parseDouble(
                     body.split("\"minimumPrice\":")[1].split(",")[0]
             );
+            double maxDiscount = Double.parseDouble(
+                    body.split("\"maxDiscount\":")[1].split(",")[0]
+            );
+
+            int usageLimit = Integer.parseInt(
+                    body.split("\"usageLimit\":")[1].split(",")[0]
+            );
+
+
+            String startDate = "";
+
+            if(body.contains("\"startDate\":\"")){
+                startDate =
+                        body.split("\"startDate\":\"")[1]
+                                .split("\"")[0];
+            }
+
+
+            String endDate = "";
+
+            if(body.contains("\"endDate\":\"")){
+                endDate =
+                        body.split("\"endDate\":\"")[1]
+                                .split("\"")[0];
+            }
 
 
             String sellerName = body.split("\"sellerName\":\"")[1].split("\"")[0];
+
             String category = null;
 
             if (body.contains("\"category\"")) {
@@ -176,6 +203,22 @@ public class SellerDiscountHandler implements HttpHandler {
                     discount.setCategory(category);
                     discount.setProductId(productId);
                     discount.setSellerOnly(sellerOnly);
+                    discount.setMaxDiscount(maxDiscount);
+                    discount.setUsageLimit(usageLimit);
+
+
+                    if(!startDate.isEmpty()){
+                        discount.setStartDate(
+                                LocalDate.parse(startDate)
+                        );
+                    }
+
+
+                    if(!endDate.isEmpty()){
+                        discount.setEndDate(
+                                LocalDate.parse(endDate)
+                        );
+                    }
 
                     MainServer.saveData();
 

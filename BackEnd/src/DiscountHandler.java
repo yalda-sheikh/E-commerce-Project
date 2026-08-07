@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,88 @@ public class DiscountHandler implements HttpHandler {
                     System.out.println("GET /api/discount called");
                     System.out.println("Discount count: " + allDiscountCodes.size());
 
-                    String json = gson.toJson(allDiscountCodes);
+                    List<DiscountCode> availableDiscounts = new ArrayList<>();
+
+                    LocalDate today = LocalDate.now();
+
+                    for (DiscountCode discount : allDiscountCodes) {
+
+
+                        if (today.isBefore(discount.getStartDate())) {
+                            continue;
+                        }
+
+                        if (today.isAfter(discount.getEndDate())) {
+                            continue;
+                        }
+
+                        if (discount.getUsageLimit() > 0 &&
+                                discount.getUsedCount() >= discount.getUsageLimit()) {
+                            continue;
+                        }
+
+
+                        availableDiscounts.add(discount);
+                    }
+                    List<DiscountResponse> responseList = new ArrayList<>();
+
+                    for (DiscountCode discount : availableDiscounts) {
+
+                        String productName = null;
+
+
+                        if (discount.getProductId() != null) {
+
+                            for (Product product : MainServer.allBaseProducts) {
+
+                                if (product.getId() == discount.getProductId()) {
+
+                                    productName = product.getName();
+                                    break;
+                                }
+                            }
+                        }
+                        String categoryName = "همه محصولات";
+
+                        if (discount.getCategory() != null) {
+
+                            switch (discount.getCategory()) {
+
+                                case "MOBILE":
+                                    categoryName = "موبایل";
+                                    break;
+
+                                case "LAPTOP":
+                                    categoryName = "لپ‌تاپ";
+                                    break;
+
+                                case "BASE":
+                                    categoryName = "همه محصولات";
+                                    break;
+                            }
+                        }
+
+
+                        DiscountResponse response =
+                                new DiscountResponse(
+                                        discount.getCode(),
+                                        discount.getDiscountType(),
+                                        discount.getValue(),
+                                        discount.getMinimumPrice(),
+                                        discount.getMaxDiscount(),
+                                        discount.getUsageLimit(),
+                                        discount.getStartDate().toString(),
+                                        discount.getEndDate().toString(),
+                                        categoryName,
+                                        productName,
+                                        discount.isSellerOnly()
+                                );
+
+
+                        responseList.add(response);
+                    }
+
+                    String json = gson.toJson(responseList);
 
                     byte[] response = json.getBytes(StandardCharsets.UTF_8);
 

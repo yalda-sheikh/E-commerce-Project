@@ -18,6 +18,7 @@ function Dashboard({ user, setUser }) {
   const [purchaseHistory, setPurchaseHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const {alert, showAlert, closeAlert} = useAlert()
+  const [discountAmount , setDiscountAmount] = useState()
   const fetchDashboardData = () => {
     if (!user) return
 
@@ -228,6 +229,15 @@ function Dashboard({ user, setUser }) {
             return;
         }
       }
+      setTotalCartPrice(data.newPrice);
+      setDiscountAmount(data.discountAmount);
+
+      showAlert(
+        "موفق",
+        `تخفیف ${data.discountAmount.toLocaleString()} تومان اعمال شد.\n
+        مبلغ قابل پرداخت: ${data.newPrice.toLocaleString()} تومان`,
+        "success"
+      );
     
     });}
 const handleRemove = (itemId) => {
@@ -307,59 +317,107 @@ return (
 
 
 
-    {/* <div className="dashboard-card">
+   <div className="dashboard-card">
+   <div className="discounts-container">
 
-      <h3 className="card-title">
-        🎁 {t("dashboard.myDiscounts")}
-      </h3> */}
-{/* 
-      {discountCodes.map((discount, index) => (
+<h3 className="discounts-title">
+  🎁 کدهای تخفیف
+</h3>
 
-        <div
-          key={index}
-          className="discount-card"
-        >
+{discountCodes.length === 0 ? (
+  <p className="empty-discount">
+    در حال حاضر کد تخفیفی وجود ندارد.
+  </p>
+) : (
+  <div className="discount-card-list">
 
-          <p className="discount-item">
-            <strong>{t("discount.table.code")}:</strong>{" "}
-            {discount.code}
-          </p>
+    {discountCodes.map((discount) => (
+      <div
+        className="discount-card"
+        key={discount.code}
+      >
 
-          <p className="discount-item">
-            <strong>{t("discount.table.type")}:</strong>{" "}
-            {discount.discountType}
-          </p>
+        <div className="discount-card-header">
 
-          <p className="discount-item">
-            <strong>{t("discount.table.value")}:</strong>{" "}
-            {discount.value}
-          </p>
+          <h4>{discount.code}</h4>
 
-          <p className="discount-item">
-            <strong>{t("discount.table.minimum")}:</strong>{" "}
-            {(discount.minimumPrice || 0).toLocaleString()}{" "}
-            {t("product.currency")}
-          </p> */}
-{/* 
-          <p className="discount-item">
-            <strong>{t("discount.table.status")}:</strong>{" "}
-            {discount.active
-              ? `✅ ${t("discount.enabled")}`
-              : `❌ ${t("dashboard.used")}`}
-          </p> */}
-          {/* <p className="discount-item">
-            <strong>تاریخ شروع:</strong>
-                {discount.startDate}
-          </p>
-          <p className="discount-item">
-            <strong>تاریخ انقضا:</strong>
-                {discount.endDate}
-          </p>
+          <button
+            className="copy-btn"
+            onClick={() => {
+              navigator.clipboard.writeText(discount.code);
+              showAlert(
+                "موفق",
+                "کد تخفیف کپی شد.",
+                "success"
+              );
+            }}
+          >
+            📋 کپی
+          </button>
+
         </div>
 
-      ))}
+        <div className="discount-card-body">
 
-    </div> */}
+          <p>
+            <strong>نوع:</strong>{" "}
+            {discount.discountType === "PERCENT"
+              ? "درصدی"
+              : "مبلغ ثابت"}
+          </p>
+
+          <p>
+            <strong>مقدار:</strong>{" "}
+            {discount.discountType === "PERCENT"
+              ? `${discount.value}%`
+              : `${discount.value.toLocaleString()} تومان`}
+          </p>
+
+          <p>
+            <strong>حداقل خرید:</strong>{" "}
+            {discount.minimumPrice.toLocaleString()} تومان
+          </p>
+
+          <p>
+            <strong>سقف تخفیف:</strong>{" "}
+            {discount.maxDiscount > 0
+              ? `${discount.maxDiscount.toLocaleString()} تومان`
+              : "ندارد"}
+          </p>
+
+          <p>
+            <strong>اعتبار:</strong>{" "}
+            {discount.startDate} تا {discount.endDate}
+          </p>
+
+          {discount.category  && (
+            <p>
+              <strong>دسته‌بندی:</strong>{" "}
+              {discount.category}
+              
+            </p>
+          )}
+<p>
+  <strong>محصول:</strong>{" "}
+  {discount.productName || "همه محصولات"}
+</p>
+
+<p>
+  <strong>فقط محصولات این فروشنده:</strong>{" "}
+  {discount.sellerName}
+</p>
+
+
+        </div>
+
+      </div>
+    ))}
+
+  </div>
+)}
+
+</div>
+    </div> 
 
     {/* Cart */}
 
@@ -464,6 +522,7 @@ return (
               {t("dashboard.payable")}{" "}
               {totalCartPrice.toLocaleString()}{" "}
               {t("product.currency")}
+                  {}
             </span>
 
             <button
@@ -472,6 +531,12 @@ return (
             >
               💳 {t("dashboard.checkout")}
             </button>
+            <p>
+            <span >
+              مقدار تخفیف:
+            </span>
+            {discountAmount}
+            </p>
 
           </div>
 

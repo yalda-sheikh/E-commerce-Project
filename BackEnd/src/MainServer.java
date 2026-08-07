@@ -1432,6 +1432,39 @@ public class MainServer {
                                 );
 
                             } else {
+                                if (customer.hasUsedCode(discountCode)) {
+
+                                    responseText =
+                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_USED\"}";
+
+                                    exchange.sendResponseHeaders(
+                                            400,
+                                            responseText.getBytes(StandardCharsets.UTF_8).length
+                                    );
+
+                                    OutputStream os = exchange.getResponseBody();
+                                    os.write(responseText.getBytes(StandardCharsets.UTF_8));
+                                    os.close();
+
+                                    return;
+                                }
+                                if (customer.getAppliedDiscount() != null &&
+                                        customer.getAppliedDiscount().getCode().equals(discountCode)) {
+
+                                    responseText =
+                                            "{\"success\":false,\"message\":\"DISCOUNT_ALREADY_APPLIED\"}";
+
+                                    exchange.sendResponseHeaders(
+                                            400,
+                                            responseText.getBytes(StandardCharsets.UTF_8).length
+                                    );
+
+                                    OutputStream os = exchange.getResponseBody();
+                                    os.write(responseText.getBytes(StandardCharsets.UTF_8));
+                                    os.close();
+
+                                    return;
+                                }
 
                                 double oldPrice = customer.getCartTotal();
                                 double newPrice = oldPrice;
@@ -1618,9 +1651,12 @@ public class MainServer {
                                                     oldPrice - discountAmount;
 
 
+
                                             if (newPrice < 0) {
                                                 newPrice = 0;
                                             }
+                                            customer.setAppliedDiscountAmount(discountAmount);
+                                            customer.setPriceAfterDiscount(newPrice);
 
 
                                             customer.setAppliedDiscount(discount);

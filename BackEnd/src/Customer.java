@@ -8,6 +8,8 @@ public class Customer extends User {
     private ArrayList<Purchase> purchaseHistory;
     private ArrayList<String> usedDiscountCodes = new ArrayList<>();
     private DiscountCode appliedDiscount;
+    private double appliedDiscountAmount;
+    private double priceAfterDiscount;
 
     public Customer(int userId, String username, String password, double wallet ) {
         super(userId, username, password, Role.CUSTOMER, wallet);
@@ -20,6 +22,22 @@ public class Customer extends User {
 
     public ArrayList<String> getUsedDiscountCodes() {
         return usedDiscountCodes;
+    }
+    public double getAppliedDiscountAmount() {
+        return appliedDiscountAmount;
+    }
+
+    public void setAppliedDiscountAmount(double appliedDiscountAmount) {
+        this.appliedDiscountAmount = appliedDiscountAmount;
+    }
+
+
+    public double getPriceAfterDiscount() {
+        return priceAfterDiscount;
+    }
+
+    public void setPriceAfterDiscount(double priceAfterDiscount) {
+        this.priceAfterDiscount = priceAfterDiscount;
     }
     public DiscountCode getAppliedDiscount() {
         return appliedDiscount;
@@ -41,7 +59,10 @@ public class Customer extends User {
         if(!usedDiscountCodes.contains(code)){
             usedDiscountCodes.add(code);
         }
+    }public void removeAppliedDiscount() {
+        this.appliedDiscount = null;
     }
+
     public double getDiscountEligibleTotal(DiscountCode discount) {
 
 
@@ -113,6 +134,7 @@ public class Customer extends User {
 
     public void addToCart(ProductItem item, int quantity) {
         if (item == null || quantity <= 0) return;
+        appliedDiscount = null;
 
         if (item.getStock() >= quantity) {
             // متد برای تعیین اینکه از قبل محصول وجود داشته است یا خیر getOrDefault
@@ -136,6 +158,7 @@ public class Customer extends User {
         for (ProductItem item : cart.keySet()) {
             if (item.getItemId() == itemId) {
                 toRemove = item;
+                appliedDiscount = null;
                 break;
             }
         }
@@ -392,6 +415,7 @@ public class Customer extends User {
 
 
         cart.clear();
+        appliedDiscount = null;
 
 
 
