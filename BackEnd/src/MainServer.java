@@ -1369,6 +1369,156 @@ public class MainServer {
                         os.close();
                     }
                 });
+        server.createContext("/api/discount/remove", new HttpHandler() {
+
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+
+                exchange.getResponseHeaders().add(
+                        "Access-Control-Allow-Origin", "*"
+                );
+
+                exchange.getResponseHeaders().add(
+                        "Access-Control-Allow-Methods",
+                        "POST, OPTIONS"
+                );
+
+                exchange.getResponseHeaders().add(
+                        "Access-Control-Allow-Headers",
+                        "Content-Type"
+                );
+
+                exchange.getResponseHeaders().add(
+                        "Content-Type",
+                        "application/json; charset=UTF-8"
+                );
+
+                if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    exchange.sendResponseHeaders(200, -1);
+                    return;
+                }
+
+                if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+                    String response =
+                            "{\"success\":false,\"message\":\"METHOD_NOT_ALLOWED\"}";
+
+                    byte[] bytes = response.getBytes("UTF-8");
+
+                    exchange.sendResponseHeaders(405, bytes.length);
+
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(bytes);
+                    os.close();
+
+                    return;
+                }
+
+                InputStream is = exchange.getRequestBody();
+
+                String body = new String(
+                        is.readAllBytes(),
+                        "UTF-8"
+                );
+
+                System.out.println("REMOVE DISCOUNT BODY = " + body);
+
+                int userId = -1;
+
+                if (body.contains("\"userId\"")) {
+
+                    userId = Integer.parseInt(
+                            body.split("\"userId\":")[1]
+                                    .split(",")[0]
+                                    .split("}")[0]
+                                    .trim()
+                    );
+                }
+
+                Customer customer = null;
+
+                for (User u : allUsers) {
+
+                    if (u instanceof Customer &&
+                            u.userId == userId) {
+
+                        customer = (Customer) u;
+                        break;
+                    }
+                }
+
+                if (customer == null) {
+
+                    String response =
+                            "{\"success\":false,\"message\":\"USER_NOT_FOUND\"}";
+
+                    byte[] bytes =
+                            response.getBytes("UTF-8");
+
+                    exchange.sendResponseHeaders(
+                            404,
+                            bytes.length
+                    );
+
+                    OutputStream os =
+                            exchange.getResponseBody();
+
+                    os.write(bytes);
+                    os.close();
+
+                    return;
+                }
+
+                // بررسی اینکه اصلاً تخفیفی اعمال شده یا نه
+                if (customer.getAppliedDiscount() == null) {
+
+                    String response =
+                            "{\"success\":false,\"message\":\"NO_DISCOUNT_APPLIED\"}";
+
+                    byte[] bytes =
+                            response.getBytes("UTF-8");
+
+                    exchange.sendResponseHeaders(
+                            400,
+                            bytes.length
+                    );
+
+                    OutputStream os =
+                            exchange.getResponseBody();
+
+                    os.write(bytes);
+                    os.close();
+
+                    return;
+                }
+
+                // لغو تخفیف
+                customer.removeAppliedDiscount();
+
+                MainServer.saveData();
+
+                String response =
+                        "{"
+                                + "\"success\":true,"
+                                + "\"message\":\"DISCOUNT_REMOVED\","
+                                + "\"newPrice\":" + customer.getCartTotal()
+                                + "}";
+
+                byte[] bytes =
+                        response.getBytes("UTF-8");
+
+                exchange.sendResponseHeaders(
+                        200,
+                        bytes.length
+                );
+
+                OutputStream os =
+                        exchange.getResponseBody();
+
+                os.write(bytes);
+                os.close();
+            }
+        });
                 server.createContext("/api/discount/apply", new HttpHandler() {
 
                     @Override

@@ -59,7 +59,8 @@ public class Customer extends User {
         if(!usedDiscountCodes.contains(code)){
             usedDiscountCodes.add(code);
         }
-    }public void removeAppliedDiscount() {
+    }
+    public void removeAppliedDiscount() {
         this.appliedDiscount = null;
     }
 

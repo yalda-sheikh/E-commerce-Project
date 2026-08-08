@@ -19,6 +19,7 @@ function Dashboard({ user, setUser }) {
   const [loading, setLoading] = useState(true)
   const {alert, showAlert, closeAlert} = useAlert()
   const [discountAmount , setDiscountAmount] = useState()
+  const [discountApplied, setDiscountApplied] = useState(false)
   const fetchDashboardData = () => {
     if (!user) return
 
@@ -238,8 +239,68 @@ function Dashboard({ user, setUser }) {
         مبلغ قابل پرداخت: ${data.newPrice.toLocaleString()} تومان`,
         "success"
       );
+      setDiscountApplied(true);
+     
     
     });}
+    const handleRemoveDiscount = () => {
+
+      fetch("http://localhost:8080/api/discount/remove", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({
+          userId: user.userId,
+        }),
+      })
+        .then(async (res) => {
+    
+          const data = await res.json();
+    
+          console.log("remove discount response:", data);
+    
+          if (!res.ok) {
+            throw new Error(data.message);
+          }
+    
+          return data;
+        })
+        .then((data) => {
+    
+          setDiscountCode("");
+    
+          showAlert(
+            "موفق",
+            "کد تخفیف با موفقیت لغو شد.",
+            "success"
+          );
+          setDiscountApplied(false);
+          setDiscountAmount("");
+          
+    
+          fetchDashboardData();
+        })
+        .catch((err) => {
+    
+          if (err.message === "NO_DISCOUNT_APPLIED") {
+    
+            showAlert(
+              "خطا",
+              "هیچ کد تخفیفی روی سبد اعمال نشده است.",
+              "error"
+            );
+    
+          } else {
+    
+            showAlert(
+              "خطا",
+              "لغو کد تخفیف انجام نشد.",
+              "error"
+            );
+          }
+        });
+    };
 const handleRemove = (itemId) => {
   fetch("http://localhost:8080/api/cart/remove",{
     method : "POST",
@@ -513,6 +574,14 @@ return (
             >
               {t("dashboard.applyDiscount")}
             </button>
+            {discountCode && (
+  <button
+    onClick={handleRemoveDiscount}
+    className="btn btn-danger"
+  >
+    ❌ لغو تخفیف
+  </button>
+)}
 
           </div>
 
