@@ -219,6 +219,7 @@ public class Customer extends User {
 
 
         double totalCost = getCartTotal();
+        double discountAmount = 0;
 
         String usedCode = null;
 
@@ -236,7 +237,6 @@ public class Customer extends User {
                     getDiscountEligibleTotal(discount);
 
 
-            double discountAmount = 0;
 
 
             if (discount.getDiscountType()
@@ -371,7 +371,9 @@ public class Customer extends User {
                         "1405/03/09",
                         cart,
                         totalCost,
-                        usedCode
+                        usedCode,
+                        discountAmount
+
                 );
 
 

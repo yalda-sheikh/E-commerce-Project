@@ -5,28 +5,36 @@ public class Purchase {
     private String purchaseDate;
     private HashMap<ProductItem, Integer> items;
     private double totalAmount;
+    private double discountAmount;
+
     private String discountCodeUsed;
     public int getPurchaseId(){
         return this.purchaseId;
     }
+
     public String getPurchaseDate(){
         return this.purchaseDate;
     }
     public double getTotalAmount(){
         return this.totalAmount;
     }
+    public double getDiscountAmount(){
+        return this.discountAmount;
+    }
+
     public String getDiscountCodeUsed(){
         return this.discountCodeUsed;
     }
 
 
     public Purchase(int purchaseId, String purchaseDate, HashMap<ProductItem, Integer> items,
-                    double totalAmount, String discountCodeUsed) {
+                    double totalAmount, String discountCodeUsed , double discountAmount) {
         this.purchaseId = purchaseId;
         this.purchaseDate = purchaseDate;
         this.items = new HashMap<>(items);
         this.totalAmount = totalAmount;
         this.discountCodeUsed = discountCodeUsed;
+        this.discountAmount = discountAmount;
     }
 
 

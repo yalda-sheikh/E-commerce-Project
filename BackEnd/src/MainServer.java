@@ -260,6 +260,7 @@ public class MainServer {
                             jsonBuilder.append("\"purchaseId\":").append(p.getPurchaseId()).append(","); // متد گتر فاکتور
                             jsonBuilder.append("\"date\":\"").append(p.getPurchaseDate()).append("\","); // متد گتر تاریخ
                             jsonBuilder.append("\"total\":").append(p.getTotalAmount()).append(","); // متد گتر مبلغ
+                            jsonBuilder.append("\"discountAmount\":").append(p.getDiscountAmount()).append(",");
                             jsonBuilder.append("\"status\":\"✅ پرداخت شده\""); // وضعیت به صورت پیش‌فرض پرداخت شده درج می‌شود
                             jsonBuilder.append("}");
 

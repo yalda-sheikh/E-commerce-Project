@@ -642,6 +642,7 @@ return (
                 <th>{t("dashboard.date")}</th>
                 <th>{t("dashboard.amount")}</th>
                 <th>{t("dashboard.status")}</th>
+                <th>مقدار تخفیف</th>
               </tr>
 
             </thead>
@@ -663,6 +664,11 @@ return (
 
                   <td className="status-success">
                     {history.status}
+                  </td>
+                  <td>
+                  {history.discountAmount > 0
+    ? `${history.discountAmount.toLocaleString()} ${t("product.currency")}`
+    : "بدون تخفیف"}
                   </td>
 
                 </tr>
