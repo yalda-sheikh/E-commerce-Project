@@ -19,6 +19,11 @@ public class Customer extends User {
     public ArrayList<Purchase> getPurchaseHistory(){
         return purchaseHistory;
     }
+    public void addPurchaseHistory(Purchase purchase) {
+        if (purchase != null) {
+            purchaseHistory.add(purchase);
+        }
+    }
 
     public ArrayList<String> getUsedDiscountCodes() {
         return usedDiscountCodes;
@@ -55,6 +60,8 @@ public class Customer extends User {
         System.out.println("CHECK CODE = " + code);
         return usedDiscountCodes.contains(code);
     }
+
+
     public void addUsedCode(String code){
         if(!usedDiscountCodes.contains(code)){
             usedDiscountCodes.add(code);
@@ -143,6 +150,7 @@ public class Customer extends User {
             int currentQty = cart.getOrDefault(item, 0);
             // بروز رسانی یا اضافه کردن به تعداد محصول درون سبد خرید
             cart.put(item, currentQty + quantity);
+            MainServer.saveData();
             System.out.println(quantity + " عدد کالا به سبد خرید اضافه شد.");
         } else {
             System.out.println("❌ خطا: موجودی کافی نیست! موجودی فعلی: " + item.getStock());
@@ -150,6 +158,9 @@ public class Customer extends User {
     }
     public java.util.HashMap<ProductItem, Integer> getCart() {
         return this.cart;
+    }
+    public void setCart(HashMap<ProductItem, Integer> cart) {
+        this.cart = cart;
     }
 
 
@@ -165,6 +176,7 @@ public class Customer extends User {
         }
         if (toRemove != null) {
             cart.remove(toRemove);
+            MainServer.saveData();
             System.out.println("کالا با موفقیت از سبد خرید حذف شد.");
         } else {
             System.out.println("این کالا در سبد خرید شما یافت نشد.");
@@ -378,6 +390,9 @@ public class Customer extends User {
 
 
         purchaseHistory.add(newPurchase);
+
+
+
 
 
 

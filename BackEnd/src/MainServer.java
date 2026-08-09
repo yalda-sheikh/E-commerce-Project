@@ -1896,6 +1896,28 @@ public class MainServer {
                         }
                     }
                     writer.close();
+                    PrintWriter writerCart =
+                            new PrintWriter(new FileWriter("cart.txt"));
+
+                    for (User u : allUsers) {
+
+                        if (u instanceof Customer customer) {
+
+                            for (ProductItem item : customer.getCart().keySet()) {
+
+                                int quantity =
+                                        customer.getCart().get(item);
+
+                                writerCart.println(
+                                        customer.userId + "," +
+                                                item.getItemId() + "," +
+                                                quantity
+                                );
+                            }
+                        }
+                    }
+
+                    writerCart.close();
 
                     // ۲. نویسنده و ایجاد فایل لیست محصولات پایه
                     PrintWriter writerProducts = new PrintWriter(new FileWriter("products.txt")); // تغییر نام داخلی متغیر به دلیل رعایت دقیق کدهای کاربر بدون خطا
@@ -1938,6 +1960,30 @@ public class MainServer {
                     }
 
                     writerDiscount.close();
+                    PrintWriter writerPurchases =
+                            new PrintWriter(new FileWriter("purchases.txt"));
+
+                    for (User u : allUsers) {
+
+                        if (u instanceof Customer customer) {
+
+                            for (Purchase purchase : customer.getPurchaseHistory()) {
+
+                                writerPurchases.println(
+                                        customer.userId + "," +
+                                                purchase.getPurchaseId() + "," +
+                                                purchase.getPurchaseDate() + "," +
+                                                purchase.getTotalAmount() + "," +
+                                                (purchase.getDiscountCodeUsed() != null
+                                                        ? purchase.getDiscountCodeUsed()
+                                                        : "null") + "," +
+                                                purchase.getDiscountAmount()
+                                );
+                            }
+                        }
+                    }
+
+                    writerPurchases.close();
                     System.out.println("💾 تمام اطلاعات با موفقیت در فایل‌های متنی سیستم ذخیره شدند.");
                 } catch (IOException e) {
                     System.out.println("❌ خطا در هنگام ذخیره‌سازی اطلاعات در فایل‌ها: " + e.getMessage());
@@ -1962,6 +2008,11 @@ public class MainServer {
                     if (!f6.exists()) f6.createNewFile();
                     File f7 = new File("discount_codes.txt");
                     if (!f7.exists()) f7.createNewFile();
+                    File f8 = new File("cart.txt");
+
+                    if (!f8.exists()) {
+                        f8.createNewFile();
+                    }
                     // خواندن کدهای تخفیف از فایل
                     BufferedReader discountReader =
                             new BufferedReader(new FileReader("discount_codes.txt"));
@@ -2080,6 +2131,7 @@ public class MainServer {
                         }
                     }
 
+
                     userReader.close();
 
                     // پر کردن موقت اطلاعات دمی و فیک برای تست در صورتی که دیتابیس متنی در ابتدا کاملاً خالی باشد
@@ -2109,6 +2161,52 @@ public class MainServer {
                                 0,
                                 8
                         ));
+                        BufferedReader cartReader =
+                                new BufferedReader(new FileReader("cart.txt"));
+
+                        String cartLine;
+
+                        while ((cartLine = cartReader.readLine()) != null) {
+
+                            String[] parts = cartLine.split(",");
+
+                            if (parts.length == 3) {
+
+                                int userId =
+                                        Integer.parseInt(parts[0]);
+
+                                int itemId =
+                                        Integer.parseInt(parts[1]);
+
+                                int quantity =
+                                        Integer.parseInt(parts[2]);
+
+                                Customer customer = null;
+
+                                for (User u : allUsers) {
+
+                                    if (u instanceof Customer &&
+                                            u.userId == userId) {
+
+                                        customer = (Customer) u;
+                                        break;
+                                    }
+                                }
+
+                                ProductItem item =
+                                        findProductItemById(itemId);
+
+                                if (customer != null && item != null) {
+
+                                    customer.getCart().put(
+                                            item,
+                                            quantity
+                                    );
+                                }
+                            }
+                        }
+
+                        cartReader.close();
 
                         // یک نمونه کالا پیش‌فرض به سبد خرید کاربر هلیای تستی اضافه می‌کنیم تا فرانت در زمان اولین رندر لودینگ کامپوننت‌ها خالی نباشد
                         if (allUsers.get(0) instanceof Customer) {
@@ -2133,6 +2231,17 @@ public class MainServer {
 
                 return null;
             }
+    public static ProductItem findProductItemById(int itemId) {
+
+        for (ProductItem item : allProductItems) {
+
+            if (item.getItemId() == itemId) {
+                return item;
+            }
+        }
+
+        return null;
+    }
 
             // یک متد ساده برای بیرون کشیدن مقدار فیلدها از متن JSON
             private static String extractJsonValue(String json, String key) {

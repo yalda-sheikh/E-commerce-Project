@@ -21,6 +21,9 @@ public class Purchase {
     public double getDiscountAmount(){
         return this.discountAmount;
     }
+    public HashMap<ProductItem, Integer> getItems() {
+        return items;
+    }
 
     public String getDiscountCodeUsed(){
         return this.discountCodeUsed;
