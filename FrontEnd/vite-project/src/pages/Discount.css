@@ -1153,4 +1153,270 @@ select.discount-input {
 
   opacity: 1 !important;
 }
+/* =========================================================
+   DISCOUNT TABLE - FINAL RESPONSIVE FIX
+========================================================= */
 
+.discount-list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.discount-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+}
+
+/* جدول */
+.discount-table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* سلول‌ها */
+.discount-table th,
+.discount-table td {
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   COLUMN WIDTHS
+========================================================= */
+
+/* کد */
+.discount-table th:nth-child(1),
+.discount-table td:nth-child(1) {
+  width: 8%;
+}
+
+/* نوع */
+.discount-table th:nth-child(2),
+.discount-table td:nth-child(2) {
+  width: 7%;
+}
+
+/* مقدار */
+.discount-table th:nth-child(3),
+.discount-table td:nth-child(3) {
+  width: 8%;
+}
+
+/* حداقل خرید */
+.discount-table th:nth-child(4),
+.discount-table td:nth-child(4) {
+  width: 8%;
+}
+
+/* تاریخ شروع */
+.discount-table th:nth-child(5),
+.discount-table td:nth-child(5) {
+  width: 8%;
+}
+
+/* تاریخ پایان */
+.discount-table th:nth-child(6),
+.discount-table td:nth-child(6) {
+  width: 8%;
+}
+
+/* سقف */
+.discount-table th:nth-child(7),
+.discount-table td:nth-child(7) {
+  width: 8%;
+}
+
+/* محدودیت استفاده */
+.discount-table th:nth-child(8),
+.discount-table td:nth-child(8) {
+  width: 8%;
+}
+
+/* دسته بندی */
+.discount-table th:nth-child(9),
+.discount-table td:nth-child(9) {
+  width: 8%;
+}
+
+/* محصول */
+.discount-table th:nth-child(10),
+.discount-table td:nth-child(10) {
+  width: 7%;
+}
+
+/* فروشنده */
+.discount-table th:nth-child(11),
+.discount-table td:nth-child(11) {
+  width: 7%;
+}
+
+/* ویرایش */
+.discount-table th:nth-child(12),
+.discount-table td:nth-child(12) {
+  width: 7%;
+  text-align: center;
+}
+
+/* حذف */
+.discount-table th:nth-child(13),
+.discount-table td:nth-child(13) {
+  width: 8%;
+  min-width: 0;
+  text-align: center;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.discount-table .btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+  min-height: 32px;
+
+  padding: 5px 6px;
+
+  box-sizing: border-box;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 900;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.discount-table .btn:hover {
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.discount-table .discount-edit-btn {
+  background: var(--accent-blue) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+
+  box-shadow:
+    0 4px 10px var(--accent-blue-soft);
+}
+
+.discount-table .discount-edit-btn:hover {
+  background: var(--accent-blue) !important;
+  filter: brightness(0.92);
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+========================================================= */
+
+.discount-table .discount-delete-btn {
+  background: var(--accent-red) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+
+  box-shadow:
+    0 4px 10px var(--accent-red-soft);
+}
+
+.discount-table .discount-delete-btn:hover {
+  background: var(--accent-red-hover) !important;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .discount-list {
+    padding: 18px;
+  }
+
+  .discount-table {
+    font-size: 10px;
+  }
+
+  .discount-table th,
+  .discount-table td {
+    padding: 9px 5px;
+  }
+
+  .discount-table .btn {
+    min-height: 30px;
+    padding: 4px 4px;
+    font-size: 9px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /*
+    در موبایل جدول دسکتاپ نمایش داده نمی‌شود
+    و کارت‌های موبایل که بالاتر تعریف کردی نمایش داده می‌شوند.
+  */
+
+  .discount-table-wrapper {
+    display: none;
+  }
+
+  .discount-mobile-list {
+    display: flex;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREEN
+========================================================= */
+
+@media (max-width: 430px) {
+
+  .discount-list {
+    padding: 14px;
+  }
+
+  .discount-mobile-list {
+    width: 100%;
+  }
+}

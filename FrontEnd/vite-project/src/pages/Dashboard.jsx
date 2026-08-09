@@ -464,8 +464,8 @@ return (
 </p>
 
 <p>
-  <strong>فقط محصولات این فروشنده:</strong>{" "}
-  {discount.sellerName}
+  <strong>فقط محصولات این فروشنده:</strong>
+  {discount.sellerName || "همه فروشندگان"}
 </p>
 
 

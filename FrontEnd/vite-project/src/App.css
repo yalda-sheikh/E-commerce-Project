@@ -74,7 +74,72 @@
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.6);
 }
+/* =========================================================
+   Custom Scrollbar
+   ========================================================= */
 
+   html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-hover) var(--bg-app);
+  }
+  
+  /* Chrome / Edge / Safari */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-app);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--bg-app);
+    transition: background var(--transition-fast);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-red);
+  }
+  
+  /* اسکرول افقی در صورت ایجاد شدن */
+  ::-webkit-scrollbar:horizontal {
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track:horizontal {
+    background: var(--bg-app);
+  }
+  
+  ::-webkit-scrollbar-thumb:horizontal {
+    background: var(--border-hover);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--bg-app);
+  }
+  
+  ::-webkit-scrollbar-thumb:horizontal:hover {
+    background: var(--accent-red);
+  }
+  
+  /* Dark Mode */
+  [data-theme="dark"] {
+    scrollbar-color: var(--border-hover) var(--bg-app);
+  }
+  
+  [data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--bg-app);
+  }
+  
+  [data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-color: var(--bg-app);
+  }
+  
+  [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-red);
+  }
 
 /* =========================================================
    RESET

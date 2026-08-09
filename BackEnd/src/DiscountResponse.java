@@ -11,6 +11,7 @@ public class DiscountResponse {
     String category;
     String productName;
     boolean sellerOnly;
+    private String sellerName;
 
     public DiscountResponse(
             String code,
@@ -23,7 +24,9 @@ public class DiscountResponse {
             String endDate,
             String category,
             String productName,
+            String sellerName,
             boolean sellerOnly
+
     ) {
         this.code = code;
         this.discountType = discountType;
@@ -35,6 +38,7 @@ public class DiscountResponse {
         this.endDate = endDate;
         this.category = category;
         this.productName = productName;
+        this.sellerName = sellerName;
         this.sellerOnly = sellerOnly;
     }
 }

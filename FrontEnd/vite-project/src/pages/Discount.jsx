@@ -508,7 +508,7 @@ function Discount({ user }) {
                                         </th>
 
                                         <th>
-                                            محدودیت تعداد استفاده
+                                            محدودیت استفاده
                                         </th>
 
                                         <th>
@@ -524,11 +524,11 @@ function Discount({ user }) {
                                         </th>
 
                                         <th>
-                                            {t("discount.table.edit")}
+                                            
                                         </th>
 
                                         <th>
-                                            {t("discount.table.delete")}
+                                            
                                         </th>
 
                                     </tr>

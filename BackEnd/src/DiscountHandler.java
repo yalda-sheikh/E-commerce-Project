@@ -118,6 +118,7 @@ public class DiscountHandler implements HttpHandler {
                                         discount.getEndDate().toString(),
                                         categoryName,
                                         productName,
+                                        discount.getSellerName(),
                                         discount.isSellerOnly()
                                 );
 
