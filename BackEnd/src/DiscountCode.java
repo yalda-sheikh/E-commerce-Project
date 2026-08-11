@@ -15,6 +15,7 @@ public class DiscountCode {
     private String category;
     private Integer productId;
     private boolean sellerOnly;
+    private Integer customerId;
 
     public DiscountCode(
             String code,
@@ -29,7 +30,8 @@ public class DiscountCode {
             int usedCount,
             String category,
             Integer productId,
-            boolean sellerOnly
+            boolean sellerOnly,
+            Integer customerId
     ){
 
         this.code = code;
@@ -45,10 +47,17 @@ public class DiscountCode {
         this.category = category;
         this.productId = productId;
         this.sellerOnly = sellerOnly;
+        this.customerId = customerId;
 
 
     }
+    public Integer getCustomerId() {
+        return customerId;
+    }
 
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
     public Integer getProductId() {
         return productId;
     }

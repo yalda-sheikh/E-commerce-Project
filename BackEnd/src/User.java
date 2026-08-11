@@ -13,6 +13,9 @@ public abstract class User {
         this.wallet = wallet;
     }
 
+    public int getUserId() {
+        return userId;
+    }
 
     public String getUsername() {
         return username;

@@ -47,6 +47,23 @@ public class DiscountHandler implements HttpHandler {
                     List<DiscountCode> availableDiscounts = new ArrayList<>();
 
                     LocalDate today = LocalDate.now();
+                    String query = exchange.getRequestURI().getQuery();
+
+                    Integer customerId = null;
+
+                    if (query != null) {
+                        String[] params = query.split("&");
+
+                        for (String param : params) {
+                            String[] pair = param.split("=");
+
+                            if (pair.length == 2 && pair[0].equals("customerId")) {
+                                customerId = Integer.parseInt(
+                                        URLDecoder.decode(pair[1], StandardCharsets.UTF_8)
+                                );
+                            }
+                        }
+                    }
 
                     for (DiscountCode discount : allDiscountCodes) {
 
@@ -63,6 +80,14 @@ public class DiscountHandler implements HttpHandler {
                                 discount.getUsedCount() >= discount.getUsageLimit()) {
                             continue;
                         }
+                        if (discount.getCustomerId() != null) {
+
+                            if (customerId == null ||
+                                    !discount.getCustomerId().equals(customerId)) {
+                                continue;
+                            }
+                        }
+
 
 
                         availableDiscounts.add(discount);
@@ -187,7 +212,9 @@ public class DiscountHandler implements HttpHandler {
                         0,
                         request.category,
                         request.productId,
-                        request.sellerOnly
+                        request.sellerOnly,
+                        request.customerId
+
 
                 );
 

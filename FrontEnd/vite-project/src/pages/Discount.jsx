@@ -21,6 +21,7 @@ function Discount({ user }) {
     const [category, setCategory] = useState("BASE");
     const [productId, setProductId] = useState("");
     const [sellerOnly, setSellerOnly] = useState(false);
+    const [customerId, setCustomerId] = useState("");
 
     const { alert, showAlert, closeAlert } = useAlert();
 
@@ -58,6 +59,7 @@ function Discount({ user }) {
                 category,
                 productId: productId ? Number(productId) : null,
                 sellerOnly,
+                customerId : customerId ? Number(customerId) : null,
             }),
         })
             .then((res) => res.json())
@@ -81,6 +83,7 @@ function Discount({ user }) {
                 setCategory("BASE");
                 setProductId("");
                 setSellerOnly(false);
+                setCustomerId("")
             })
             .catch(() => {
                 showAlert(
@@ -110,6 +113,7 @@ function Discount({ user }) {
                 category,
                 productId: productId ? Number(productId) : null,
                 sellerOnly,
+                customerId: customerId ? Number(customerId) : null,
             }),
         })
             .then((res) => res.json())
@@ -135,6 +139,7 @@ function Discount({ user }) {
                 setCategory("BASE");
                 setProductId("");
                 setSellerOnly(false);
+                setCustomerId("")
             })
             .catch(() => {
                 showAlert(
@@ -185,6 +190,7 @@ function Discount({ user }) {
         setCategory(discount.category || "BASE");
         setProductId(discount.productId || "");
         setSellerOnly(discount.sellerOnly || false);
+        setCustomerId(discount.customerId || "");
 
         window.scrollTo({
             top: 0,
@@ -388,7 +394,18 @@ function Discount({ user }) {
                 </div>
 
                 {/* Seller Only */}
+                <div className="discount-field">
+                        <label>آیدی کاربر خاص</label>
 
+                        <input
+                            className="discount-input"
+                            type="number"
+                            value={customerId}
+                            onChange={(e) =>
+                                setCustomerId(e.target.value)
+                            }
+                        />
+                    </div>
                 <label className="discount-check">
                     <input
                         type="checkbox"
@@ -522,6 +539,9 @@ function Discount({ user }) {
                                         <th>
                                             فروشنده
                                         </th>
+                                        <th>
+                                         آیدی کابر خاص
+                                        </th>
 
                                         <th>
                                             
@@ -604,6 +624,10 @@ function Discount({ user }) {
                                                         ? "بله"
                                                         : "خیر"}
                                                 </span>
+                                            </td>
+                                            <td data-label= "کاربر">
+                                            {discount.customerId || "-"}
+
                                             </td>
 
                                             <td data-label="ویرایش">
@@ -746,6 +770,12 @@ function Discount({ user }) {
                                             <span>تاریخ پایان</span>
                                             <strong>
                                                 {discount.endDate || "-"}
+                                            </strong>
+                                        </div>
+                                        <div>
+                                            <span>کاربر خاص</span>
+                                            <strong>
+                                                {discount.customerId || "-"}
                                             </strong>
                                         </div>
 

@@ -57,7 +57,7 @@ function Dashboard({ user, setUser }) {
         console.error('History Fetch Error:', err)
         setLoading(false)
       })
-      fetch("http://localhost:8080/api/discount")
+      fetch(`http://localhost:8080/api/discount?customerId=${user.userId}`)
 .then(res => res.json())
 .then(data => {
     setDiscountCodes(data)
@@ -200,7 +200,10 @@ function Dashboard({ user, setUser }) {
           case "DISCOUNT_ALREADY_APPLIED":
             showAlert("خطا", "این کد قبلاً روی سبد اعمال شده است.", "error");
             return;
-      
+    
+          case "DISCOUNT_NOT_FOR_THIS_CUSTOMER" :
+              showAlert("خطا", "این کد برای شما قابل استفاده نیست.", "error");
+              return;
           case "DISCOUNT_INACTIVE":
             showAlert("خطا", "این کد تخفیف غیرفعال است.", "error");
             return;

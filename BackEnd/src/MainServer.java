@@ -1632,7 +1632,25 @@ public class MainServer {
                                             responseText.getBytes("UTF-8").length
                                     );
 
-                                } else {boolean allowed = true;
+                                } else {
+                                    if (discount.getCustomerId() != null &&
+                                            !discount.getCustomerId().equals(userId)) {
+
+                                        String responseJson =
+                                                "{\"success\":false,\"message\":\"DISCOUNT_NOT_FOR_THIS_CUSTOMER\"}";
+
+                                        byte[] response =
+                                                responseJson.getBytes(StandardCharsets.UTF_8);
+
+                                        exchange.sendResponseHeaders(400, response.length);
+
+                                        OutputStream os = exchange.getResponseBody();
+                                        os.write(response);
+                                        os.close();
+
+                                        return;
+                                    }
+                                    boolean allowed = true;
                                     String errorMessage = "";
 
                                     for (ProductItem item : customer.getCart().keySet()) {
@@ -1952,7 +1970,8 @@ public class MainServer {
                                         dc.getUsedCount() + ","+
                                         dc.getCategory() + ","+
                                         dc.getProductId() + ","+
-                                        dc.isSellerOnly()
+                                        dc.isSellerOnly()+ "," +
+                                        dc.getCustomerId()
 
 
 
@@ -2023,7 +2042,7 @@ public class MainServer {
 
                         String[] parts = line.split(",");
 
-                        if (parts.length == 13) {
+                        if (parts.length == 14) {
 
                             String code = parts[0];
                             String discountType = parts[1];
@@ -2047,6 +2066,11 @@ public class MainServer {
                             };
                             boolean sellerOnly =
                                     Boolean.parseBoolean(parts[12]);
+                            Integer customerId = null;
+
+                            if (!parts[13].equals("null")) {
+                                customerId = Integer.parseInt(parts[13]);
+                            }
 
 
                             DiscountCode discount = new DiscountCode(
@@ -2062,7 +2086,8 @@ public class MainServer {
                                     usedCount,
                                     category,
                                     productId,
-                                    sellerOnly
+                                    sellerOnly,
+                                    customerId
 
                             );
 

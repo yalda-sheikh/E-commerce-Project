@@ -14,5 +14,6 @@ public class DiscountRequest {
      String category;
      Integer productId;
      boolean sellerOnly;
+     Integer customerId;
 
 }

@@ -96,7 +96,8 @@ public class SellerDiscountHandler implements HttpHandler {
 
 
                 json.append("\"sellerOnly\":")
-                        .append(discount.isSellerOnly());
+                        .append(discount.isSellerOnly()).append(",");
+                json.append("\"customerId\":").append(discount.getCustomerId());
 
 
                 json.append("}");
@@ -183,7 +184,17 @@ public class SellerDiscountHandler implements HttpHandler {
                                 .trim()
                 );
             }
+            Integer customerId = null;
 
+            if (body.contains("\"customerId\":")
+                    && !body.contains("\"customerId\":null")) {
+
+                customerId = Integer.parseInt(
+                        body.split("\"customerId\":")[1]
+                                .split(",")[0]
+                                .trim()
+                );
+            }
 
             boolean sellerOnly = false;
 
@@ -205,6 +216,7 @@ public class SellerDiscountHandler implements HttpHandler {
                     discount.setSellerOnly(sellerOnly);
                     discount.setMaxDiscount(maxDiscount);
                     discount.setUsageLimit(usageLimit);
+                    discount.setCustomerId(customerId);
 
 
                     if(!startDate.isEmpty()){
