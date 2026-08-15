@@ -22,6 +22,7 @@ function Discount({ user }) {
     const [productId, setProductId] = useState("");
     const [sellerOnly, setSellerOnly] = useState(false);
     const [customerId, setCustomerId] = useState("");
+    const [maxPurchaseCount, setMaxPurchaseCount] =  useState(null)
 
     const { alert, showAlert, closeAlert } = useAlert();
 
@@ -60,6 +61,7 @@ function Discount({ user }) {
                 productId: productId ? Number(productId) : null,
                 sellerOnly,
                 customerId : customerId ? Number(customerId) : null,
+                maxPurchaseCount : maxPurchaseCount ? Number(maxPurchaseCount) : null,
             }),
         })
             .then((res) => res.json())
@@ -392,6 +394,21 @@ function Discount({ user }) {
                     </div>
 
                 </div>
+                <label>محدودیت خرید مشتری</label>
+
+<select
+  value={maxPurchaseCount ?? ""}
+  onChange={(e) =>
+    setMaxPurchaseCount(
+      e.target.value === "" ? null : Number(e.target.value)
+    )
+  }
+>
+  <option value="">بدون محدودیت</option>
+  <option value="1">فقط خرید اول</option>
+  <option value="3">۳ خرید اول</option>
+  <option value="5">۵ خرید اول</option>
+</select>
 
                 {/* Seller Only */}
                 <div className="discount-field">

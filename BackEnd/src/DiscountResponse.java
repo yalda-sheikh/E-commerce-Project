@@ -13,6 +13,7 @@ public class DiscountResponse {
     boolean sellerOnly;
     private String sellerName;
 
+
     public DiscountResponse(
             String code,
             String discountType,
@@ -27,6 +28,7 @@ public class DiscountResponse {
             String sellerName,
             boolean sellerOnly
 
+
     ) {
         this.code = code;
         this.discountType = discountType;
@@ -40,5 +42,6 @@ public class DiscountResponse {
         this.productName = productName;
         this.sellerName = sellerName;
         this.sellerOnly = sellerOnly;
+
     }
 }

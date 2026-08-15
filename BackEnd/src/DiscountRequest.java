@@ -1,5 +1,6 @@
 public class DiscountRequest {
 
+    public Integer maxPurchaseCount;
     String code;
     String discountType;
     double value;

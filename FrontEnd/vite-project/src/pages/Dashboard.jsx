@@ -219,6 +219,13 @@ function Dashboard({ user, setUser }) {
           case "PRODUCT_NOT_ALLOWED":
             showAlert("خطا", "این کد فقط برای محصول مشخص‌شده قابل استفاده است.", "error");
             return;
+            case "PURCHASE_LIMIT_REACHED":
+    showAlert(
+        "خطا",
+        "این کد تخفیف فقط برای خریدهای اولیه قابل استفاده است.",
+        "error"
+    );
+    return;
       
           case "SELLER_NOT_ALLOWED":
             showAlert("خطا", "این کد فقط برای محصولات یک فروشنده قابل استفاده است.", "error");

@@ -145,6 +145,7 @@ public class DiscountHandler implements HttpHandler {
                                         productName,
                                         discount.getSellerName(),
                                         discount.isSellerOnly()
+
                                 );
 
 
@@ -213,7 +214,8 @@ public class DiscountHandler implements HttpHandler {
                         request.category,
                         request.productId,
                         request.sellerOnly,
-                        request.customerId
+                        request.customerId,
+                        request.maxPurchaseCount
 
 
                 );

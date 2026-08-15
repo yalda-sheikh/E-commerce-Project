@@ -16,6 +16,7 @@ public class DiscountCode {
     private Integer productId;
     private boolean sellerOnly;
     private Integer customerId;
+    private Integer maxPurchaseCount;
 
     public DiscountCode(
             String code,
@@ -31,7 +32,8 @@ public class DiscountCode {
             String category,
             Integer productId,
             boolean sellerOnly,
-            Integer customerId
+            Integer customerId,
+            Integer maxPurchaseCount
     ){
 
         this.code = code;
@@ -48,11 +50,20 @@ public class DiscountCode {
         this.productId = productId;
         this.sellerOnly = sellerOnly;
         this.customerId = customerId;
+        this.maxPurchaseCount = maxPurchaseCount;
 
 
     }
     public Integer getCustomerId() {
         return customerId;
+    }
+
+    public Integer getMaxPurchaseCount() {
+        return maxPurchaseCount;
+    }
+
+    public void setMaxPurchaseCount(Integer maxPurchaseCount) {
+        this.maxPurchaseCount = maxPurchaseCount;
     }
 
     public void setCustomerId(Integer customerId) {

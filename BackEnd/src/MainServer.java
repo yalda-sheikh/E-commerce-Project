@@ -1701,6 +1701,19 @@ public class MainServer {
                                                 break;
                                             }
                                         }
+                                        if (discount.getMaxPurchaseCount() != null &&
+                                                discount.getMaxPurchaseCount() > 0) {
+
+                                            int purchaseCount = customer.getPurchaseHistory().size();;
+
+                                            // تعداد خریدهای موفق مشتری
+
+                                            if (purchaseCount >= discount.getMaxPurchaseCount()) {
+                                                allowed = false;
+                                                errorMessage = "PURCHASE_LIMIT_REACHED";
+                                                break;
+                                            }
+                                        }
                                     }
 
 
@@ -2042,7 +2055,7 @@ public class MainServer {
 
                         String[] parts = line.split(",");
 
-                        if (parts.length == 14) {
+                        if (parts.length == 15) {
 
                             String code = parts[0];
                             String discountType = parts[1];
@@ -2071,6 +2084,11 @@ public class MainServer {
                             if (!parts[13].equals("null")) {
                                 customerId = Integer.parseInt(parts[13]);
                             }
+                            Integer maxPurchaseCount = null;
+
+                            if (!parts[14].equals("null") && !parts[14].isEmpty()) {
+                                maxPurchaseCount = Integer.parseInt(parts[14]);
+                            }
 
 
                             DiscountCode discount = new DiscountCode(
@@ -2087,7 +2105,9 @@ public class MainServer {
                                     category,
                                     productId,
                                     sellerOnly,
-                                    customerId
+                                    customerId,
+                                    maxPurchaseCount
+
 
                             );
 
