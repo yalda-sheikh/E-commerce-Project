@@ -394,9 +394,12 @@ function Discount({ user }) {
                     </div>
 
                 </div>
-                <label>محدودیت خرید مشتری</label>
+                <div className="discount-field purchase-limit-field">
+
+<label>محدودیت خرید مشتری</label>
 
 <select
+  className="discount-input"
   value={maxPurchaseCount ?? ""}
   onChange={(e) =>
     setMaxPurchaseCount(
@@ -409,6 +412,8 @@ function Discount({ user }) {
   <option value="3">۳ خرید اول</option>
   <option value="5">۵ خرید اول</option>
 </select>
+
+</div>
 
                 {/* Seller Only */}
                 <div className="discount-field">
@@ -559,6 +564,9 @@ function Discount({ user }) {
                                         <th>
                                          آیدی کابر خاص
                                         </th>
+                                        <th>
+                                         محدودیت خرید
+                                        </th>
 
                                         <th>
                                             
@@ -645,6 +653,9 @@ function Discount({ user }) {
                                             <td data-label= "کاربر">
                                             {discount.customerId || "-"}
 
+                                            </td>
+                                            <td>
+                                              {discount.maxPurchaseCount || "-"}
                                             </td>
 
                                             <td data-label="ویرایش">
@@ -794,6 +805,12 @@ function Discount({ user }) {
                                             <strong>
                                                 {discount.customerId || "-"}
                                             </strong>
+                                        </div>
+                                        <div>
+                                          <span>محدودیت خرید</span>
+                                          <strong>
+                                            {discount.maxPurchaseCount || "-"}
+                                          </strong>
                                         </div>
 
                                     </div>
