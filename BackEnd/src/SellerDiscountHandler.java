@@ -65,6 +65,7 @@ public class SellerDiscountHandler implements HttpHandler {
                 json.append("\"maxDiscount\":").append(discount.getMaxDiscount()).append(",");
                 json.append("\"usageLimit\":").append(discount.getUsageLimit()).append(",");
 
+
                 json.append("\"startDate\":\"")
                         .append(discount.getStartDate())
                         .append("\",");
@@ -97,7 +98,8 @@ public class SellerDiscountHandler implements HttpHandler {
 
                 json.append("\"sellerOnly\":")
                         .append(discount.isSellerOnly()).append(",");
-                json.append("\"customerId\":").append(discount.getCustomerId());
+                json.append("\"customerId\":").append(discount.getCustomerId()).append(",");
+                json.append("\"maxPurchaseCount\":").append(discount.getMaxPurchaseCount());
 
 
                 json.append("}");
@@ -201,6 +203,19 @@ public class SellerDiscountHandler implements HttpHandler {
             if (body.contains("\"sellerOnly\":true")) {
                 sellerOnly = true;
             }
+            Integer maxPurchaseCount = null;
+
+            if (body.contains("\"maxPurchaseCount\":")
+                    && !body.contains("\"maxPurchaseCount\":null")) {
+
+                maxPurchaseCount = Integer.parseInt(
+                        body.split("\"maxPurchaseCount\":")[1]
+                                .split(",")[0]
+                                .split("}")[0]
+                                .trim()
+                );
+            }
+
 
             for (DiscountCode discount : allDiscountCodes) {
 
@@ -217,6 +232,8 @@ public class SellerDiscountHandler implements HttpHandler {
                     discount.setMaxDiscount(maxDiscount);
                     discount.setUsageLimit(usageLimit);
                     discount.setCustomerId(customerId);
+                    discount.setMaxPurchaseCount(maxPurchaseCount);
+
 
 
                     if(!startDate.isEmpty()){

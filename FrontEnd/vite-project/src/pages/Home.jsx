@@ -52,10 +52,14 @@ function Home({ user }) {
           throw new Error(data.error || t("addCartError"));
         return data;
       })
-      .then((data) => {
-        setMessage(data.message || t("productAdded"));
-        setTimeout(() => setMessage(''), 3000);
+      .then(() => {
+        showAlert(
+          t("success"),
+          t("productAdded"),
+          "success"
+        );
       })
+
       .catch((err) => {
         setMessage(`❌ ${err.message}`);
         setTimeout(() => setMessage(''), 4000);
@@ -88,10 +92,13 @@ function Home({ user }) {
   return (
     <div className="home-container">
 
+      <h2 className="home-title">
+        🏪 {t("storeTitle")}
+      </h2>
+
       <Search onSearch={searchProduct} />
       <FilterHandler setProducts={setProducts} />
 
-      {message && <div className="home-alert">{message}</div>}
 
       <div className="store-grid">
 

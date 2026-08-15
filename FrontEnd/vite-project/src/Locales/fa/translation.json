@@ -12,6 +12,7 @@
     "failed": "ناموفق",
     "loginFirst": "❌ برای اضافه کردن کالا به سبد خرید، ابتدا باید وارد حساب خود شوید!",
     "addCartError": "خطا در اضافه کردن به سبد خرید",
+    "success" : "موفق",
     "productAdded": "✅ محصول با موفقیت اضافه شد.",
     "noProducts": "محصولی برای نمایش یافت نشد.",
     "color": "رنگ",
@@ -32,7 +33,16 @@
         "common": {
           "success": "موفق",
           "loading": "در حال بارگذاری...",
-              "ok": "متوجه شدم"
+              "ok": "متوجه شدم",
+              "failed": "ناموفق",
+              "yes": "بله",
+              "no": "خیر",
+   
+            
+              "warning": "هشدار",
+              
+              "edit": "ویرایش",
+              "delete": "حذف"
 
         },
       
@@ -61,41 +71,75 @@
           "serverError": "خطایی از سمت سرور رخ داد",
           "connectionError": "خطا در اتصال به سرور جاوا! مطمئن شوید MainServer روشن است."
         },
-        "discount": {
-            "title": "ایجاد کد تخفیف",
-            "code": "کد تخفیف",
-            "type": "نوع تخفیف",
-            "percent": "درصدی",
-            "fixed": "مبلغ ثابت",
-            "value": "مقدار تخفیف",
-            "minimumPrice": "حداقل مبلغ خرید",
-            "active": "فعال بودن کد تخفیف",
-            "create": "ثبت کد تخفیف",
-            "save": "ذخیره تغییرات",
-            "myDiscounts": "کدهای تخفیف من",
-            "empty": "هنوز کد تخفیفی ایجاد نکرده‌اید.",
-            "enabled": "فعال",
-            "disabled": "غیرفعال",
-            "edit": "ویرایش",
-            "delete": "حذف",
+        
+            "discount": {
+              "title": "ایجاد و مدیریت کد تخفیف",
+              "subtitle": "مدیریت و ایجاد کدهای تخفیف فروشگاه",
           
-            "createSuccess": "کد تخفیف با موفقیت ایجاد شد.",
-            "createError": "ایجاد کد تخفیف با خطا مواجه شد.",
-            "updateSuccess": "تغییرات کد تخفیف با موفقیت اعمال شد.",
-            "updateError": "ویرایش کد تخفیف با خطا مواجه شد.",
-            "deleteSuccess": "کد تخفیف با موفقیت حذف شد.",
-            "deleteError": "حذف کد تخفیف با خطا مواجه شد.",
+              "code": "کد تخفیف",
+              "type": "نوع تخفیف",
+              "percent": "درصدی",
+              "fixed": "مبلغ ثابت",
+              "value": "مقدار تخفیف",
+              "minimumPrice": "حداقل مبلغ خرید",
           
-            "table": {
-              "code": "کد",
-              "type": "نوع",
-              "value": "مقدار",
-              "minimum": "حداقل خرید",
-              "status": "وضعیت",
+              "startDate": "تاریخ شروع",
+              "endDate": "تاریخ پایان",
+              "maxDiscount": "سقف مبلغ",
+              "usageLimit": "محدودیت تعداد استفاده",
+          
+              "category": "دسته‌بندی",
+              "allProducts": "همه محصولات",
+              "laptop": "لپ‌تاپ",
+              "mobile": "موبایل",
+          
+              "productId": "آیدی محصول خاص",
+              "customerId": "آیدی کاربر خاص",
+          
+              "purchaseLimit": "محدودیت خرید مشتری",
+              "noLimit": "بدون محدودیت",
+              "firstPurchase": "فقط خرید اول",
+              "firstThreePurchases": "۳ خرید اول",
+              "firstFivePurchases": "۵ خرید اول",
+          
+              "sellerOnly": "فقط این فروشنده",
+          
+              "save": "ذخیره تغییرات",
+              "create": "ثبت کد تخفیف",
               "edit": "ویرایش",
-              "delete": "حذف"
-            }
-          },
+              "delete": "حذف",
+          
+              "myDiscounts": "کدهای تخفیف من",
+              "listSubtitle": "کدهای تخفیف ایجاد شده توسط شما",
+              "empty": "هنوز کد تخفیفی ایجاد نکرده‌اید.",
+          
+              "onlySeller": "فقط فروشنده",
+              "allSellers": "همه فروشندگان",
+          
+              "createSuccess": "کد تخفیف با موفقیت ایجاد شد.",
+              "createError": "ایجاد کد تخفیف با خطا مواجه شد.",
+              "updateSuccess": "تغییرات کد تخفیف با موفقیت اعمال شد.",
+              "updateError": "ویرایش کد تخفیف با خطا مواجه شد.",
+              "deleteSuccess": "کد تخفیف با موفقیت حذف شد.",
+              "deleteError": "حذف کد تخفیف با خطا مواجه شد.",
+          
+              "table": {
+                "code": "کد",
+                "type": "نوع",
+                "value": "مقدار",
+                "minimum": "حداقل خرید",
+                "startDate": "تاریخ شروع",
+                "endDate": "تاریخ پایان",
+                "maxDiscount": "سقف مبلغ",
+                "usageLimit": "محدودیت استفاده",
+                "category": "دسته‌بندی خاص",
+                "product": "محصول خاص",
+                "seller": "فروشنده",
+                "customer": "آیدی کاربر خاص",
+                "purchaseLimit": "محدودیت خرید"
+              }
+            },
+
           "product": {
             "selectColor": "انتخاب رنگ",
             "stock": "موجودی",
@@ -106,60 +150,162 @@
             "loginRequired": "برای اضافه کردن کالا به سبد خرید، ابتدا باید وارد حساب خود شوید!",
             "addSuccess": "محصول با موفقیت اضافه شد.",
             "addError": "خطا در اضافه کردن به سبد خرید",
-            "notFound": "محصول پیدا نشد"
+            "notFound": "محصول پیدا نشد",
+            "success" : "موفق",
+            "productAdded": "✅ محصول با موفقیت اضافه شد."
           },
-          "seller": {
-            "dashboard": "داشبورد فروشنده",
-            "addProduct": "افزودن محصول جدید",
-            "productName": "نام محصول",
-            "brand": "برند",
-            "color": "رنگ",
-            "price": "قیمت",
-            "stock": "موجودی انبار",
-            "fillVariant": "اطلاعات رنگ را کامل وارد کنید.",
-            "addColor": "افزودن رنگ",
-            "productColors": "رنگ‌های محصول",
-            "productType": "نوع محصول",
-            "baseProduct": "محصول معمولی (ساده)",
-            "laptop": "لپ‌تاپ",
-            "mobile": "موبایل",
-            "laptopSpecs": "ویژگی‌های اختصاصی لپ‌تاپ",
-            "ram": "مقدار رم (GB)",
-            "storage": "مقدار حافظه (GB)",
-            "graphics": "کارت گرافیک مجزا دارد؟",
-            "mobileSpecs": "مشخصات فنی موبایل",
-            "camera": "کیفیت دوربین (مگاپیکسل)",
-            "battery": "ظرفیت باتری (mAh)",
-            "cameraPlaceholder": "مثلاً 48",
-            "batteryPlaceholder": "مثلاً 5000",
-            "submitProduct": "ثبت محصول جدید",
-            "saveChanges": "ذخیره تغییرات"
-          },
-          "dashboard": {
-            "wallet": "وضعیت مالی و کیف پول",
-            "currentBalance": "موجودی فعلی حساب شما:",
-            "chargePlaceholder": "مبلغ افزایش موجودی (تومان)",
-            "chargeWallet": "شارژ آنلاین کیف پول",
-            "myDiscounts": "کدهای تخفیف من",
-            "used": "استفاده شده",
-            "cart": "سبد خرید شما",
-            "emptyCart": "سبد خرید شما در حال حاضر خالی است.",
-            "product": "نام کالا",
-            "unitPrice": "قیمت واحد",
-            "quantity": "تعداد",
-            "totalPrice": "قیمت کل",
-            "remove": "حذف",
-            "discountPlaceholder": "کد تخفیف",
-            "applyDiscount": "ثبت کد",
-            "payable": "مبلغ کل قابل پرداخت:",
-            "checkout": "پرداخت و تسویه نهایی",
-            "history": "تاریخچه خریدها و فاکتورها",
-            "emptyHistory": "هنوز هیچ خریدی ثبت نشده است.",
-            "invoice": "شماره فاکتور",
-            "date": "تاریخ ثبت",
-            "amount": "مبلغ پرداختی",
-            "status": "وضعیت فاکتور"
-          }
+          
+  "addProduct": {
+    "createTitle": "افزودن محصول جدید",
+    "editTitle": "ویرایش محصول",
+    "sellerDashboard": "داشبورد فروشنده",
+
+    "name": "نام محصول",
+    "brand": "برند",
+    "color": "رنگ",
+    "newColor": "رنگ جدید",
+    "price": "قیمت",
+    "stock": "موجودی انبار",
+
+    "addColor": "افزودن رنگ",
+    "addNewColor": "افزودن رنگ جدید",
+    "productColors": "رنگ‌های محصول",
+
+    "productType": "نوع محصول",
+
+    "types": {
+      "base": "محصول معمولی (ساده)",
+      "laptop": "لپ‌تاپ",
+      "mobile": "موبایل"
+    },
+
+    "laptop": {
+      "title": "ویژگی‌های اختصاصی لپ‌تاپ",
+      "ram": "مقدار رم (GB)",
+      "storage": "مقدار حافظه (GB)",
+      "graphics": "کارت گرافیک مجزا دارد؟"
+    },
+
+    "mobile": {
+      "title": "مشخصات فنی موبایل",
+      "camera": "کیفیت دوربین (مگاپیکسل):",
+      "battery": "ظرفیت باتری (mAh):",
+      "cameraPlaceholder": "مثلاً 48",
+      "batteryPlaceholder": "مثلاً 5000"
+    },
+
+    "saveChanges": "ذخیره تغییرات",
+    "createProduct": "ثبت محصول جدید",
+
+    "inventory": {
+      "title": "لیست محصولات موجود در انبار شما",
+      "empty": "هیچ محصولی توسط شما ثبت نشده است.",
+      "itemId": "شناسه کالا",
+      "name": "نام محصول",
+      "brand": "برند",
+      "color": "رنگ",
+      "price": "قیمت (تومان)",
+      "stock": "موجودی",
+      "type": "نوع کالا",
+      "specialFeatures": "✨ ویژگی‌های اختصاصی",
+      "unit": "عدد",
+      "ram": "رم",
+      "storage": "حافظه",
+      "camera": "دوربین",
+      "battery": "باتری"
+    },
+
+    "messages": {
+      "loading": "در حال بارگذاری محصولات...",
+      "fetchError": "خطا در دریافت لیست محصولات از جاوا",
+      "createSuccess": "محصول با موفقیت اضافه شد.",
+      "updateSuccess": "تغییرات با موفقیت اعمال شد.",
+      "deleteSuccess": "محصول با موفقیت حذف شد.",
+      "deleteError": "حذف محصول با خطا مواجه شد.",
+      "saveError": "خطا در ذخیره محصول",
+      "saveErrorAlert": "ذخیره محصول با خطا مواجه شد.",
+      "completeVariant": "اطلاعات رنگ را کامل وارد کنید."
+    }
+  },
+  "dashboard": {
+    "wallet": "کیف پول",
+    "currentBalance": "موجودی فعلی:",
+    "chargePlaceholder": "مبلغ شارژ را وارد کنید",
+    "chargeWallet": "شارژ کیف پول",
+
+
+    "allCategories": "همه دسته‌بندی‌ها",
+    "baseCategory": "پایه",
+    "laptopCategory": "لپ‌تاپ",
+    "mobileCategory": "موبایل",
+    "discounts": "کدهای تخفیف",
+    "noDiscounts": "در حال حاضر کد تخفیفی وجود ندارد.",
+    "copy": "کپی",
+    "discountCopied": "کد تخفیف کپی شد.",
+    "type": "نوع:",
+    "percent": "درصدی",
+    "fixed": "مبلغ ثابت",
+    "value": "مقدار:",
+    "minimumPurchase": "حداقل خرید:",
+    "maximumDiscount": "سقف تخفیف:",
+    "none": "ندارد",
+    "validity": "اعتبار:",
+    "category": "دسته‌بندی:",
+    "product": "محصول:",
+    "allProducts": "همه محصولات",
+    "sellerOnly": "فقط محصولات این فروشنده:",
+    "allSellers": "همه فروشندگان",
+
+    "cart": "سبد خرید",
+    "emptyCart": "سبد خرید شما خالی است.",
+    "unitPrice": "قیمت واحد",
+    "quantity": "تعداد",
+    "totalPrice": "قیمت کل",
+    "remove": "حذف",
+    "discountPlaceholder": "کد تخفیف را وارد کنید",
+    "applyDiscount": "اعمال تخفیف",
+    "removeDiscount": "لغو تخفیف",
+    "payable": "مبلغ قابل پرداخت:",
+    "discountAmount": "مقدار تخفیف:",
+    "checkout": "تسویه حساب",
+
+    "history": "تاریخچه خرید",
+    "emptyHistory": "هنوز خریدی انجام نداده‌اید.",
+    "invoice": "شماره فاکتور",
+    "date": "تاریخ",
+    "amount": "مبلغ",
+    "status": "وضعیت",
+    "withoutDiscount": "بدون تخفیف",
+
+    "loading": "در حال بارگذاری اطلاعات داشبورد...",
+    "loginRequired": "ابتدا باید وارد حساب کاربری خود شوید!",
+
+    "success": "موفق",
+    "error": "خطا",
+    "warning": "هشدار",
+
+    "walletCharged": "شارژ کیف پول با موفقیت انجام شد!",
+    "checkoutSuccess": "تسویه حساب با موفقیت انجام شد!",
+    "discountRemoved": "کد تخفیف با موفقیت لغو شد.",
+
+    "discountExpired": "کد تخفیف منقضی شده است.",
+    "discountNotStarted": "کد تخفیف هنوز فعال نشده است.",
+    "minimumPriceError": "حداقل مبلغ خرید رعایت نشده است.",
+    "discountAlreadyUsed": "این کد قبلاً استفاده شده است.",
+    "discountAlreadyApplied": "این کد قبلاً روی سبد اعمال شده است.",
+    "discountNotForCustomer": "این کد برای شما قابل استفاده نیست.",
+    "discountInactive": "این کد تخفیف غیرفعال است.",
+    "usageLimitReached": "ظرفیت استفاده از این کد به پایان رسیده است.",
+    "categoryNotAllowed": "این کد برای محصولات این دسته‌بندی قابل استفاده نیست.",
+    "productNotAllowed": "این کد فقط برای محصول مشخص‌شده قابل استفاده است.",
+    "purchaseLimitReached": "این کد تخفیف فقط برای خریدهای اولیه قابل استفاده است.",
+    "sellerNotAllowed": "این کد فقط برای محصولات یک فروشنده قابل استفاده است.",
+    "invalidDiscount": "کد تخفیف نامعتبر است.",
+    "unknownError": "خطای ناشناخته.",
+    "noDiscountApplied": "هیچ کد تخفیفی روی سبد اعمال نشده است.",
+    "removeDiscountFailed": "لغو کد تخفیف انجام نشد.",
+    "discountApplied": "تخفیف {{amount}} تومان اعمال شد. مبلغ قابل پرداخت: {{price}} تومان"
+  }
       }
     
   

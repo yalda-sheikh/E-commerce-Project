@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./Discount.css";
@@ -22,7 +21,7 @@ function Discount({ user }) {
     const [productId, setProductId] = useState("");
     const [sellerOnly, setSellerOnly] = useState(false);
     const [customerId, setCustomerId] = useState("");
-    const [maxPurchaseCount, setMaxPurchaseCount] =  useState(null)
+    const [maxPurchaseCount, setMaxPurchaseCount] = useState(null);
 
     const { alert, showAlert, closeAlert } = useAlert();
 
@@ -60,8 +59,10 @@ function Discount({ user }) {
                 category,
                 productId: productId ? Number(productId) : null,
                 sellerOnly,
-                customerId : customerId ? Number(customerId) : null,
-                maxPurchaseCount : maxPurchaseCount ? Number(maxPurchaseCount) : null,
+                customerId: customerId ? Number(customerId) : null,
+                maxPurchaseCount: maxPurchaseCount
+                    ? Number(maxPurchaseCount)
+                    : null,
             }),
         })
             .then((res) => res.json())
@@ -85,7 +86,8 @@ function Discount({ user }) {
                 setCategory("BASE");
                 setProductId("");
                 setSellerOnly(false);
-                setCustomerId("")
+                setCustomerId("");
+                setMaxPurchaseCount(null);
             })
             .catch(() => {
                 showAlert(
@@ -116,6 +118,9 @@ function Discount({ user }) {
                 productId: productId ? Number(productId) : null,
                 sellerOnly,
                 customerId: customerId ? Number(customerId) : null,
+                maxPurchaseCount: maxPurchaseCount
+                    ? Number(maxPurchaseCount)
+                    : null,
             }),
         })
             .then((res) => res.json())
@@ -141,7 +146,8 @@ function Discount({ user }) {
                 setCategory("BASE");
                 setProductId("");
                 setSellerOnly(false);
-                setCustomerId("")
+                setCustomerId("");
+                setMaxPurchaseCount(null);
             })
             .catch(() => {
                 showAlert(
@@ -193,6 +199,7 @@ function Discount({ user }) {
         setProductId(discount.productId || "");
         setSellerOnly(discount.sellerOnly || false);
         setCustomerId(discount.customerId || "");
+        setMaxPurchaseCount(discount.maxPurchaseCount || null);
 
         window.scrollTo({
             top: 0,
@@ -200,12 +207,24 @@ function Discount({ user }) {
         });
     };
 
+    const getCategoryLabel = (category) => {
+        switch (category) {
+            case "LAPTOP":
+                return t("discount.laptop");
+
+            case "MOBILE":
+                return t("discount.mobile");
+
+            case "BASE":
+                return t("discount.allProducts");
+
+            default:
+                return category || "-";
+        }
+    };
+
     return (
         <div className="discount-page">
-
-            {/* =========================
-                FORM
-            ========================= */}
 
             <section className="discount-form-card">
 
@@ -220,14 +239,12 @@ function Discount({ user }) {
                         </h2>
 
                         <p className="discount-subtitle">
-                            مدیریت و ایجاد کدهای تخفیف فروشگاه
+                            {t("discount.subtitle")}
                         </p>
                     </div>
                 </div>
 
                 <div className="discount-form-grid">
-
-                    {/* Code */}
 
                     <div className="discount-field">
                         <label>{t("discount.code")}</label>
@@ -239,8 +256,6 @@ function Discount({ user }) {
                             onChange={(e) => setCode(e.target.value)}
                         />
                     </div>
-
-                    {/* Type */}
 
                     <div className="discount-field">
                         <label>{t("discount.type")}</label>
@@ -262,8 +277,6 @@ function Discount({ user }) {
                         </select>
                     </div>
 
-                    {/* Value */}
-
                     <div className="discount-field">
                         <label>{t("discount.value")}</label>
 
@@ -276,8 +289,6 @@ function Discount({ user }) {
                             }
                         />
                     </div>
-
-                    {/* Minimum */}
 
                     <div className="discount-field">
                         <label>{t("discount.minimumPrice")}</label>
@@ -292,10 +303,8 @@ function Discount({ user }) {
                         />
                     </div>
 
-                    {/* Start Date */}
-
                     <div className="discount-field">
-                        <label>تاریخ شروع</label>
+                        <label>{t("discount.startDate")}</label>
 
                         <input
                             className="discount-input"
@@ -307,10 +316,8 @@ function Discount({ user }) {
                         />
                     </div>
 
-                    {/* End Date */}
-
                     <div className="discount-field">
-                        <label>تاریخ پایان</label>
+                        <label>{t("discount.endDate")}</label>
 
                         <input
                             className="discount-input"
@@ -322,10 +329,8 @@ function Discount({ user }) {
                         />
                     </div>
 
-                    {/* Max Discount */}
-
                     <div className="discount-field">
-                        <label>سقف مبلغ</label>
+                        <label>{t("discount.maxDiscount")}</label>
 
                         <input
                             className="discount-input"
@@ -337,10 +342,8 @@ function Discount({ user }) {
                         />
                     </div>
 
-                    {/* Usage Limit */}
-
                     <div className="discount-field">
-                        <label>محدودیت تعداد استفاده</label>
+                        <label>{t("discount.usageLimit")}</label>
 
                         <input
                             className="discount-input"
@@ -352,10 +355,8 @@ function Discount({ user }) {
                         />
                     </div>
 
-                    {/* Category */}
-
                     <div className="discount-field">
-                        <label>دسته بندی</label>
+                        <label>{t("discount.category")}</label>
 
                         <select
                             className="discount-input"
@@ -365,23 +366,21 @@ function Discount({ user }) {
                             }
                         >
                             <option value="BASE">
-                                همه محصولات
+                                {t("discount.allProducts")}
                             </option>
 
                             <option value="LAPTOP">
-                                لپ تاپ
+                                {t("discount.laptop")}
                             </option>
 
                             <option value="MOBILE">
-                                موبایل
+                                {t("discount.mobile")}
                             </option>
                         </select>
                     </div>
 
-                    {/* Product */}
-
                     <div className="discount-field">
-                        <label>آیدی محصول خاص</label>
+                        <label>{t("discount.productId")}</label>
 
                         <input
                             className="discount-input"
@@ -394,41 +393,58 @@ function Discount({ user }) {
                     </div>
 
                 </div>
+
                 <div className="discount-field purchase-limit-field">
 
-<label>محدودیت خرید مشتری</label>
+                    <label>{t("discount.purchaseLimit")}</label>
 
-<select
-  className="discount-input"
-  value={maxPurchaseCount ?? ""}
-  onChange={(e) =>
-    setMaxPurchaseCount(
-      e.target.value === "" ? null : Number(e.target.value)
-    )
-  }
->
-  <option value="">بدون محدودیت</option>
-  <option value="1">فقط خرید اول</option>
-  <option value="3">۳ خرید اول</option>
-  <option value="5">۵ خرید اول</option>
-</select>
+                    <select
+                        className="discount-input"
+                        value={maxPurchaseCount ?? ""}
+                        onChange={(e) =>
+                            setMaxPurchaseCount(
+                                e.target.value === ""
+                                    ? null
+                                    : Number(e.target.value)
+                            )
+                        }
+                    >
+                        <option value="">
+                            {t("discount.noLimit")}
+                        </option>
 
-</div>
+                        <option value="1">
+                            {t("discount.firstPurchase")}
+                        </option>
 
-                {/* Seller Only */}
+                        <option value="3">
+                            {t("discount.firstThreePurchases")}
+                        </option>
+
+                        <option value="5">
+                            {t("discount.firstFivePurchases")}
+                        </option>
+                    </select>
+
+                </div>
+
                 <div className="discount-field">
-                        <label>آیدی کاربر خاص</label>
 
-                        <input
-                            className="discount-input"
-                            type="number"
-                            value={customerId}
-                            onChange={(e) =>
-                                setCustomerId(e.target.value)
-                            }
-                        />
-                    </div>
+                    <label>{t("discount.customerId")}</label>
+
+                    <input
+                        className="discount-input"
+                        type="number"
+                        value={customerId}
+                        onChange={(e) =>
+                            setCustomerId(e.target.value)
+                        }
+                    />
+
+                </div>
+
                 <label className="discount-check">
+
                     <input
                         type="checkbox"
                         checked={sellerOnly}
@@ -438,11 +454,10 @@ function Discount({ user }) {
                     />
 
                     <span>
-                        فقط این فروشنده
+                        {t("discount.sellerOnly")}
                     </span>
-                </label>
 
-                {/* Submit */}
+                </label>
 
                 <button
                     className={`discount-submit-btn ${
@@ -464,10 +479,6 @@ function Discount({ user }) {
             </section>
 
 
-            {/* =========================
-                DISCOUNT LIST
-            ========================= */}
-
             <section className="discount-list">
 
                 <div className="discount-list-heading">
@@ -482,7 +493,7 @@ function Discount({ user }) {
                         </h3>
 
                         <p className="discount-list-subtitle">
-                            کدهای تخفیف ایجاد شده توسط شما
+                            {t("discount.listSubtitle")}
                         </p>
                     </div>
 
@@ -496,6 +507,7 @@ function Discount({ user }) {
                 {discounts.length === 0 ? (
 
                     <div className="discount-empty">
+
                         <div className="discount-empty-icon">
                             🎟️
                         </div>
@@ -503,13 +515,12 @@ function Discount({ user }) {
                         <p>
                             {t("discount.empty")}
                         </p>
+
                     </div>
 
                 ) : (
 
                     <>
-
-                        {/* Desktop */}
 
                         <div className="discount-table-wrapper">
 
@@ -535,46 +546,44 @@ function Discount({ user }) {
                                         </th>
 
                                         <th>
-                                            تاریخ شروع
+                                            {t("discount.table.startDate")}
                                         </th>
 
                                         <th>
-                                            تاریخ پایان
+                                            {t("discount.table.endDate")}
                                         </th>
 
                                         <th>
-                                            سقف مبلغ
+                                            {t("discount.table.maxDiscount")}
                                         </th>
 
                                         <th>
-                                            محدودیت استفاده
+                                            {t("discount.table.usageLimit")}
                                         </th>
 
                                         <th>
-                                            دسته بندی خاص
+                                            {t("discount.table.category")}
                                         </th>
 
                                         <th>
-                                            محصول خاص
+                                            {t("discount.table.product")}
                                         </th>
 
                                         <th>
-                                            فروشنده
-                                        </th>
-                                        <th>
-                                         آیدی کابر خاص
-                                        </th>
-                                        <th>
-                                         محدودیت خرید
+                                            {t("discount.table.seller")}
                                         </th>
 
                                         <th>
-                                            
+                                            {t("discount.table.customer")}
                                         </th>
 
                                         <th>
-                                            
+                                            {t("discount.table.purchaseLimit")}
                                         </th>
+
+                                        <th></th>
+
+                                        <th></th>
 
                                     </tr>
                                 </thead>
@@ -585,59 +594,78 @@ function Discount({ user }) {
 
                                         <tr key={discount.code}>
 
-                                            <td data-label="کد">
+                                            <td data-label={t("discount.table.code")}>
                                                 <span className="discount-code-badge">
                                                     {discount.code}
                                                 </span>
                                             </td>
 
-                                            <td data-label="نوع">
+                                            <td data-label={t("discount.table.type")}>
                                                 {discount.discountType === "PERCENT"
                                                     ? t("discount.percent")
                                                     : t("discount.fixed")}
                                             </td>
 
-                                            <td data-label="مقدار">
+                                            <td data-label={t("discount.table.value")}>
+
                                                 <strong className="discount-value">
+
                                                     {discount.discountType === "PERCENT"
                                                         ? `${discount.value}%`
                                                         : `${discount.value.toLocaleString()} ${t("product.currency")}`}
+
                                                 </strong>
+
                                             </td>
 
-                                            <td data-label="حداقل خرید">
+                                            <td data-label={t("discount.table.minimum")}>
+
                                                 {discount.minimumPrice
                                                     ? discount.minimumPrice.toLocaleString()
                                                     : 0}
+
                                             </td>
 
-                                            <td data-label="شروع">
+                                            <td data-label={t("discount.table.startDate")}>
+
                                                 {discount.startDate || "-"}
+
                                             </td>
 
-                                            <td data-label="پایان">
+                                            <td data-label={t("discount.table.endDate")}>
+
                                                 {discount.endDate || "-"}
+
                                             </td>
 
-                                            <td data-label="سقف">
+                                            <td data-label={t("discount.table.maxDiscount")}>
+
                                                 {discount.maxDiscount
                                                     ? `${discount.maxDiscount.toLocaleString()} ${t("product.currency")}`
                                                     : "-"}
+
                                             </td>
 
-                                            <td data-label="محدودیت">
+                                            <td data-label={t("discount.table.usageLimit")}>
+
                                                 {discount.usageLimit || "-"}
+
                                             </td>
 
-                                            <td data-label="دسته‌بندی">
-                                                {discount.category || "-"}
+                                            <td data-label={t("discount.table.category")}>
+
+                                                {getCategoryLabel(discount.category)}
+
                                             </td>
 
-                                            <td data-label="محصول">
+                                            <td data-label={t("discount.table.product")}>
+
                                                 {discount.productId || "-"}
+
                                             </td>
 
-                                            <td data-label="فروشنده">
+                                            <td data-label={t("discount.table.seller")}>
+
                                                 <span
                                                     className={
                                                         discount.sellerOnly
@@ -645,20 +673,28 @@ function Discount({ user }) {
                                                             : "seller-status no"
                                                     }
                                                 >
+
                                                     {discount.sellerOnly
-                                                        ? "بله"
-                                                        : "خیر"}
+                                                        ? t("common.yes")
+                                                        : t("common.no")}
+
                                                 </span>
-                                            </td>
-                                            <td data-label= "کاربر">
-                                            {discount.customerId || "-"}
 
                                             </td>
-                                            <td>
-                                              {discount.maxPurchaseCount || "-"}
+
+                                            <td data-label={t("discount.table.customer")}>
+
+                                                {discount.customerId || "-"}
+
                                             </td>
 
-                                            <td data-label="ویرایش">
+                                            <td data-label={t("discount.table.purchaseLimit")}>
+
+                                                {discount.maxPurchaseCount || "-"}
+
+                                            </td>
+
+                                            <td data-label={t("discount.edit")}>
 
                                                 <button
                                                     className="btn btn-primary discount-edit-btn"
@@ -671,7 +707,7 @@ function Discount({ user }) {
 
                                             </td>
 
-                                            <td data-label="حذف">
+                                            <td data-label={t("discount.delete")}>
 
                                                 <button
                                                     className="btn btn-danger discount-delete-btn"
@@ -697,8 +733,6 @@ function Discount({ user }) {
                         </div>
 
 
-                        {/* Mobile */}
-
                         <div className="discount-mobile-list">
 
                             {discounts.map((discount) => (
@@ -721,9 +755,11 @@ function Discount({ user }) {
                                                     : "seller-status no"
                                             }
                                         >
+
                                             {discount.sellerOnly
-                                                ? "✓ فقط فروشنده"
-                                                : "همه فروشندگان"}
+                                                ? `✓ ${t("discount.onlySeller")}`
+                                                : t("discount.allSellers")}
+
                                         </span>
 
                                     </div>
@@ -731,7 +767,10 @@ function Discount({ user }) {
                                     <div className="mobile-discount-grid">
 
                                         <div>
-                                            <span>نوع</span>
+                                            <span>
+                                                {t("discount.table.type")}
+                                            </span>
+
                                             <strong>
                                                 {discount.discountType === "PERCENT"
                                                     ? t("discount.percent")
@@ -740,16 +779,24 @@ function Discount({ user }) {
                                         </div>
 
                                         <div>
-                                            <span>مقدار</span>
+                                            <span>
+                                                {t("discount.table.value")}
+                                            </span>
+
                                             <strong className="discount-value">
+
                                                 {discount.discountType === "PERCENT"
                                                     ? `${discount.value}%`
                                                     : `${discount.value.toLocaleString()} ${t("product.currency")}`}
+
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>حداقل خرید</span>
+                                            <span>
+                                                {t("discount.table.minimum")}
+                                            </span>
+
                                             <strong>
                                                 {discount.minimumPrice
                                                     ? discount.minimumPrice.toLocaleString()
@@ -758,59 +805,87 @@ function Discount({ user }) {
                                         </div>
 
                                         <div>
-                                            <span>سقف مبلغ</span>
+                                            <span>
+                                                {t("discount.table.maxDiscount")}
+                                            </span>
+
                                             <strong>
+
                                                 {discount.maxDiscount
                                                     ? `${discount.maxDiscount.toLocaleString()} ${t("product.currency")}`
                                                     : "-"}
+
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>محدودیت استفاده</span>
+                                            <span>
+                                                {t("discount.table.usageLimit")}
+                                            </span>
+
                                             <strong>
                                                 {discount.usageLimit || "-"}
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>دسته‌بندی</span>
+                                            <span>
+                                                {t("discount.table.category")}
+                                            </span>
+
                                             <strong>
-                                                {discount.category || "-"}
+                                                {getCategoryLabel(discount.category)}
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>محصول خاص</span>
+                                            <span>
+                                                {t("discount.table.product")}
+                                            </span>
+
                                             <strong>
                                                 {discount.productId || "-"}
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>تاریخ شروع</span>
+                                            <span>
+                                                {t("discount.table.startDate")}
+                                            </span>
+
                                             <strong>
                                                 {discount.startDate || "-"}
                                             </strong>
                                         </div>
 
                                         <div>
-                                            <span>تاریخ پایان</span>
+                                            <span>
+                                                {t("discount.table.endDate")}
+                                            </span>
+
                                             <strong>
                                                 {discount.endDate || "-"}
                                             </strong>
                                         </div>
+
                                         <div>
-                                            <span>کاربر خاص</span>
+                                            <span>
+                                                {t("discount.table.customer")}
+                                            </span>
+
                                             <strong>
                                                 {discount.customerId || "-"}
                                             </strong>
                                         </div>
+
                                         <div>
-                                          <span>محدودیت خرید</span>
-                                          <strong>
-                                            {discount.maxPurchaseCount || "-"}
-                                          </strong>
+                                            <span>
+                                                {t("discount.table.purchaseLimit")}
+                                            </span>
+
+                                            <strong>
+                                                {discount.maxPurchaseCount || "-"}
+                                            </strong>
                                         </div>
 
                                     </div>
@@ -862,4 +937,3 @@ function Discount({ user }) {
 }
 
 export default Discount;
-

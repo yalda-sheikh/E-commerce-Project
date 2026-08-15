@@ -96,21 +96,16 @@ function ProductDetail({ user }) {
 
       })
 
-      .then((data) => {
-
-        setMessage(
-          data.message || `✅ ${t("product.addSuccess")}`
+      .then(() => {
+        showAlert(
+          t("product.success"),
+          t("product.productAdded"),
+          "success"
         );
-
-        setTimeout(() => setMessage(""), 3000);
-
       })
 
       .catch((err) => {
-
-
         setTimeout(() => setMessage(""), 4000);
-
       });
 
   };
@@ -121,9 +116,6 @@ function ProductDetail({ user }) {
     return <h2 className="loading">{t("common.loading")}</h2>;
   }
 
-  if (error) {
-    return <h2 className="error">{error}</h2>;
-  }
   return (
 
     <div className="product-detail">
