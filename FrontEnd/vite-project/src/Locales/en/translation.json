@@ -22,7 +22,7 @@
   "currency": "Toman",
   "addToCart": "Add to Cart",
   "search": "Search",
-  "searchPlaceholder": "Search products, brands or categories...",
+  "searchPlaceholder": "...Search products, brands or categories",
   "allCategories": "All Categories",
   "mobile": "Mobile",
   "laptop": "Laptop",
@@ -30,6 +30,7 @@
   "minPrice": "Minimum Price",
   "maxPrice": "Maximum Price",
   "applyFilter": "Apply Filter",
+  "sellerCannotAddToCart": ".Sellers cannot add products to the shopping cart",
     "common": {
       "success": "Success",
       "loading": "Loading...",
@@ -59,7 +60,8 @@
   
       "login": "Login",
       "register": "Register",
-  
+
+      "noAccountOrPasswordError" : "!Your username or password is wrong",
       "noAccount": "Don't have an account? Register",
       "haveAccount": "Already have an account? Login",
   
@@ -120,8 +122,8 @@
         "createError": ".Failed to create the discount code",
         "updateSuccess": ".Discount code updated successfully",
         "updateError": ".Failed to update the discount code",
-        "deleteSuccess": ".Discount code deleted successfully",
-        "deleteError": ".Failed to delete the discount code",
+        "deleteSuccess": "Discount code deleted successfully.",
+        "deleteError": "Failed to delete the discount code.",
     
         "table": {
           "code": "Code",
@@ -152,6 +154,7 @@
       "addError": ".Failed to add product to cart",
       "notFound": "Product not found",
       "success" : "!Success",
+      "sellerCannotAddToCart": ".Sellers cannot add products to the shopping cart",
   "productAdded": ".Product added successfully"
     },
     "addProduct": {
@@ -223,7 +226,7 @@
         "deleteError": "Failed to delete the product.",
         "saveError": "Error while saving the product",
         "saveErrorAlert": "Failed to save the product",
-        "completeVariant": "Please complete the color information"
+        "completeVariant": ".Please complete the color information"
       }
     },
       "dashboard": {
@@ -282,7 +285,7 @@
         "error": "Error",
         "warning": "Warning",
     
-        "walletCharged": "Wallet charged successfully!",
+        "walletCharged": "!Wallet charged successfully",
         "checkoutSuccess": "!Checkout completed successfully",
         "discountRemoved": ".Discount code removed successfully",
     

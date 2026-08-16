@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./Auth.css";
 import AlertModal from "../components/AlertModal";
+import useAlert from "../components/useAlert";
 
 function Auth({ setUser }) {
   const { t } = useTranslation();
@@ -13,18 +14,7 @@ function Auth({ setUser }) {
   const [wallet, setWallet] = useState("100000");
   const [message, setMessage] = useState("");
   const [isReadOnly, setIsReadOnly] = useState(true);
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [modalData, setModalData] = useState({
-    title: "",
-    message: "",
-    type: "info",
-  });
-
-  const onClose = () => {
-    setIsOpen(false);
-  };
+  const { alert, showAlert, closeAlert } = useAlert();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,25 +46,22 @@ function Auth({ setUser }) {
         setUser(data);
         localStorage.setItem("user", JSON.stringify(data));
 
-        setModalData({
-          title: t("common.success"),
-          message: isLogin
-            ? t("auth.loginSuccess")
-            : t("auth.registerSuccess"),
-          type: "success",
-        });
+        // setModalData({
+        //   title: t("common.success"),
+        //   message: isLogin
+        //     ? t("auth.loginSuccess")
+        //     : t("auth.registerSuccess"),
+        //   type: "success",
+        // });
 
-        setIsOpen(true);
+        // setIsOpen(true);
       })
       .catch((error) => {
         console.error("خطا:", error);
+        
+        showAlert(t("auth.error") , t("auth.noAccountOrPasswordError"),"error" )
 
-        setMessage(
-          error.message.includes("Fetch") ||
-            error.message.includes("network")
-            ? `❌ ${t("auth.connectionError")}`
-            : `❌ ${error.message}`
-        );
+
       });
   };
 
@@ -174,11 +161,8 @@ function Auth({ setUser }) {
       </button>
 
       <AlertModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={modalData.title}
-        message={modalData.message}
-        type={modalData.type}
+      {...alert}
+      onClose={closeAlert}
       />
     </div>
   );

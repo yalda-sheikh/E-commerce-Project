@@ -65,6 +65,10 @@ function ProductDetail({ user }) {
       return;
 
     }
+    if(user.role === "SELLER"){
+      showAlert(t("failed") , t("product.sellerCannotAddToCart"), t("error"))
+      return;
+    }
 
     fetch("http://localhost:8080/api/cart/add", {
 

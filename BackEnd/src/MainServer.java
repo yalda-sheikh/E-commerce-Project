@@ -463,8 +463,10 @@ public class MainServer {
 
                             // بررسی شروط و اعتبارسنجی‌ها برای اضافه کردن به سبد خرید
                             if (currentCustomer == null) {
+
                                 // پاسخ در صورت پیدا نشدن کاربر معتبر در دیتابیس حافظه‌ای
-                                responseText = "{\"error\":\"کاربر معتبر یافت نشد. ابتدا لاگین کنید.\"}";
+                                responseText =
+                                        "{\"success\":false,\"message\":\"USER_INVALID\"}";
                                 exchange.sendResponseHeaders(400, responseText.getBytes("UTF-8").length);
                             } else if (targetItem == null) {
                                 // پاسخ در صورت نامعتبر بودن یا موجود نبودن شناسه محصول در انبار
@@ -1984,7 +1986,8 @@ public class MainServer {
                                         dc.getCategory() + ","+
                                         dc.getProductId() + ","+
                                         dc.isSellerOnly()+ "," +
-                                        dc.getCustomerId()
+                                        dc.getCustomerId() + ","+
+                                        dc.getMaxPurchaseCount()
 
 
 

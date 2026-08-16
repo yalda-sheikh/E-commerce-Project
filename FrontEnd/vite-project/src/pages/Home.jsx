@@ -36,6 +36,14 @@ function Home({ user }) {
       );
       return;
     }
+    if (user.role === "SELLER") {
+      showAlert(
+        t("failed"),
+        t("sellerCannotAddToCart"),
+        "error"
+      );
+      return;
+    }
 
     fetch('http://localhost:8080/api/cart/add', {
       method: 'POST',
@@ -61,8 +69,7 @@ function Home({ user }) {
       })
 
       .catch((err) => {
-        setMessage(`❌ ${err.message}`);
-        setTimeout(() => setMessage(''), 4000);
+        console.log(err);
       });
   };
 

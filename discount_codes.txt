@@ -1,1 +1,1 @@
-43,PERCENT,34.0,34.0,5252.0,th,2026-08-08,2026-10-10,52,0,BASE,null,false,null
+34,PERCENT,34.0,34.0,34.0,nda,2026-07-07,2026-09-09,0,0,BASE,null,false,null,null
