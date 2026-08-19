@@ -9,6 +9,14 @@ public class Tablet extends Product {
         this.screenSize = screenSize;
     }
 
+    public double getScreenSize() {
+        return screenSize;
+    }
+
+    public boolean isHasStylus() {
+        return hasStylus;
+    }
+
     public boolean isGoodForNoteTaking() {
         return hasStylus && screenSize >= 10.0;
     }

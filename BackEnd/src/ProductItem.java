@@ -19,6 +19,15 @@ public class ProductItem implements StockManageable, Discountable {
 
 
     }
+
+    public double getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
     public double getFinalPrice() {
         return price * (1 - (discountPercent / 100.0));
     }

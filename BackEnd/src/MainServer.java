@@ -856,6 +856,7 @@ public class MainServer {
                                 } else {
                                     // اگر محصول معمولی بود (می‌تونی کلاس محصول ساده رو بسازی، یا مثل قبل یک لپ‌تاپ با مقادیر صفر بدی)
                                     newProductObj = new BaseProduct(productId, name, brand);
+                                    allBaseProducts.add(newProductObj);
                                 }
 
                                 // ساخت شیء فروشنده بر اساس سازنده کلاس Seller
@@ -872,8 +873,11 @@ public class MainServer {
 
                                     int itemId = nextItemId++;
 
+
+
                                     // ذخیره هر رنگ به صورت جداگانه
                                     try (FileWriter fw = new FileWriter("products.txt", true);
+
                                          BufferedWriter bw = new BufferedWriter(fw);
                                          PrintWriter out = new PrintWriter(bw)) {
 
@@ -906,6 +910,7 @@ public class MainServer {
                                     allProductItems.add(item);
                                     currentSeller.addProductItem(item);
                                 }
+                                saveData();
 
 
                                 // ۵. ارسال پاسخ موفقیت به فرانت‌اند
@@ -1953,18 +1958,84 @@ public class MainServer {
                     writerCart.close();
 
                     // ۲. نویسنده و ایجاد فایل لیست محصولات پایه
-                    PrintWriter writerProducts = new PrintWriter(new FileWriter("products.txt")); // تغییر نام داخلی متغیر به دلیل رعایت دقیق کدهای کاربر بدون خطا
+                    // ۲. ذخیره محصولات پایه
+                    System.out.println("===== PRODUCTS BEFORE SAVE =====");
+
                     for (Product p : allBaseProducts) {
-                        writerProducts.println(p.getId() + "," + p.getName() + "," + p.getBrand());
+                        System.out.println(
+                                "ID: " + p.getId()
+                                        + " | Name: " + p.getName()
+                                        + " | Type: " + p.getClass().getSimpleName()
+                        );
                     }
+
+                    System.out.println("===============================");
+                    PrintWriter writerProducts =
+                            new PrintWriter(new FileWriter("products.txt"));
+                    System.out.println("===== SAVING PRODUCTS =====");
+                    System.out.println("Number of products: " + allBaseProducts.size());
+
+                    for (Product p : allBaseProducts) {
+
+                        if (p instanceof BaseProduct baseProduct) {
+
+                            writerProducts.println(
+                                    "BASE," +
+                                            baseProduct.getId() + "," +
+                                            baseProduct.getName() + "," +
+                                            baseProduct.getBrand()
+                            );
+
+                        } else if (p instanceof Laptop laptop) {
+
+                            writerProducts.println(
+                                    "LAPTOP," +
+                                            laptop.getId() + "," +
+                                            laptop.getName() + "," +
+                                            laptop.getBrand() + "," +
+                                            laptop.getRamSize() + "," +
+                                            laptop.getStorage() + "," +
+                                            laptop.isHasGraphicsCard()
+                            );
+
+                        }
+                        else if (p instanceof Mobile mobile) {
+
+                            writerProducts.println(
+                                    "MOBILE," +
+                                            mobile.getId() + "," +
+                                            mobile.getName() + "," +
+                                            mobile.getBrand() + "," +
+                                            mobile.getCameraMP() + "," +
+                                            mobile.getBatteryMah() + "," +
+                                            mobile.is5G()
+                            );
+
+                        }
+                    }
+
                     writerProducts.close();
 
 
-                    // ۳. نویسنده و ایجاد فایل جزئیات و موجودی انبار کالاها
-                    PrintWriter writerItems = new PrintWriter(new FileWriter("product_items.txt")); // تغییر نام داخلی متغیر به دلیل رعایت دقیق کدهای کاربر بدون خطا
+// ۳. ذخیره ProductItem ها
+                    PrintWriter writerItems =
+                            new PrintWriter(new FileWriter("product_items.txt"));
+
                     for (ProductItem pi : allProductItems) {
-                        writerItems.println(pi.getItemId() + "," + (pi.getSeller() != null ? pi.getSeller().getUsername() : "null") + "," + pi.getStock());
+
+                        writerItems.println(
+                                pi.getItemId() + "," +
+                                        pi.getProduct().getId() + "," +
+                                        (pi.getSeller() != null
+                                                ? pi.getSeller().getUsername()
+                                                : "null") + "," +
+                                        pi.getColor() + "," +
+                                        pi.getPrice() + "," +
+                                        pi.getDiscountPercent() + "," +
+                                        pi.getStock()
+                        );
                     }
+
                     writerItems.close();
                     // ۴. ذخیره کدهای تخفیف
                     PrintWriter writerDiscount =
@@ -2122,6 +2193,8 @@ public class MainServer {
 
                     discountReader.close();
 
+
+
                     BufferedReader userReader =
                             new BufferedReader(new FileReader("users.txt"));
 
@@ -2181,6 +2254,253 @@ public class MainServer {
 
 
                     userReader.close();
+                    // خواندن محصولات پایه از فایل
+                    BufferedReader productReader =
+                            new BufferedReader(new FileReader("products.txt"));
+
+                    String productLine;
+
+                    while ((productLine = productReader.readLine()) != null) {
+
+                        String[] parts = productLine.split(",");
+
+                        String type = parts[0];
+
+                        // =========================
+                        // Base Product
+                        // =========================
+                        if (type.equals("BASE")) {
+
+                            if (parts.length == 4) {
+
+                                int productId = Integer.parseInt(parts[1]);
+                                String name = parts[2];
+                                String brand = parts[3];
+
+                                BaseProduct baseProduct =
+                                        new BaseProduct(
+                                                productId,
+                                                name,
+                                                brand
+                                        );
+
+                                allBaseProducts.add(baseProduct);
+                            }
+
+                        }
+
+                        // =========================
+                        // Laptop
+                        // =========================
+                        else if (type.equals("LAPTOP")) {
+
+                            if (parts.length == 7) {
+
+                                int productId = Integer.parseInt(parts[1]);
+                                String name = parts[2];
+                                String brand = parts[3];
+
+                                int ramSize =
+                                        Integer.parseInt(parts[4]);
+
+                                int storage =
+                                        Integer.parseInt(parts[5]);
+
+                                boolean hasGraphicsCard =
+                                        Boolean.parseBoolean(parts[6]);
+
+                                Laptop laptop =
+                                        new Laptop(
+                                                productId,
+                                                name,
+                                                brand,
+                                                ramSize,
+                                                storage,
+                                                hasGraphicsCard
+                                        );
+
+                                allBaseProducts.add(laptop);
+                            }
+
+                        }
+
+                        // =========================
+                        // Tablet
+                        // =========================
+                        else if (type.equals("MOBILE")) {
+
+                            if (parts.length == 7) {
+
+                                int productId =
+                                        Integer.parseInt(parts[1]);
+
+                                String name = parts[2];
+                                String brand = parts[3];
+
+                                int cameraMP =
+                                        Integer.parseInt(parts[4]);
+
+                                int batteryMah =
+                                        Integer.parseInt(parts[5]);
+
+                                boolean is5G =
+                                        Boolean.parseBoolean(parts[6]);
+
+                                Mobile mobile =
+                                        new Mobile(
+                                                productId,
+                                                name,
+                                                brand,
+                                                cameraMP,
+                                                batteryMah,
+                                                is5G
+                                        );
+
+                                allBaseProducts.add(mobile);
+                            }
+                        }
+                    }
+
+                    productReader.close();
+                    // اگر هیچ محصولی از فایل لود نشده بود، محصولات پیش‌فرض را ایجاد کن
+//                    if (allBaseProducts.isEmpty()) {
+//
+//
+//
+//
+//
+//                    }
+                    System.out.println("===== PRODUCTS LOADED =====");
+
+                    for (Product p : allBaseProducts) {
+                        System.out.println(
+                                "Product ID: " + p.getId()
+                                        + " | Name: " + p.getName()
+                                        + " | Type: " + p.getClass().getSimpleName()
+                        );
+                    }
+
+                    System.out.println("===========================");
+                    // خواندن ProductItem ها از فایل
+                    BufferedReader itemReader =
+                            new BufferedReader(new FileReader("product_items.txt"));
+
+                    String itemLine;
+
+                    while ((itemLine = itemReader.readLine()) != null) {
+
+                        String[] parts = itemLine.split(",");
+
+                        if (parts.length == 7) {
+
+                            long itemId = Long.parseLong(parts[0]);
+                            int productId = Integer.parseInt(parts[1]);
+                            String sellerName = parts[2];
+
+                            String color = parts[3];
+                            double price = Double.parseDouble(parts[4]);
+                            double discountPercent = Double.parseDouble(parts[5]);
+                            int stock = Integer.parseInt(parts[6]);
+
+                            // پیدا کردن محصول پایه
+                            Product product = null;
+
+                            for (Product p : allBaseProducts) {
+                                if (p.getId() == productId) {
+                                    product = p;
+                                    break;
+                                }
+                            }
+
+                            // پیدا کردن فروشنده
+                            Seller seller = null;
+
+                            for (User u : allUsers) {
+
+                                if (u instanceof Seller &&
+                                        u.getUsername().equals(sellerName)) {
+
+                                    seller = (Seller) u;
+                                    break;
+                                }
+                            }
+
+                            // اگر محصول و فروشنده پیدا شدند، ProductItem ساخته شود
+                            if (product != null && seller != null) {
+
+                                ProductItem item = new ProductItem(
+                                        itemId,
+                                        product,
+                                        seller,
+                                        color,
+                                        price,
+                                        discountPercent,
+                                        stock
+                                );
+
+                                allProductItems.add(item);
+
+                            } else {
+
+                                System.out.println(
+                                        "❌ ProductItem لود نشد"
+                                                + " | itemId=" + itemId
+                                                + " | productId=" + productId
+                                                + " | seller=" + sellerName
+                                                + " | productFound=" + (product != null)
+                                                + " | sellerFound=" + (seller != null)
+                                );
+                            }
+                        }
+                    }
+
+                    itemReader.close();
+                    BufferedReader cartReader =
+                            new BufferedReader(new FileReader("cart.txt"));
+
+                    String cartLine;
+
+                    while ((cartLine = cartReader.readLine()) != null) {
+
+                        String[] parts = cartLine.split(",");
+
+                        if (parts.length == 3) {
+
+                            int userId =
+                                    Integer.parseInt(parts[0]);
+
+                            long itemId =
+                                    Long.parseLong(parts[1]);
+
+                            int quantity =
+                                    Integer.parseInt(parts[2]);
+
+                            Customer customer = null;
+
+                            for (User u : allUsers) {
+
+                                if (u instanceof Customer &&
+                                        u.userId == userId) {
+
+                                    customer = (Customer) u;
+                                    break;
+                                }
+                            }
+
+                            ProductItem item =
+                                    findProductItemById(itemId);
+
+                            if (customer != null && item != null) {
+
+                                customer.getCart().put(
+                                        item,
+                                        quantity
+                                );
+                            }
+                        }
+                    }
+
+                    cartReader.close();
 
                     // پر کردن موقت اطلاعات دمی و فیک برای تست در صورتی که دیتابیس متنی در ابتدا کاملاً خالی باشد
                     if (allUsers.isEmpty()) {
@@ -2188,79 +2508,7 @@ public class MainServer {
                         allUsers.add(new Customer(1, "helia", "password123", 50000000.0));
                     }
 
-                    if (allBaseProducts.isEmpty()) {
-                        // مقداردهی و شبیه‌سازی محصولات پایه تبلت و ساعت هوشمند برندهای اپل و سامسونگ
-                        allBaseProducts.add(new Tablet(50, "iPad Pro", "Apple", true, 12.9));
-                        allBaseProducts.add(new Smartwatch(60, "Apple Watch 9", "Apple", true, true, 2, 1.9));
-                        allBaseProducts.add(new Tablet(51, "Galaxy Tab S9", "Samsung", false, 11.0));
-                        allBaseProducts.add(new Smartwatch(62, "Galaxy Watch 6", "Samsung", false, true, 3, 1.4));
-                    }
 
-                    if (allProductItems.isEmpty()) {
-                        // نمونه‌سازی فروشنده فرضی سیستم جهت برقراری وابستگی‌ها (Dependencies) در سازنده‌های اشیاء انبار
-                        Seller dummySeller = new Seller(99, "TechShop", "1234", 0.0);
-
-                        allProductItems.add(new ProductItem(
-                                0,
-                                allBaseProducts.get(3),
-                                dummySeller,
-                                "نقره‌ای",
-                                12000000.0,
-                                0,
-                                8
-                        ));
-                        BufferedReader cartReader =
-                                new BufferedReader(new FileReader("cart.txt"));
-
-                        String cartLine;
-
-                        while ((cartLine = cartReader.readLine()) != null) {
-
-                            String[] parts = cartLine.split(",");
-
-                            if (parts.length == 3) {
-
-                                int userId =
-                                        Integer.parseInt(parts[0]);
-
-                                int itemId =
-                                        Integer.parseInt(parts[1]);
-
-                                int quantity =
-                                        Integer.parseInt(parts[2]);
-
-                                Customer customer = null;
-
-                                for (User u : allUsers) {
-
-                                    if (u instanceof Customer &&
-                                            u.userId == userId) {
-
-                                        customer = (Customer) u;
-                                        break;
-                                    }
-                                }
-
-                                ProductItem item =
-                                        findProductItemById(itemId);
-
-                                if (customer != null && item != null) {
-
-                                    customer.getCart().put(
-                                            item,
-                                            quantity
-                                    );
-                                }
-                            }
-                        }
-
-                        cartReader.close();
-
-                        // یک نمونه کالا پیش‌فرض به سبد خرید کاربر هلیای تستی اضافه می‌کنیم تا فرانت در زمان اولین رندر لودینگ کامپوننت‌ها خالی نباشد
-                        if (allUsers.get(0) instanceof Customer) {
-                            ((Customer) allUsers.get(0)).addToCart(allProductItems.get(0), 1);
-                        }
-                    }
                     System.out.println("🟢 اطلاعات اولیه با موفقیت لود شدند.");
                 } catch (IOException e) {
                     System.out.println("❌ خطا در آماده‌سازی یا بارگذاری اولیه فایل‌ها: " + e.getMessage());
@@ -2279,7 +2527,7 @@ public class MainServer {
 
                 return null;
             }
-    public static ProductItem findProductItemById(int itemId) {
+    public static ProductItem findProductItemById(long itemId) {
 
         for (ProductItem item : allProductItems) {
 

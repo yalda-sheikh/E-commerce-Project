@@ -220,10 +220,10 @@
       "messages": {
         "loading": "Loading products...",
         "fetchError": "Error while fetching products from Java",
-        "createSuccess": "Product added successfully.",
+        "createSuccess": ".Product added successfully",
         "updateSuccess": "Changes have been saved successfully",
         "deleteSuccess": "Product deleted successfully.",
-        "deleteError": "Failed to delete the product.",
+        "deleteError": ".Failed to delete the product",
         "saveError": "Error while saving the product",
         "saveErrorAlert": "Failed to save the product",
         "completeVariant": ".Please complete the color information"
