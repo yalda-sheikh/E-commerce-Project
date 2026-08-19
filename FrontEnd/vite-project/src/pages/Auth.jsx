@@ -57,7 +57,6 @@ function Auth({ setUser }) {
         // setIsOpen(true);
       })
       .catch((error) => {
-        console.error("خطا:", error);
         
         showAlert(t("error") , t("auth.noAccountOrPasswordError"),"error" )
 

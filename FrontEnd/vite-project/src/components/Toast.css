@@ -21,8 +21,25 @@
   
     z-index: 9999;
   
-    animation: toastSlideIn 0.3s ease;
+    animation: toastSlideInRight 0.3s ease;
   }
+  
+  
+  /* =========================
+     English / LTR
+     ========================= */
+  
+  [dir="ltr"] .toast {
+    right: auto;
+    left: 20px;
+  
+    animation: toastSlideInLeft 0.3s ease;
+  }
+  
+  
+  /* =========================
+     Close Button
+     ========================= */
   
   .toast button {
     border: none;
@@ -31,6 +48,11 @@
     cursor: pointer;
     color: inherit;
   }
+  
+  
+  /* =========================
+     Toast Types
+     ========================= */
   
   .toast-success {
     border-left: 4px solid #10b981;
@@ -44,10 +66,32 @@
     border-left: 4px solid #f59e0b;
   }
   
-  @keyframes toastSlideIn {
+  
+  /* =========================
+     RTL → From Right
+     ========================= */
+  
+  @keyframes toastSlideInRight {
     from {
       opacity: 0;
       transform: translateX(30px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  
+  /* =========================
+     LTR → From Left
+     ========================= */
+  
+  @keyframes toastSlideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
     }
   
     to {

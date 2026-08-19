@@ -1,9 +1,3 @@
-BASE,1,بیئد,طئب
-BASE,1,45,5
-BASE,2,ذص,قذ
-BASE,3,ذص,قذ
-BASE,4,yc;i,y;ci
-BASE,5,fk,kf
-BASE,6,kft,kgt
-BASE,7,jfd,dj
-BASE,8,mdg,zfm
+1,Iphone 17,Apple,silver,500.00,11,yalda
+2,Iphone 17,Apple,orange,500.00,13,yalda
+3,Iphone 17,Apple,dark blue,469.00,15,yalda
