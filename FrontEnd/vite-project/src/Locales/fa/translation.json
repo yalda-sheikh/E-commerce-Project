@@ -27,6 +27,7 @@
     "mobile": "موبایل",
     "laptop": "لپ‌تاپ",
     "brand": "برند",
+    "error" : "خطا",
     "minPrice": "حداقل قیمت",
     "maxPrice": "حداکثر قیمت",
     "applyFilter": "اعمال فیلتر",
@@ -61,7 +62,7 @@
           "register": "ثبت‌نام",
 
           "error" : "خطا",
-          "noAccountOrPasswordError" : "نام کاربری یا رمز شما اشتباه استت.",
+          "noAccountOrPasswordError" : "نام کاربری یا رمز شما اشتباه است.",
           "noAccount": "حساب کاربری ندارید؟ ثبت‌نام کنید",
           "haveAccount": "قبلاً ثبت‌نام کرده‌اید؟ وارد شوید",
       
@@ -233,8 +234,8 @@
     "currentBalance": "موجودی فعلی:",
     "chargePlaceholder": "مبلغ شارژ را وارد کنید",
     "chargeWallet": "شارژ کیف پول",
-
-
+    "deletedFromCart" : "محصول از سبد خرید خذف شد.",
+    "enterDiscountCode" : "کد تخفیف را وارد کنید.",
     "allCategories": "همه دسته‌بندی‌ها",
     "baseCategory": "پایه",
     "laptopCategory": "لپ‌تاپ",
@@ -305,7 +306,7 @@
     "unknownError": "خطای ناشناخته.",
     "noDiscountApplied": "هیچ کد تخفیفی روی سبد اعمال نشده است.",
     "removeDiscountFailed": "لغو کد تخفیف انجام نشد.",
-    "discountApplied": "تخفیف {{amount}} تومان اعمال شد. مبلغ قابل پرداخت: {{price}} تومان"
+    "discountApplied": "تخفیف اعمال شد."
   }
       }
     

@@ -59,7 +59,7 @@ function Auth({ setUser }) {
       .catch((error) => {
         console.error("خطا:", error);
         
-        showAlert(t("auth.error") , t("auth.noAccountOrPasswordError"),"error" )
+        showAlert(t("error") , t("auth.noAccountOrPasswordError"),"error" )
 
 
       });

@@ -3,6 +3,8 @@ import axios from "axios";
 import "./AddProductForm.css";
 import AlertModal from "./AlertModal";
 import useAlert from "./useAlert";
+import useToast from "./UseToast";
+import Toast from "./Toast";
 import { useTranslation } from "react-i18next";
 
 export default function AddProductForm({ user }) {
@@ -16,6 +18,7 @@ export default function AddProductForm({ user }) {
     name: "",
     brand: "",
   });
+  const {toast , showToast , hideToast} = useToast();
 
   const { alert, showAlert, closeAlert } = useAlert();
 
@@ -140,19 +143,11 @@ export default function AddProductForm({ user }) {
       }
 
       if (editingId) {
-        showAlert(
-          t("common.success"),
-          t("addProduct.messages.updateSuccess"),
-          "success"
-        );
+        showToast(t("addProduct.messages.updateSuccess"), "success");
       }
 
       if (!editingId) {
-        showAlert(
-          t("common.success"),
-          t("addProduct.messages.createSuccess"),
-          "success"
-        );
+        showToast(t("addProduct.messages.createSuccess"), "success");
       }
 
       setEditingId(null);
@@ -221,11 +216,7 @@ export default function AddProductForm({ user }) {
         throw new Error(data.error);
       }
 
-      showAlert(
-        t("common.success"),
-        t("addProduct.messages.deleteSuccess"),
-        "success"
-      );
+      showToast( t("addProduct.messages.deleteSuccess"), "success");
 
       setProducts((prevProducts) =>
         prevProducts.filter(
@@ -432,6 +423,13 @@ export default function AddProductForm({ user }) {
         {/* =========================
             حالت ویرایش محصول
         ========================= */}
+              {toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
+    )}
 
         {editingId && (
           <>

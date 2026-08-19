@@ -6,6 +6,8 @@ import { Link } from 'react-router';
 import Search from '../components/Search';
 import FilterHandler from '../components/FilterHandler';
 import useAlert from '../components/useAlert';
+import useToast from '../components/UseToast';
+import Toast from '../components/Toast';
 
 function Home({ user }) {
   const [products, setProducts] = useState([]);
@@ -13,7 +15,11 @@ function Home({ user }) {
   const [message, setMessage] = useState('');
   const { alert, showAlert, closeAlert } = useAlert();
   const { t } = useTranslation();
-
+  const {
+    toast,
+    showToast,
+    hideToast
+  } = useToast();
   useEffect(() => {
     fetch('http://localhost:8080/api/products')
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -36,14 +42,14 @@ function Home({ user }) {
       );
       return;
     }
-    if (user.role === "SELLER") {
-      showAlert(
-        t("failed"),
-        t("sellerCannotAddToCart"),
-        "error"
-      );
-      return;
-    }
+     if (user.role === "SELLER") {
+    showAlert(
+      t("failed"),
+      t("sellerCannotAddToCart"),
+      "error"
+    );
+    return;
+  }
 
     fetch('http://localhost:8080/api/cart/add', {
       method: 'POST',
@@ -61,11 +67,12 @@ function Home({ user }) {
         return data;
       })
       .then(() => {
-        showAlert(
-          t("success"),
-          t("productAdded"),
-          "success"
-        );
+        // showAlert(
+        //   t("success"),
+        //   t("productAdded"),
+        //   "success"
+        // );
+        showToast(t("productAdded"), "success");
       })
 
       .catch((err) => {
@@ -97,7 +104,11 @@ function Home({ user }) {
     );
 
   return (
+  
     <div className="home-container">
+      <div>
+        {message}
+      </div>
 
       <h2 className="home-title">
         🏪 {t("storeTitle")}
@@ -105,6 +116,13 @@ function Home({ user }) {
 
       <Search onSearch={searchProduct} />
       <FilterHandler setProducts={setProducts} />
+      {toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
+    )}
 
 
       <div className="store-grid">

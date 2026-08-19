@@ -1,1 +1,9 @@
 BASE,1,بیئد,طئب
+BASE,1,45,5
+BASE,2,ذص,قذ
+BASE,3,ذص,قذ
+BASE,4,yc;i,y;ci
+BASE,5,fk,kf
+BASE,6,kft,kgt
+BASE,7,jfd,dj
+BASE,8,mdg,zfm

@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import "./Discount.css";
 import useAlert from "../components/useAlert";
 import AlertModal from "../components/AlertModal";
-
+import useToast from "../components/UseToast";
+import Toast from "../components/Toast";
 function Discount({ user }) {
     const { t } = useTranslation();
 
@@ -22,7 +23,7 @@ function Discount({ user }) {
     const [sellerOnly, setSellerOnly] = useState(false);
     const [customerId, setCustomerId] = useState("");
     const [maxPurchaseCount, setMaxPurchaseCount] = useState(null);
-
+const {toast , showToast , hideToast} = useToast();
     const { alert, showAlert, closeAlert } = useAlert();
 
     const loadDiscounts = () => {
@@ -39,7 +40,6 @@ function Discount({ user }) {
     }, [user]);
 
     const createDiscount = () => {
-        console.log("Before fetch:", usageLimit);
 
         fetch("http://localhost:8080/api/discount", {
             method: "POST",
@@ -67,11 +67,8 @@ function Discount({ user }) {
         })
             .then((res) => res.json())
             .then(() => {
-                showAlert(
-                    t("common.success"),
-                    t("discount.createSuccess"),
-                    "success"
-                );
+
+                showToast(t("discount.createSuccess"), "success")
 
                 loadDiscounts();
 
@@ -125,11 +122,8 @@ function Discount({ user }) {
         })
             .then((res) => res.json())
             .then(() => {
-                showAlert(
-                    t("common.success"),
-                    t("discount.updateSuccess"),
-                    "success"
-                );
+
+                showToast( t("discount.updateSuccess"), "success")
 
                 loadDiscounts();
 
@@ -167,11 +161,11 @@ function Discount({ user }) {
         )
             .then((res) => res.json())
             .then(() => {
-                showAlert(
-                    t("common.success"),
+                showToast(
                     t("discount.deleteSuccess"),
                     "success"
                 );
+                
 
                 loadDiscounts();
             })
@@ -224,7 +218,14 @@ function Discount({ user }) {
     };
 
     return (
+
         <div className="discount-page">
+                {toast && (
+        <Toast 
+        message={toast.message} type={toast.type}  onclose={hideToast} />
+
+
+      )}
 
             <section className="discount-form-card">
 

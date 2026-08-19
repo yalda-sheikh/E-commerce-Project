@@ -13,7 +13,7 @@
   "loginFirst": "Please sign in before adding items to your cart",
   "addCartError": "Failed to add product to cart",
 "success" : "!Success",
-  "productAdded": ".Product added successfully",
+  "productAdded": "Product added successfully.",
   "noProducts": "No products found",
   "color": "Color",
   "inStock": "In Stock",
@@ -118,9 +118,9 @@
         "onlySeller": "Only Seller",
         "allSellers": "All Sellers",
     
-        "createSuccess": ".Discount code created successfully",
+        "createSuccess": "Discount code created successfully.",
         "createError": ".Failed to create the discount code",
-        "updateSuccess": ".Discount code updated successfully",
+        "updateSuccess": "Discount code updated successfully.",
         "updateError": ".Failed to update the discount code",
         "deleteSuccess": "Discount code deleted successfully.",
         "deleteError": "Failed to delete the discount code.",
@@ -150,12 +150,12 @@
       "outOfStock": "Out of Stock",
       "addToCart": "Add to Cart",
       "loginRequired": ".Please sign in before adding this item to your cart",
-      "addSuccess": ".Product added successfully",
+      "addSuccess": "Product added successfully.",
       "addError": ".Failed to add product to cart",
       "notFound": "Product not found",
       "success" : "!Success",
       "sellerCannotAddToCart": ".Sellers cannot add products to the shopping cart",
-  "productAdded": ".Product added successfully"
+       "productAdded": "Product added successfully."
     },
     "addProduct": {
       "createTitle": "Add New Product",
@@ -220,12 +220,12 @@
       "messages": {
         "loading": "Loading products...",
         "fetchError": "Error while fetching products from Java",
-        "createSuccess": ".Product added successfully",
-        "updateSuccess": "Changes have been saved successfully",
+        "createSuccess": "Product added successfully.",
+        "updateSuccess": "Changes have been saved successfully.",
         "deleteSuccess": "Product deleted successfully.",
         "deleteError": ".Failed to delete the product",
         "saveError": "Error while saving the product",
-        "saveErrorAlert": "Failed to save the product",
+        "saveErrorAlert": ".Failed to save the product",
         "completeVariant": ".Please complete the color information"
       }
     },
@@ -234,11 +234,11 @@
         "currentBalance": "Current balance:",
         "chargePlaceholder": "Enter charge amount",
         "chargeWallet": "Charge Wallet",
-    
+        "deletedFromCart" : "Product deleted.",
         "discounts": "Discount Codes",
         "noDiscounts": "There are currently no discount codes.",
         "copy": "Copy",
-        "discountCopied": ".Discount code copied",
+        "discountCopied": "Discount code copied.",
         "type": "Type:",
         "percent": "Percentage",
         "fixed": "Fixed amount",
@@ -285,10 +285,10 @@
         "error": "Error",
         "warning": "Warning",
     
-        "walletCharged": "!Wallet charged successfully",
-        "checkoutSuccess": "!Checkout completed successfully",
-        "discountRemoved": ".Discount code removed successfully",
-    
+        "walletCharged": "Wallet charged successfully!",
+        "checkoutSuccess": "Checkout completed successfully!",
+        "discountRemoved": "Discount code removed successfully.",
+    "enterDiscountCode" : ".please enter discount code",
         "discountExpired": ".The discount code has expired",
         "discountNotStarted": ".The discount code has not started yet",
         "minimumPriceError": ".The minimum purchase amount has not been met",
@@ -305,7 +305,7 @@
         "unknownError": ".Unknown error",
         "noDiscountApplied": ".No discount code has been applied to the cart",
         "removeDiscountFailed": ".Failed to remove the discount code",
-        "discountApplied": "Discount of {{amount}} Toman applied. Amount payable: {{price}} Toman"
+        "discountApplied": "Discount applied."
       }
     
 

@@ -4,6 +4,8 @@ import "./Dashboard.css";
 import AlertModal from "../components/AlertModal";
 import useAlert from "../components/useAlert";
 import { useTranslation } from "react-i18next";
+import useToast from "../components/UseToast";
+import Toast from "../components/Toast";
 
 function Dashboard({ user, setUser }) {
   const { t, i18n } = useTranslation();
@@ -20,6 +22,9 @@ function Dashboard({ user, setUser }) {
   const { alert, showAlert, closeAlert } = useAlert();
   const [discountAmount, setDiscountAmount] = useState(0);
   const [discountApplied, setDiscountApplied] = useState(false);
+  const {    toast,
+    showToast,
+    hideToast} = useToast();
 
   // =========================================
   // RTL / LTR
@@ -188,9 +193,8 @@ function Dashboard({ user, setUser }) {
 
         setMessage(data.message);
 
-        showAlert(
-          t("dashboard.success"),
-          t("dashboard.walletCharged"),
+        showToast(
+                    t("dashboard.walletCharged"),
           "success"
         );
       })
@@ -239,8 +243,7 @@ function Dashboard({ user, setUser }) {
         return data;
       })
       .then(() => {
-        showAlert(
-          t("dashboard.success"),
+        showToast(
           t("dashboard.checkoutSuccess"),
           "success"
         );
@@ -277,7 +280,7 @@ function Dashboard({ user, setUser }) {
       showAlert(
         t("dashboard.error"),
         t("dashboard.enterDiscountCode"),
-        "error"
+        "warning"
       );
 
       return;
@@ -416,19 +419,15 @@ function Dashboard({ user, setUser }) {
               return;
           }
         }
-
+        showToast(
+          t("dashboard.discountApplied"),
+          "success"
+        );
         setTotalCartPrice(data.newPrice);
         setDiscountAmount(data.discountAmount);
         setDiscountApplied(true);
 
-        showAlert(
-          t("dashboard.success"),
-          t("dashboard.discountApplied", {
-            amount: data.discountAmount.toLocaleString(),
-            price: data.newPrice.toLocaleString(),
-          }),
-          "success"
-        );
+
       })
       .catch((err) => {
         console.error("Discount Apply Error:", err);
@@ -474,8 +473,7 @@ function Dashboard({ user, setUser }) {
         setDiscountAmount(0);
         setDiscountApplied(false);
 
-        showAlert(
-          t("dashboard.success"),
+        showToast(
           t("dashboard.discountRemoved"),
           "success"
         );
@@ -516,6 +514,7 @@ function Dashboard({ user, setUser }) {
     })
       .then(async (res) => {
         const data = await res.json();
+        showToast(t("dashboard.deletedFromCart") , "success")
 
         if (!res.ok) {
           throw new Error(data.error);
@@ -525,6 +524,7 @@ function Dashboard({ user, setUser }) {
       })
       .then(() => {
         fetchDashboardData();
+
       })
       .catch((err) => {
         showAlert(
@@ -557,10 +557,18 @@ function Dashboard({ user, setUser }) {
   // =========================================
 
   return (
+
     <div
       className="dashboard-container"
       dir={isRTL ? "rtl" : "ltr"}
     >
+          {toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
+      />
+    )}
 
       {/* ================= MESSAGE ================= */}
 
@@ -664,8 +672,8 @@ function Dashboard({ user, setUser }) {
                           discount.code
                         );
 
-                        showAlert(
-                          t("dashboard.success"),
+                        showToast(
+
                           t("dashboard.discountCopied"),
                           "success"
                         );
@@ -780,6 +788,7 @@ function Dashboard({ user, setUser }) {
         </div>
 
       </div>
+      
 
 
       {/* ================= CART ================= */}

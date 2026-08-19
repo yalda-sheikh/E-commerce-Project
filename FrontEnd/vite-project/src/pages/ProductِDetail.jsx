@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import "./ProductDetail.css";
 import useAlert from "../components/useAlert";
 import AlertModal from "../components/AlertModal";
+import Toast from "../components/Toast";
+import useToast from "../components/UseToast";
+
 
 function ProductDetail({ user }) {
   const {alert , showAlert, closeAlert} = useAlert()
@@ -18,6 +21,7 @@ function ProductDetail({ user }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const{toast , showToast , hideToast } = useToast();
 
   useEffect(() => {
 
@@ -101,8 +105,8 @@ function ProductDetail({ user }) {
       })
 
       .then(() => {
-        showAlert(
-          t("product.success"),
+        showToast(
+
           t("product.productAdded"),
           "success"
         );
@@ -123,6 +127,11 @@ function ProductDetail({ user }) {
   return (
 
     <div className="product-detail">
+      {toast && (
+        <Toast 
+        message={toast.message} type={toast.type} onClose={hideToast}
+        />
+      )}
   
       <div className="product-card">
   
